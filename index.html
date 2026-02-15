@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untitled World</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* --- CSS START --- */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:white;min-height: 100vh;}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 10%;position:relative;}
+nav{display:flex;gap:20px;}
+nav a{color:white;text-decoration:none;transition:.3s;}
+nav a:hover{color:#00f2fe;}
+.menu-toggle{display:none;font-size:24px;cursor:pointer;}
+
+.hero{text-align:center;padding:80px 10%;}
+.hero h2{font-size:48px;}
+.btn{margin-top:20px;padding:12px 28px;border:none;border-radius:30px;background:linear-gradient(45deg,#00f2fe,#4facfe);cursor:pointer;font-weight:600;color:#fff;}
+.btn:hover{transform: scale(1.05); transition: 0.3s;}
+
+.study-section{text-align:center;padding:40px 10%;}
+.input-container{margin-bottom: 30px;}
+input{padding:15px;border-radius:30px;border:none;width:70%;max-width:500px;margin-right: 10px; outline: none; padding-left: 20px;}
+.add-btn{background: #00f2fe; color: #000; padding: 14px 30px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer;}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+    justify-content: center;
+}
+
+.video-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
+
+.video-card:hover { transform: translateY(-5px); }
+
+iframe {
+    width: 100%;
+    height: 200px;
+    border-radius: 15px;
+    border: none;
+    margin-bottom: 15px;
+}
+
+.complete-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+    background: #e0e0e0;
+    color: #333;
+}
+
+.complete-btn.active {
+    background: #2ecc71;
+    color: white;
+}
+
+.timer-section { text-align: center; padding: 40px 10%; }
+.timer{font-size:50px;margin:20px 0; font-weight: 700; color: #00f2fe;}
+
+.graph-section{text-align:center;padding:40px 10%; max-width: 800px; margin: 0 auto;}
+
+/* Graph Size Fix */
+.chart-box {
+    position: relative;
+    height: 400px; 
+    width: 100%;
+}
+
+.features{padding:80px 10%;text-align:center;}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;}
+.feature-card{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);padding:30px;border-radius:20px;transition:.3s;}
+.feature-card:hover{transform:translateY(-10px);}
+
+.contact-section{text-align:center;padding:40px 10%;background:rgba(0,0,0,.3);}
+footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
+
+@media(max-width:768px){
+    .hero h2{font-size:32px;}
+    input{width:100%; margin-bottom: 10px;}
+    nav{display:none;flex-direction:column;background:#1f3c44;position:absolute;top:70px;right:20px;padding:15px;border-radius:10px; z-index: 100;}
+    nav.active{display:flex;}
+    .menu-toggle{display:block;}
+}
+/* --- CSS END --- */
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Untitled World</h1>
+<div class="menu-toggle" onclick="toggleMenu()">☰</div>
+<nav id="navMenu">
+<a href="#">Home</a>
+<a href="#study">Study</a>
+<a href="#features">Features</a>
+<a href="#contact">Contact</a>
+</nav>
+</header>
+
+<section class="hero">
+<h2>Welcome Untitled World</h2>
+<p>Distraction Free Study + Smart Progress Tracking</p>
+<button class="btn" onclick="goToStudy()">Start Learning 👇</button>
+</section>
+
+<section class="study-section" id="study">
+<h2>Your Study Playlist</h2>
+<div class="input-container">
+    <input type="text" id="ytLink" placeholder="Paste YouTube URL here (e.g. https://youtu.be/xyz...)">
+    <button class="add-btn" onclick="addVideo()">Add Video</button>
+</div>
+
+<div class="video-grid" id="videoContainer"></div>
+</section>
+
+<section class="timer-section">
+    <h2>Focus Timer</h2>
+    <div class="timer" id="timer">00:00:00</div>
+    <button class="btn" onclick="startTimer(3600)">1 Hour</button>
+    <button class="btn" onclick="startTimer(7200)">2 Hour</button>
+    <button class="btn" style="background: #e74c3c;" onclick="stopTimer()">Stop</button>
+</section>
+
+<section class="graph-section">
+<h2>Weekly Progress</h2>
+<div class="chart-box">
+    <canvas id="studyChart"></canvas>
+</div>
+</section>
+
+<section class="features" id="features">
+<h2>Powerful Features</h2>
+<div class="feature-grid">
+<div class="feature-card"><h4>Modern UI</h4><p>Clean and aesthetic design.</p></div>
+<div class="feature-card"><h4>Study Timer</h4><p>1hr & 2hr Focus Mode.</p></div>
+<div class="feature-card"><h4>Video Learning</h4><p>Paste any YouTube link & study.</p></div>
+<div class="feature-card"><h4>Progress Graph</h4><p>Track your daily study time visually.</p></div>
+</div>
+</section>
+
+<section class="contact-section" id="contact">
+<h2>Contact Us</h2>
+<p>Email: untitledworld9@gmail.com</p>
+<button class="btn" onclick="window.location.href='mailto:untitledworld9@gmail.com'">Contact Now</button>
+</section>
+
+<footer>
+© 2026 Untitled World. All rights reserved.
+</footer>
+
+<script>
+function toggleMenu(){
+document.getElementById("navMenu").classList.toggle("active");
+}
+
+function goToStudy(){
+document.getElementById("study").scrollIntoView({behavior:"smooth"});
+}
+
+let videos = JSON.parse(localStorage.getItem("myVideos")) || [];
+
+function extractVideoID(url){
+    try {
+        let u = new URL(url);
+
+        // Playlist detection
+        if(u.searchParams.get("list")){
+            return "playlist:" + u.searchParams.get("list");
+        }
+
+        if(u.hostname.includes("youtu.be")){
+            return u.pathname.slice(1,12);
+        }
+
+        if(u.searchParams.get("v")){
+            return u.searchParams.get("v");
+        }
+
+        if(u.pathname.includes("/live/")){
+            return u.pathname.split("/live/")[1].substring(0,11);
+        }
+
+        if(u.pathname.includes("/embed/")){
+            return u.pathname.split("/embed/")[1].substring(0,11);
+        }
+
+        return false;
+    } catch {
+        return false;
+    }
+}
+
+function addVideo(){
+    let input = document.getElementById("ytLink");
+    let url = input.value.trim();
+    let videoID = extractVideoID(url);
+
+    if(videoID){
+        videos.push({ id: videoID, completed: false });
+        saveAndRender();
+        input.value = "";
+    } else {
+        alert("Please enter a valid YouTube URL");
+    }
+}
+
+function deleteVideo(index){
+    if(confirm("Delete this video?")){
+        videos.splice(index, 1);
+        saveAndRender();
+    }
+}
+
+function toggleComplete(index){
+    videos[index].completed = !videos[index].completed;
+    if(videos[index].completed){
+        updateGraph(1);
+    } else {
+        updateGraph(-1);
+    }
+    saveAndRender();
+}
+
+function saveAndRender(){
+    localStorage.setItem("myVideos", JSON.stringify(videos));
+    let container = document.getElementById("videoContainer");
+    container.innerHTML = "";
+
+    videos.forEach((video, index) => {
+        let isDone = video.completed ? "active" : "";
+        let btnText = video.completed ? "Completed ✔" : "Mark Complete";
+        
+        let html = `
+            <div class="video-card">
+                <iframe src="${
+video.id.startsWith('playlist:')
+? `https://www.youtube.com/embed/videoseries?list=${video.id.replace('playlist:','')}`
+: `https://www.youtube.com/embed/${video.id}`
+}" allowfullscreen></iframe>
+                <button class="complete-btn ${isDone}" onclick="toggleComplete(${index})">${btnText}</button>
+                <button onclick="deleteVideo(${index})" style="margin-top:10px; background:none; border:none; color:white; opacity:0.6; cursor:pointer; font-size:12px;">Remove</button>
+            </div>
+        `;
+        container.innerHTML += html;
+    });
+}
+
+window.onload = function(){
+    saveAndRender();
+}
+
+let timerInterval;
+function startTimer(duration){
+    clearInterval(timerInterval);
+    let time=duration;
+    displayTime(time);
+    timerInterval=setInterval(()=>{
+        time--;
+        displayTime(time);
+        if(time<0){clearInterval(timerInterval);alert("Session Complete!");}
+    },1000);
+}
+
+function stopTimer(){
+    clearInterval(timerInterval);
+    document.getElementById("timer").innerHTML = "00:00:00";
+}
+
+function displayTime(time){
+    let h=Math.floor(time/3600);
+    let m=Math.floor((time%3600)/60);
+    let s=time%60;
+    document.getElementById("timer").innerHTML=
+    (h<10?"0":"")+h+":"+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+}
+
+let studyData = JSON.parse(localStorage.getItem("studyGraphData")) || [0,0,0,0,0,0,0];
+
+function updateGraph(val){
+    let day = new Date().getDay();
+    studyData[day] += val;
+    if(studyData[day] < 0) studyData[day] = 0;
+    
+    localStorage.setItem("studyGraphData", JSON.stringify(studyData));
+    studyChart.data.datasets[0].data = studyData;
+    studyChart.update();
+}
+
+const ctx = document.getElementById('studyChart').getContext('2d');
+const studyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+        datasets: [{
+            label: 'Videos Completed',
+            data: studyData,
+            backgroundColor: '#00f2fe',
+            borderRadius: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: { beginAtZero: true, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+            x: { ticks: { color: 'white' }, grid: { display: false } }
+        },
+        plugins: {
+            legend: { labels: { color: 'white' } }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
