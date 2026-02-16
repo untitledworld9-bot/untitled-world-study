@@ -4,13 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Untitled World</title>
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="theme-color" content="#0f2027">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 /* --- CSS START --- */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-body{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:white;min-height: 100vh;}
+body{
+  color:white;
+  min-height:100vh;
+  background:
+    linear-gradient(rgba(15,32,39,0.7),
+                    rgba(44,83,100,0.7)),
+    url("background.jpg");
+  background-size: cover;
+  background-position: center;
+}
 header{display:flex;justify-content:space-between;align-items:center;padding:20px 10%;position:relative;}
 nav{display:flex;gap:20px;}
 nav a{color:white;text-decoration:none;transition:.3s;}
