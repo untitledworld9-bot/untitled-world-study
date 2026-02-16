@@ -1,0 +1,105 @@
+<!DOCTYPE html>    
+<html lang="en">    
+<head>    
+<meta charset="UTF-8">    
+<title>About Us - Untitled World</title>    
+<meta name="viewport" content="width=device-width, initial-scale=1">    
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">    
+    
+<style>    
+* { margin: 0; padding: 0; box-sizing: border-box; }    
+    
+body {    
+  font-family: 'Poppins', sans-serif;    
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);    
+  color: #ffffff;    
+  min-height: 100vh;    
+  display: flex;    
+  align-items: center;    
+  justify-content: center;    
+  padding: 20px;    
+}    
+    
+.container {    
+  max-width: 700px;    
+  width: 100%;    
+  background: rgba(255, 255, 255, 0.05);    
+  backdrop-filter: blur(12px);    
+  -webkit-backdrop-filter: blur(12px);    
+  border: 1px solid rgba(255, 255, 255, 0.1);    
+  border-radius: 20px;    
+  padding: 50px 40px;    
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);    
+  text-align: center;    
+  animation: fadeIn 1s ease-out;    
+}    
+    
+h1 {    
+  font-size: 36px;    
+  font-weight: 600;    
+  margin-bottom: 25px;    
+  letter-spacing: 1px;    
+  background: linear-gradient(to right, #00f2fe, #4facfe);    
+  -webkit-background-clip: text;    
+  -webkit-text-fill-color: transparent;    
+}    
+    
+p {    
+  line-height: 1.8;    
+  font-size: 16px;    
+  color: #e0e0e0;    
+  margin-bottom: 20px;    
+  font-weight: 300;    
+}    
+    
+.btn {    
+  display: inline-block;    
+  margin-top: 30px;    
+  padding: 14px 35px;    
+  background: linear-gradient(90deg, #00f2fe, #4facfe);    
+  color: #0f2027;    
+  border-radius: 50px;    
+  text-decoration: none;    
+  font-weight: 600;    
+  font-size: 16px;    
+  transition: all 0.3s ease;    
+  box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3);    
+}    
+    
+.btn:hover {    
+  transform: translateY(-3px);    
+  box-shadow: 0 8px 20px rgba(0, 242, 254, 0.5);    
+  background: linear-gradient(90deg, #4facfe, #00f2fe);    
+}    
+    
+@keyframes fadeIn {    
+  from { opacity: 0; transform: translateY(20px); }    
+  to { opacity: 1; transform: translateY(0); }    
+}    
+    
+@media (max-width: 600px) {    
+  .container { padding: 30px 20px; }    
+  h1 { font-size: 28px; }    
+  p { font-size: 15px; }    
+}    
+</style>    
+</head>    
+    
+<body>    
+    
+<div class="container">    
+  <h1>About Untitled World</h1>    
+    
+  <p>Untitled World is a distraction-free study platform designed for students preparing     
+  for JEE, NEET and board exams. Our goal is to make studying simple, focused and effective.</p>    
+    
+  <p>Here you can track your progress, use study timers, create playlists from YouTube     
+  lectures and soon take mock tests — all in one place.</p>    
+    
+  <p>This platform is built to help students stay consistent, motivated and productive.</p>    
+    
+  <a href="index.html" class="btn">⬅ Back to Home</a>    
+</div>    
+    
+</body>    
+</html>
