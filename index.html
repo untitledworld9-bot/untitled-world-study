@@ -2,8 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="google-site-verification" content="fBQIEBmTNrzlTsyT3SmORHwQFKqwU3LcgaybVCyVIdI" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Untitled World</title>
+<!-- SEO Meta Tags -->
+<title>Untitled World - Smart Study Platform</title>
+<meta name="description" content="Distraction free study platform for JEE, NEET & Boards. Mock tests, focus timer, progress tracking.">
+<meta name="keywords" content="JEE preparation, NEET study, mock test platform, study timer, focus study">
+<meta name="author" content="Untitled World">
+
+<!-- Mobile friendly -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Social sharing -->
+<meta property="og:title" content="Untitled World Study Platform">
+<meta property="og:description" content="Smart AI study platform with mock tests & focus timer.">
+<meta property="og:image" content="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="theme-color" content="#0f2027">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -13,14 +27,9 @@
 /* --- CSS START --- */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 body{
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
   color:white;
   min-height:100vh;
-  background:
-    linear-gradient(rgba(15,32,39,0.7),
-                    rgba(44,83,100,0.7)),
-    url("background.jpg");
-  background-size: cover;
-  background-position: center;
 }
 header{display:flex;justify-content:space-between;align-items:center;padding:20px 10%;position:relative;}
 nav{display:flex;gap:20px;}
@@ -28,7 +37,17 @@ nav a{color:white;text-decoration:none;transition:.3s;}
 nav a:hover{color:#00f2fe;}
 .menu-toggle{display:none;font-size:24px;cursor:pointer;}
 
-.hero{text-align:center;padding:80px 10%;}
+.hero{
+  text-align:center;
+  padding:80px 10%;
+  background:
+    linear-gradient(rgba(15,32,39,0.7),
+                    rgba(44,83,100,0.7)),
+    url("background.jpg");
+  background-size:cover;
+  background-position:center;
+  border-radius:20px;
+}
 .hero h2{font-size:48px;}
 .btn{margin-top:20px;padding:12px 28px;border:none;border-radius:30px;background:linear-gradient(45deg,#00f2fe,#4facfe);cursor:pointer;font-weight:600;color:#fff;}
 .btn:hover{transform: scale(1.05); transition: 0.3s;}
