@@ -15,8 +15,10 @@
 
 <!-- Social sharing -->
 <meta property="og:title" content="Untitled World Study Platform">
-<meta property="og:description" content="Smart AI study platform with mock tests & focus timer.">
-<meta property="og:image" content="icon.png">
+<meta property="og:description" content="Distraction-free study platform with mock tests & focus timer.">
+<meta property="og:url" content="https://untitledworld.us.cc">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://untitledworld.us.cc/icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="theme-color" content="#0f2027">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -49,8 +51,10 @@ nav a:hover{color:#00f2fe;}
 }
 .hero h2{font-size:48px;}
 .btn{margin-top:20px;padding:12px 28px;border:none;border-radius:30px;background:linear-gradient(45deg,#00f2fe,#4facfe);cursor:pointer;font-weight:600;color:#fff;}
-.btn:hover{transform: scale(1.05); transition: 0.3s;}
-
+.btn:hover{
+  transform: scale(1.05);
+  transition: 0.3s;
+}
 .study-section{text-align:center;padding:40px 10%;}
 .input-container{margin-bottom: 30px;}
 input{padding:15px;border-radius:30px;border:none;width:70%;max-width:500px;margin-right: 10px; outline: none; padding-left: 20px;}
@@ -117,8 +121,25 @@ iframe {
 
 .features{padding:80px 10%;text-align:center;}
 .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;}
-.feature-card{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);padding:30px;border-radius:20px;transition:.3s;}
-.feature-card:hover{transform:translateY(-10px);}
+.feature-card {
+  background: linear-gradient(135deg,#4f46e5,#06b6d4);
+  padding: 22px;
+  border-radius: 18px;
+  text-align: center;
+  color: white;
+  transition: 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.35);
+}
+
+.feature-card:active {
+  transform: scale(0.96);
+}
 
 .contact-section{text-align:center;padding:40px 10%;background:rgba(0,0,0,.3);}
 footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
@@ -150,6 +171,27 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 .feature-card:active {
   transform: scale(0.96);
                          }
+.coming-text{
+  text-align:center;
+  margin-top:10px;
+  font-size:14px;
+  color:#38bdf8;
+  font-weight:600;
+  transition:0.3s ease;   /* animation smooth */
+  cursor:pointer;
+}
+
+.coming-text span{
+  font-size:12px;
+  color:#94a3b8;
+}
+
+/* Hover animation */
+.coming-text:hover{
+  transform: translateY(-3px);
+  opacity:0.9;
+}
+  
 /* --- CSS END --- */
 </style>
 </head>
@@ -171,6 +213,10 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 <h2>Welcome Untitled World</h2>
 <p>Distraction Free Study + Smart Progress Tracking</p>
 <button class="btn" onclick="goToStudy()">Start Learning 👇</button>
+<a href="mocktest.html" class="coming-text" style="text-decoration:none;">
+Mock Test Platform<br>
+<span>Coming soon 🔜</span>
+</a>
 </section>
 
 <section class="study-section" id="study">
@@ -202,11 +248,11 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 <h2>Powerful Features</h2>
 <div class="feature-grid">
 <div class="feature-card"><h4>Modern UI</h4><p>Clean and aesthetic design.</p></div>
-<div class="feature-card"><h4>Study Timer</h4><p>1hr & 2hr Focus Mode.</p></div>
+<div class="feature-card"><h4>Study Timer ⌛</h4><p>1hr & 2hr Focus Mode.</p></div>
 <div class="feature-card"><h4>Video Learning</h4><p>Paste any YouTube link & study.</p></div>
-<div class="feature-card"><h4>Progress Graph</h4><p>Track your daily study time visually.</p></div>
+<div class="feature-card"><h4>Progress Graph</h4><p>Track your daily & Weekly lecture complete.</p></div>
 <div class="feature-card">
-  <h3>Mock Test Platform</h3>
+  <h3>📝 Mock Test Platform</h3>
   <p>Coming soon 🔜</p>
 </div>
 </div>
