@@ -222,6 +222,7 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 <a href="mocktest.html">Mock Test</a>
 <a href="#features">Features</a>
 <a href="#contact">Contact</a>
+<a href="#" onclick="logout()">Logout</a>
 <a href="about.html">About Us</a>
 </nav>
 </header>
@@ -288,7 +289,7 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 
 <script>
 if(localStorage.getItem("loggedIn")!="yes"){
-  alert("Please login first");
+  window.location="login.html";
 }
 function toggleMenu(){
 document.getElementById("navMenu").classList.toggle("active");
@@ -451,6 +452,11 @@ const studyChart = new Chart(ctx, {
         }
     }
 });
+
+function logout(){
+  localStorage.removeItem("loggedIn");
+  window.location="login.html";
+}
 </script>
 
 </body>
