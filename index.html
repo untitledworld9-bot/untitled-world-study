@@ -218,7 +218,7 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 <h1>Untitled World</h1>
 <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 <nav id="navMenu">
-<a href="#">Login</a>
+<a href="login.html">Login</a>
 <a href="mocktest.html">Mock Test</a>
 <a href="#features">Features</a>
 <a href="#contact">Contact</a>
@@ -287,6 +287,9 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 </footer>
 
 <script>
+if(localStorage.getItem("loggedIn")!="yes"){
+  alert("Please login first");
+}
 function toggleMenu(){
 document.getElementById("navMenu").classList.toggle("active");
 }
