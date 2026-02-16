@@ -1,0 +1,82 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+<title>Login - Untitled World</title>  
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">  
+  
+<style>  
+* { box-sizing: border-box; }  
+body {  
+  font-family: 'Poppins', sans-serif;  
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);  
+  color: white;  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+  height: 100vh;  
+  margin: 0;  
+}  
+.box {  
+  background: rgba(255, 255, 255, 0.1);  
+  backdrop-filter: blur(10px);  
+  -webkit-backdrop-filter: blur(10px);  
+  border: 1px solid rgba(255, 255, 255, 0.18);  
+  padding: 40px 30px;  
+  border-radius: 20px;  
+  text-align: center;  
+  width: 100%;  
+  max-width: 400px;  
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);  
+}  
+h2 { margin-top: 0; margin-bottom: 30px; font-weight: 600; letter-spacing: 1px; font-size: 28px; }  
+input {  
+  width: 100%; padding: 15px; margin: 0 0 15px 0;  
+  border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px;  
+  background: rgba(0, 0, 0, 0.2); color: white; font-size: 16px;  
+  font-family: 'Poppins', sans-serif; outline: none; transition: all 0.3s ease;  
+}  
+input:focus {  
+  background: rgba(0, 0, 0, 0.4); border-color: #00f2fe;  
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);  
+}  
+::placeholder { color: rgba(255, 255, 255, 0.6); }  
+button {  
+  width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 50px;  
+  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);  
+  color: #0f2027; font-size: 16px; font-weight: 600; cursor: pointer;  
+  transition: transform 0.2s, box-shadow 0.2s; font-family: 'Poppins', sans-serif;  
+}  
+button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4); }  
+button:active { transform: translateY(0); }  
+p { margin-top: 25px; font-size: 14px; color: rgba(255, 255, 255, 0.8); }  
+a { color: #4facfe; text-decoration: none; font-weight: 600; transition: color 0.3s; }  
+a:hover { color: #00f2fe; text-decoration: underline; }  
+br { display: none; }  
+</style>  
+</head>  
+<body>  
+<div class="box">  
+<h2>Login</h2>  
+<input type="text" id="user" placeholder="Username"><br>  
+<input type="password" id="pass" placeholder="Password"><br>  
+<button onclick="login()">Login</button>  
+<p>Not registered? <a href="signup.html">Sign Up</a></p>  
+</div>  
+<script>  
+function login(){  
+  let u=document.getElementById("user").value;  
+  let p=document.getElementById("pass").value;  
+  let savedUser=localStorage.getItem("user");  
+  let savedPass=localStorage.getItem("pass");  
+  if(u===savedUser && p===savedPass){  
+    localStorage.setItem("loggedIn","yes");  
+    alert("Login Successful");  
+    window.location="index.html";  
+  } else {  
+    alert("Wrong Username or Password");  
+  }  
+}  
+</script>  
+</body>  
+</html>
