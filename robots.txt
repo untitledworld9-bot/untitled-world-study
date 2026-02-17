@@ -1,0 +1,3 @@
+User-agent: * Allow: /
+
+Sitemap: https://untitledworld.us.cc/sitemap.xml
