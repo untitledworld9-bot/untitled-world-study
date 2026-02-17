@@ -276,7 +276,10 @@ Start Learning 👇
     <div class="timer" id="timer">00:00:00</div>
     <button class="btn" onclick="startTimer(3600)">1 Hour</button>
     <button class="btn" onclick="startTimer(7200)">2 Hour</button>
-    <button class="btn" style="background: #e74c3c;" onclick="stopTimer()">Stop</button>
+    <button class="btn" onclick="startTimer(10800)">3 Hour</button>
+
+    <button class="btn" id="pauseBtn" style="background:orange;" onclick="pauseTimer()">Pause</button>
+    <button class="btn" style="background:#e74c3c;" onclick="stopTimer()">Stop</button>
 </section>
 
 <section class="graph-section">
@@ -419,19 +422,51 @@ window.onload = function(){
 }
 
 let timerInterval;
+let time = 0;
+let isPaused = false;
+
 function startTimer(duration){
     clearInterval(timerInterval);
-    let time=duration;
+
+    // Agar new duration diya hai to reset
+    if(duration){
+        time = duration;
+        isPaused = false;
+        document.getElementById("pauseBtn").innerText = "Pause";
+    }
+
     displayTime(time);
+
     timerInterval=setInterval(()=>{
         time--;
         displayTime(time);
-        if(time<0){clearInterval(timerInterval);alert("Session Complete!");}
+
+        if(time<0){
+            clearInterval(timerInterval);
+            alert("Session Complete!");
+        }
     },1000);
+}
+
+function pauseTimer(){
+    let btn = document.getElementById("pauseBtn");
+
+    if(!isPaused){
+        clearInterval(timerInterval);
+        btn.innerText = "Resume";
+        isPaused = true;
+    }else{
+        startTimer();   // resume
+        btn.innerText = "Pause";
+        isPaused = false;
+    }
 }
 
 function stopTimer(){
     clearInterval(timerInterval);
+    time = 0;
+    isPaused = false;
+    document.getElementById("pauseBtn").innerText = "Pause";
     document.getElementById("timer").innerHTML = "00:00:00";
 }
 
@@ -444,40 +479,47 @@ function displayTime(time){
 }
 
 let studyData = JSON.parse(localStorage.getItem("studyGraphData")) || [0,0,0,0,0,0,0];
+let studyChart;
 
 function updateGraph(val){
     let day = new Date().getDay();
     studyData[day] += val;
     if(studyData[day] < 0) studyData[day] = 0;
-    
+
     localStorage.setItem("studyGraphData", JSON.stringify(studyData));
-    studyChart.data.datasets[0].data = studyData;
-    studyChart.update();
+
+    if(studyChart){
+        studyChart.data.datasets[0].data = studyData;
+        studyChart.update();
+    }
 }
 
-const ctx = document.getElementById('studyChart').getContext('2d');
-const studyChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
-        datasets: [{
-            label: 'Videos Completed',
-            data: studyData,
-            backgroundColor: '#00f2fe',
-            borderRadius: 5
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: { beginAtZero: true, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-            x: { ticks: { color: 'white' }, grid: { display: false } }
+window.addEventListener("load", function(){
+    const ctx = document.getElementById('studyChart').getContext('2d');
+
+    studyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+            datasets: [{
+                label: 'Videos Completed',
+                data: studyData,
+                backgroundColor: '#00f2fe',
+                borderRadius: 5
+            }]
         },
-        plugins: {
-            legend: { labels: { color: 'white' } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                x: { ticks: { color: 'white' }, grid: { display: false } }
+            },
+            plugins: {
+                legend: { labels: { color: 'white' } }
+            }
         }
-    }
+    });
 });
 
 function logout(){
