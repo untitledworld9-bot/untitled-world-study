@@ -408,7 +408,7 @@ function saveAndRender(){
 video.id.startsWith('playlist:')
 ? `https://www.youtube.com/embed/videoseries?list=${video.id.replace('playlist:','')}`
 : `https://www.youtube.com/embed/${video.id}`
-}" allowfullscreen></iframe>
+}" loading="lazy" allowfullscreen></iframe>
                 <button class="complete-btn ${isDone}" onclick="toggleComplete(${index})">${btnText}</button>
                 <button onclick="deleteVideo(${index})" style="margin-top:10px; background:none; border:none; color:white; opacity:0.6; cursor:pointer; font-size:12px;">Remove</button>
             </div>
