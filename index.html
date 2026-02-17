@@ -9,6 +9,7 @@
 <meta name="description" content="Distraction free study platform for JEE, NEET & Boards. Mock tests, focus timer, progress tracking.">
 <meta name="keywords" content="JEE preparation, NEET study, mock test platform, study timer, focus study">
 <meta name="author" content="Untitled World">
+<meta name="robots" content="index, follow">
 
 <!-- Mobile friendly -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,8 +22,10 @@
 <meta property="og:image" content="https://untitledworld.us.cc/icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="theme-color" content="#0f2027">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
 <style>
 /* --- CSS START --- */
@@ -44,7 +47,7 @@ nav a:hover{color:#00f2fe;}
   background:
     linear-gradient(rgba(15,32,39,0.7),
                     rgba(44,83,100,0.7)),
-    url("background.jpg");
+    url("background.webp");
   background-size:cover;
   background-position:center;
   border-radius:20px;
@@ -248,7 +251,9 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 <section class="hero">
 <h2>Welcome Untitled World</h2>
 <p>Distraction Free Study + Smart Progress Tracking</p>
-<button class="btn" onclick="goToStudy()">Start Learning 👇</button>
+<button class="btn" onclick="goToStudy()" aria-label="Start Learning">
+Start Learning 👇
+</button>
   
 <a href="mocktest.html" class="coming-text" style="text-decoration:none;">
 📝 Mock Test Platform<br>
