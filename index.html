@@ -5,6 +5,7 @@
 <meta name="google-site-verification" content="fBQIEBmTNrzlTsyT3SmORHwQFKqwU3LcgaybVCyVIdI" />
 <!-- SEO Meta Tags -->
 <title>Untitled World - Smart Study Platform</title>
+<link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.png">
 <meta name="description" content="Distraction free study platform for JEE, NEET & Boards. Mock tests, focus timer, progress tracking.">
 <meta name="keywords" content="JEE preparation, NEET study, mock test platform, study timer, focus study">
@@ -525,6 +526,11 @@ window.addEventListener("load", function(){
 function logout(){
   localStorage.removeItem("loggedIn");
   window.location="login.html";
+}
+</script>
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
 }
 </script>
 
