@@ -1,20 +1,23 @@
 {
-  "name": "Untitled World",
-  "short_name": "Study App",
-  "start_url": "/",
+  "name": "Untitled World - Smart Study Platform",
+  "short_name": "Untitled World",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#0f2027",
   "theme_color": "#0f2027",
+
   "icons": [
     {
       "src": "icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
