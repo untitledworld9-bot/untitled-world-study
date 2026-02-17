@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-  <url>
-    <loc>https://untitledworld.us.cc/</loc>
-  </url>
+<url>
+<loc>https://untitledworld.us.cc/</loc>
+</url>
 
-  <url>
-    <loc>https://untitledworld.us.cc/about.html</loc>
-  </url>
+<url>
+<loc>https://untitledworld.us.cc/about.html</loc>
+</url>
 
-  <url>
-    <loc>https://untitledworld.us.cc/privacy.html</loc>
-  </url>
+<url>
+<loc>https://untitledworld.us.cc/privacy.html</loc>
+</url>
 
-  <url>
-    <loc>https://untitledworld.us.cc/terms.html</loc>
-  </url>
+<url>
+<loc>https://untitledworld.us.cc/terms.html</loc>
+</url>
 
-  <url>
-    <loc>https://untitledworld.us.cc/login.html</loc>
-  </url>
+<url>
+<loc>https://untitledworld.us.cc/login.html</loc>
+</url>
 
-  <url>
-    <loc>https://untitledworld.us.cc/signup.html</loc>
-  </url>
+<url>
+<loc>https://untitledworld.us.cc/signup.html</loc>
+</url>
+
+<url>
+<loc>https://untitledworld.us.cc/mocktest.html</loc>
+</url>
 
 </urlset>
