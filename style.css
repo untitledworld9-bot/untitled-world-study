@@ -108,8 +108,14 @@ header {
 
 /* --- PANEL --- */
 .backdrop {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8); z-index: 200; display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 5;
+    display: none;
 }
 .social-sheet {
     position: fixed; bottom: -100%; left: 0; width: 100%; height: 70vh;
