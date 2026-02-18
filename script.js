@@ -64,22 +64,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const inviteBtn = document.getElementById("inviteBtn");
 
     // --- 1. LOGIN LOGIC ---
-    loginBtn.addEventListener("click", async () => {
+    loginBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
     const name = usernameInput.value.trim();
-    if (name === "") {
+    if (!name) {
         alert("Please enter your name!");
         return;
     }
 
     currentUser = name;
-    loginOverlay.style.display = "none";
 
-    // Firebase me user save
-    await setDoc(doc(db,"users",currentUser),{
-    name: currentUser,
-    focusTime: 0,
-    status: "Online",
-    room: roomId
+    try {
+        await setDoc(doc(db,"users",currentUser), {
+            name: currentUser,
+            focusTime: 0,
+            status: "Online",
+            room: roomId
+        });
+
+        loginOverlay.style.display = "none";
+
+    } catch(err) {
+        console.log(err);
+        alert("Firebase error, try again");
+    }
 });
 });
 
