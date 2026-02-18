@@ -7,476 +7,73 @@
     
     <link rel="icon" href="icon.png">
     <meta name="theme-color" content="#0f2027">
-    <link rel="manifest" href="manifest.json">
+    
+    <link rel="stylesheet" href="style.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        /* --- MODERN VARIABLES --- */
-        :root {
-            --bg-dark: #0f2027;
-            --bg-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            --neon-green: #00ff88;
-            --neon-blue: #00f2fe;
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #ffffff;
-            --text-muted: #a0a0a0;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* Main page no scroll */
-        }
-
-        /* --- 1. LOGIN OVERLAY (Full Screen Glass) --- */
-        #loginOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 32, 39, 0.95);
-            backdrop-filter: blur(15px);
-            z-index: 9999;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            padding: 20px;
-            transition: opacity 0.5s ease;
-        }
-        
-        .login-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--neon-blue);
-            padding: 40px 30px;
-            border-radius: 24px;
-            text-align: center;
-            width: 100%; max-width: 340px;
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.15);
-        }
-        
-        .login-input {
-            width: 100%; padding: 16px; margin: 25px 0;
-            border-radius: 12px; border: 1px solid var(--glass-border);
-            background: rgba(0,0,0,0.4); color: white;
-            font-size: 18px; text-align: center; outline: none;
-            transition: 0.3s;
-        }
-        .login-input:focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 136, 0.2); }
-        
-        .login-btn {
-            background: linear-gradient(90deg, var(--neon-blue), #00c6ff);
-            color: #000; width: 100%; padding: 14px;
-            border-radius: 50px; font-weight: 700; font-size: 16px;
-            border: none; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3);
-        }
-
-        /* --- 2. HEADER & MENU --- */
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 25px; z-index: 50;
-        }
-        .brand { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
-        .brand span { color: var(--neon-blue); }
-        .menu-btn { font-size: 24px; cursor: pointer; padding: 5px; }
-
-        .dropdown {
-            position: absolute; top: 70px; right: 20px;
-            background: #1a2f38; border: 1px solid var(--glass-border);
-            border-radius: 16px; width: 220px;
-            display: none; flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); z-index: 100;
-            overflow: hidden;
-        }
-        .dropdown.active { display: flex; animation: fadeIn 0.2s ease; }
-        .dropdown a {
-            padding: 16px; color: #fff; text-decoration: none;
-            border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 15px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .dropdown a:hover { background: rgba(255,255,255,0.05); }
-
-        /* --- 3. TIMER UI (Center) --- */
-        .timer-wrapper {
-            flex: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            position: relative; top: -30px;
-        }
-
-        .timer-ring {
-            width: 280px; height: 280px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(15,32,39,1) 0%, rgba(32,58,67,0) 70%);
-            border: 4px solid rgba(255,255,255,0.05);
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            position: relative; margin-bottom: 30px;
-            transition: all 0.4s ease;
-        }
-        
-        /* Active State Glow */
-        .timer-ring.active {
-            border-color: var(--neon-green);
-            box-shadow: 0 0 50px rgba(0, 255, 136, 0.15);
-        }
-
-        .time-display {
-            font-size: 60px; font-weight: 700;
-            color: var(--text-main); font-variant-numeric: tabular-nums;
-            text-shadow: 0 0 20px rgba(255,255,255,0.1);
-        }
-        .time-label { font-size: 14px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-top: -5px; }
-
-        /* Timer Controls */
-        .controls-area { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
-        
-        .presets { display: flex; gap: 12px; justify-content: center; width: 100%; }
-        .preset-btn {
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            color: var(--text-muted); padding: 10px 0; flex: 1;
-            border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;
-        }
-        .preset-btn.active {
-            background: rgba(0, 242, 254, 0.1); border-color: var(--neon-blue); color: var(--neon-blue);
-        }
-
-        .action-btn {
-            width: 80%; padding: 16px; border-radius: 50px;
-            font-size: 18px; font-weight: 700; border: none; cursor: pointer;
-            transition: transform 0.1s; letter-spacing: 1px;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .btn-start { background: var(--neon-green); color: #000; box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3); }
-        .btn-start:active { transform: scale(0.95); }
-        .btn-stop { background: #ff4757; color: #fff; display: none; box-shadow: 0 5px 20px rgba(255, 71, 87, 0.3); }
-
-        /* --- 4. GROUP FLOATING BUTTON (Fixed Bottom) --- */
-        .group-fab {
-            position: fixed; bottom: 30px; left: 50%;
-            transform: translateX(-50%);
-            width: 90%; max-width: 400px;
-            background: rgba(20, 30, 40, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-top: 1px solid var(--neon-blue);
-            padding: 18px 25px;
-            border-radius: 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            cursor: pointer; z-index: 500;
-            transition: bottom 0.3s;
-        }
-        .group-fab:active { transform: translateX(-50%) scale(0.98); }
-        .fab-text { font-weight: 600; color: #fff; font-size: 16px; }
-        .fab-icon { color: var(--neon-blue); font-size: 20px; }
-
-        /* --- 5. SOCIAL PANEL (Slide Up) --- */
-        .backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 800;
-            opacity: 0; pointer-events: none; transition: 0.3s;
-        }
-        .backdrop.visible { opacity: 1; pointer-events: all; }
-
-        .social-sheet {
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 75vh;
-            background: #15222b;
-            border-top-left-radius: 30px; border-top-right-radius: 30px;
-            z-index: 900;
-            display: flex; flex-direction: column;
-            transition: cubic-bezier(0.19, 1, 0.22, 1) 0.5s;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
-        }
-        .social-sheet.open { bottom: 0; }
-
-        .sheet-header {
-            padding: 25px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        .sheet-title { font-size: 18px; font-weight: 600; color: white; }
-        
-        .share-pill {
-            background: var(--neon-blue); color: #000;
-            padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
-            border: none; cursor: pointer; display: flex; align-items: center; gap: 6px;
-        }
-
-        /* Scrollable List */
-        .members-list {
-            flex: 1; overflow-y: auto; padding: 20px;
-            scrollbar-width: thin; scrollbar-color: #333 transparent;
-        }
-
-        .member-card {
-            display: flex; align-items: center;
-            background: rgba(255,255,255,0.03);
-            padding: 15px; border-radius: 16px;
-            margin-bottom: 12px; border: 1px solid transparent;
-        }
-        .member-card.is-me { border-color: rgba(0, 255, 136, 0.3); background: rgba(0, 255, 136, 0.05); }
-        
-        .avatar {
-            width: 48px; height: 48px; border-radius: 50%;
-            background: linear-gradient(135deg, #444, #222);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; position: relative; margin-right: 15px;
-        }
-        .status-dot {
-            width: 12px; height: 12px; border-radius: 50%;
-            background: var(--neon-green); border: 2px solid #15222b;
-            position: absolute; bottom: 0; right: 0;
-        }
-        .offline .status-dot { background: #666; }
-
-        .member-info { flex: 1; }
-        .member-name { font-weight: 600; font-size: 15px; color: #fff; }
-        .member-status { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-
-        .interact-btn {
-            background: transparent; border: 1px solid var(--glass-border);
-            color: var(--text-muted); width: 36px; height: 36px;
-            border-radius: 10px; margin-left: 8px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .interact-btn:hover { background: rgba(255,255,255,0.1); color: white; }
-
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Mobile Tweaks */
-        @media (max-width: 380px) {
-            .timer-ring { width: 240px; height: 240px; }
-            .time-display { font-size: 50px; }
-        }
-    </style>
 </head>
 <body>
 
     <div id="loginOverlay">
         <div class="login-card">
-            <h2 style="font-size: 24px; margin-bottom: 10px;">Untitled World</h2>
-            <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Join the Study Session</p>
-            <input type="text" id="username" class="login-input" placeholder="Enter your Name" autocomplete="off">
-            <button class="login-btn" onclick="appLogin()">Start Studying 🚀</button>
+            <h2>Untitled World</h2>
+            <p>Enter your name to join</p>
+            <input type="text" id="username" class="login-input" placeholder="Your Name" autocomplete="off">
+            <button class="login-btn" id="loginBtn">Start Studying 🚀</button>
         </div>
     </div>
 
     <header>
-        <div class="brand">Untitled <span>Focus</span></div>
-        <div class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+        <div class="brand">Untitled Focus</div>
+        <div class="menu-btn" id="menuToggle">⋮</div>
     </header>
 
     <div class="dropdown" id="navMenu">
-        <a href="#" onclick="alert('Firebase Connection Pending')"><i class="fa-solid fa-user"></i> Profile (Sync)</a>
-        <a href="mailto:untitledworld9@gmail.com"><i class="fa-solid fa-envelope"></i> Contact Us</a>
-        <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Exit Session</a>
+        <a href="mailto:untitledworld9@gmail.com">Contact Us</a>
+        <a href="index.html">Exit Session</a>
     </div>
 
     <div class="timer-wrapper">
         <div class="timer-ring" id="ring">
             <div class="time-display" id="display">00:00</div>
-            <div class="time-label" id="modeLabel">Stopwatch</div>
+            <div class="mode-label" id="modeLabel">Stopwatch Mode</div>
         </div>
 
-        <div class="controls-area" id="controls">
+        <div class="controls">
             <div class="presets">
-                <button class="preset-btn" onclick="setTime(25)">25m</button>
-                <button class="preset-btn" onclick="setTime(60)">1h</button>
-                <button class="preset-btn" onclick="setTime(120)">2h</button>
+                <button class="preset-btn" data-time="25">25m</button>
+                <button class="preset-btn" data-time="60">1h</button>
+                <button class="preset-btn" data-time="120">2h</button>
             </div>
 
-            <button class="action-btn btn-start" id="startBtn" onclick="toggleTimer()">
-                <i class="fa-solid fa-play"></i> START FOCUS
-            </button>
-            <button class="action-btn btn-stop" id="stopBtn" onclick="resetTimer()">
-                <i class="fa-solid fa-stop"></i> END SESSION
-            </button>
+            <button class="action-btn start" id="startBtn">Start Focus</button>
+            <button class="action-btn stop" id="stopBtn" style="display:none;">Stop Session</button>
         </div>
     </div>
 
-    <div class="group-fab" onclick="openSheet()">
-        <div>
-            <div class="fab-text">Group Study Room</div>
-            <div style="font-size: 12px; color: #aaa;">Tap to see friends</div>
+    <div class="group-fab" id="openPanelBtn">
+        <div class="fab-content">
+            <span class="fab-title">👥 Group Study Room</span>
+            <span class="fab-sub">Tap to see friends</span>
         </div>
-        <div class="fab-icon"><i class="fa-solid fa-users-viewfinder"></i></div>
     </div>
 
-    <div class="backdrop" id="backdrop" onclick="closeSheet()"></div>
+    <div class="backdrop" id="backdrop"></div>
     <div class="social-sheet" id="socialSheet">
         <div class="sheet-header">
-            <div class="sheet-title">Study Room <span style="font-size:12px; color:#aaa; font-weight:400;">(Live)</span></div>
-            <button class="share-pill" onclick="shareLink()"><i class="fa-solid fa-link"></i> Invite</button>
+            <h3>Live Members</h3>
+            <button class="invite-btn" id="inviteBtn">Invite</button>
         </div>
-
-        <div class="members-list" id="memberList">
-            <div style="text-align: center; padding: 40px; color: #555;">
-                <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i><br>
-                Connecting...
+        
+        <div id="userList" class="user-list-container">
             </div>
-        </div>
 
-        <div style="padding: 15px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);" onclick="closeSheet()">
-            <i class="fa-solid fa-chevron-down" style="color: #555;"></i>
-        </div>
+        <button class="close-sheet-btn" id="closePanelBtn">⬇️ Close Panel</button>
     </div>
 
-    <script>
-        // --- VARIABLES ---
-        let timerInterval;
-        let seconds = 0;
-        let isRunning = false;
-        let mode = 'stopwatch'; // 'stopwatch' (UP) or 'timer' (DOWN)
-        let initialTime = 0;
-        let currentUser = "Guest";
+    <script src="script.js" defer></script>
 
-        // DOM Elements
-        const display = document.getElementById('display');
-        const ring = document.getElementById('ring');
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const modeLabel = document.getElementById('modeLabel');
-        const presets = document.querySelectorAll('.preset-btn');
-
-        // --- 1. LOGIN LOGIC ---
-        function appLogin() {
-            const name = document.getElementById('username').value.trim();
-            if(!name) { alert("Please enter your name to start."); return; }
-            
-            currentUser = name;
-            document.getElementById('loginOverlay').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loginOverlay').style.display = 'none';
-            }, 500);
-            
-            renderMemberList(); // Load name into list
-        }
-
-        // --- 2. TIMER CORE LOGIC ---
-        function formatTime(sec) {
-            let h = Math.floor(sec / 3600);
-            let m = Math.floor((sec % 3600) / 60);
-            let s = sec % 60;
-            
-            // Format HH:MM:SS or MM:SS
-            if(h > 0) return `${h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
-            return `${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
-        }
-
-        function setTime(mins) {
-            if(isRunning) return; // Can't change while running
-            
-            mode = 'timer';
-            seconds = mins * 60;
-            initialTime = seconds;
-            
-            display.innerText = formatTime(seconds);
-            modeLabel.innerText = "Countdown Mode";
-            
-            // Visual Feedback
-            presets.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
-        function toggleTimer() {
-            if(!isRunning) {
-                // START
-                isRunning = true;
-                startBtn.style.display = 'none';
-                stopBtn.style.display = 'flex';
-                presets.forEach(p => p.style.pointerEvents = 'none'); // Lock presets
-                ring.classList.add('active'); // Glow effect
-
-                timerInterval = setInterval(() => {
-                    if(mode === 'timer') {
-                        // COUNTDOWN
-                        if(seconds > 0) {
-                            seconds--;
-                            display.innerText = formatTime(seconds);
-                        } else {
-                            clearInterval(timerInterval);
-                            alert("Session Completed! 🎉");
-                            resetTimer();
-                        }
-                    } else {
-                        // STOPWATCH (Infinite)
-                        seconds++;
-                        display.innerText = formatTime(seconds);
-                        modeLabel.innerText = "Focus Time (Infinite)";
-                    }
-                }, 1000);
-
-            }
-        }
-
-        function resetTimer() {
-            clearInterval(timerInterval);
-            isRunning = false;
-            
-            // Reset UI
-            startBtn.style.display = 'flex';
-            startBtn.innerHTML = '<i class="fa-solid fa-play"></i> RESUME / START';
-            stopBtn.style.display = 'none';
-            ring.classList.remove('active');
-            presets.forEach(p => p.style.pointerEvents = 'all');
-
-            // Logic: If it was stopwatch, reset to 0. If Timer, reset to initial.
-            if(mode === 'stopwatch') {
-                seconds = 0;
-                display.innerText = "00:00";
-            } else {
-                seconds = initialTime;
-                display.innerText = formatTime(seconds);
-            }
-        }
-
-        // --- 3. UI INTERACTIONS ---
-        function toggleMenu() {
-            const menu = document.getElementById('navMenu');
-            menu.classList.toggle('active');
-        }
-
-        function openSheet() {
-            document.getElementById('socialSheet').classList.add('open');
-            document.getElementById('backdrop').classList.add('visible');
-        }
-
-        function closeSheet() {
-            document.getElementById('socialSheet').classList.remove('open');
-            document.getElementById('backdrop').classList.remove('visible');
-        }
-
-        function shareLink() {
-            const link = "https://untitledworld.us.cc";
-            if(navigator.share) {
-                navigator.share({ title: 'Join me on Untitled World', url: link });
-            } else {
-                navigator.clipboard.writeText(link);
-                alert("Link Copied! Send it to your friends.");
-            }
-        }
-
-        // --- 4. LIST RENDERING (Mock Data + Real User) ---
-        function renderMemberList() {
-            const list = document.getElementById('memberList');
-            
-            // Here we only show the User initially (No fake bots as requested)
-            // But we can show "Offline" placeholders so it doesn't look empty/broken
-            list.innerHTML = `
-                <div class="member-card is-me">
-                    <div class="avatar">
-                        <i class="fa-solid fa-user-astronaut" style="color:#fff;"></i>
-                        <div class="status-dot"></div>
-                    </div>
-                    <div class="member-info">
-                        <div class="member-name">${currentUser} (You)</div>
-                        <div class="member-status" style="color:var(--neon-green)">Focusing • Stopwatch Mode</div>
-                    </div>
-                </div>
-
-  
+</body>
+    </html>
+    
