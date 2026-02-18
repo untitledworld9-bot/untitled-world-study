@@ -62,16 +62,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const inviteBtn = document.getElementById("inviteBtn");
 
     // --- 1. LOGIN LOGIC ---
-    loginBtn.addEventListener("click", () => {
-        const name = usernameInput.value.trim();
-        if (name === "") {
-            alert("Please enter your name!");
-            return;
-        }
-        currentUser = name;
-        loginOverlay.style.display = "none"; // Hide Login Screen
-        renderUser(); // Show user in list
+    loginBtn.addEventListener("click", async () => {
+    const name = usernameInput.value.trim();
+    if (name === "") {
+        alert("Please enter your name!");
+        return;
+    }
+
+    currentUser = name;
+    loginOverlay.style.display = "none";
+
+    // Firebase me user save
+    await addDoc(collection(db,"users"),{
+        name: currentUser,
+        status: "Focusing 👋"
     });
+});
 
     // --- 2. TIMER PRESET LOGIC ---
     presetBtns.forEach(btn => {
