@@ -137,3 +137,54 @@ header {
 }
 .dropdown.active { display: flex; }
 .dropdown a { padding: 15px; color: white; text-decoration: none; border-bottom: 1px solid #333; }
+
+/* --- LEADERBOARD --- */
+#leaderboard {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    border: 1px solid var(--neon-blue);
+    box-shadow: 0 0 20px rgba(0,242,254,0.15);
+}
+
+#leaderboard div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    transition: 0.3s;
+}
+
+#leaderboard div:hover {
+    background: rgba(0,242,254,0.12);
+    transform: translateX(4px);
+}
+
+/* Top ranks highlight */
+#leaderboard div:nth-child(1){
+    color: gold;
+    font-weight: bold;
+}
+
+#leaderboard div:nth-child(2){
+    color: silver;
+}
+
+#leaderboard div:nth-child(3){
+    color: #cd7f32;
+}
+
+/* subtle glow animation */
+@keyframes glow {
+    0% { box-shadow: 0 0 10px rgba(0,255,136,0.2); }
+    50% { box-shadow: 0 0 20px rgba(0,255,136,0.4); }
+    100% { box-shadow: 0 0 10px rgba(0,255,136,0.2); }
+}
+
+#leaderboard div:nth-child(1) {
+    animation: glow 2s infinite;
+                                 }
