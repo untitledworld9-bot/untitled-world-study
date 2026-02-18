@@ -38,6 +38,33 @@
             opacity: 0.9;
         }
 
+        .coming-box{
+  text-align:center;
+  padding:120px 20px;
+}
+
+.coming-box h1{
+  font-size:42px;
+  margin-bottom:20px;
+}
+
+.coming-icon{
+  font-size:60px;
+  animation:float 2s ease-in-out infinite;
+}
+
+.coming-text{
+  font-size:20px;
+  opacity:0.8;
+  margin-top:10px;
+}
+
+/* Floating animation */
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+        }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 2rem;
@@ -49,7 +76,14 @@
     </style>
 </head>
 <body>
-    <h1>Mock Test Platform</h1>
-    <p>Coming Soon 🔜</p>
+    <div class="coming-box">
+  <h1>Mock Test Platform</h1>
+  
+  <div class="coming-icon">🚀</div>
+  
+  <p class="coming-text">
+    Coming Soon
+  </p>
+    </div>
 </body>
 </html>
