@@ -1,10 +1,14 @@
 import { initializeApp } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-import { getFirestore } from 
+import { 
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot
+} from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
   authDomain: "untitled-world-2e645.firebaseapp.com",
@@ -15,19 +19,8 @@ const firebaseConfig = {
   measurementId: "G-X2PB6L0C75"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
-  authDomain: "untitled-world-2e645.firebaseapp.com",
-  projectId: "untitled-world-2e645",
-  storageBucket: "untitled-world-2e645.firebasestorage.app",
-  messagingSenderId: "990115586087",
-  appId: "1:990115586087:web:963f68bd59dec5ef0c6e02",
-  measurementId: "G-X2PB6L0C75"
-};
 document.addEventListener("DOMContentLoaded", () => {
     
     // --- VARIABLES ---
