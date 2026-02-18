@@ -8,6 +8,8 @@ import {
   onSnapshot
 } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc, setDoc } from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
@@ -21,6 +23,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+// ROOM SYSTEM
+const params = new URLSearchParams(location.search);
+const roomId = params.get("room") || "default";
 document.addEventListener("DOMContentLoaded", () => {
     
     // --- VARIABLES ---
@@ -66,10 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
     loginOverlay.style.display = "none";
 
     // Firebase me user save
-    await addDoc(collection(db,"users"),{
-        name: currentUser,
-        status: "Focusing 👋"
-    });
+    await setDoc(doc(db,"users",currentUser),{
+    name: currentUser,
+    focusTime: 0,
+    status: "Online",
+    room: roomId
+});
 });
 
     // --- 2. TIMER PRESET LOGIC ---
@@ -94,6 +101,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- 3. START / STOP LOGIC ---
     startBtn.addEventListener("click", () => {
+
+    updateDoc(doc(db,"users",currentUser),{
+    status:"Focusing"
+});
+
+    addDoc(collection(db,"users"),{
+        name: currentUser,
+        status: "Focusing 👋",
+        room: roomId
+    });
         if (!isRunning) {
             isRunning = true;
             startBtn.style.display = "none";
@@ -122,6 +139,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     stopBtn.addEventListener("click", () => {
+
+    addDoc(collection(db,"users"),{
+        name: currentUser,
+        status: "Online",
+        room: roomId
+    });
+      
         clearInterval(timerInterval);
         isRunning = false;
         
@@ -183,30 +207,56 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     inviteBtn.addEventListener("click", () => {
-        const url = "https://untitledworld.us.cc/timer";
+        const url = `${location.origin}/timer?room=${roomId}`;
         navigator.clipboard.writeText(url).then(() => {
             alert("Link Copied!");
         });
     });
 
-    onSnapshot(collection(db,"users"), (snapshot) => {
+ onSnapshot(collection(db,"users"), (snapshot) => {
 
     userList.innerHTML = "";
 
     snapshot.forEach(doc => {
         const u = doc.data();
 
-        userList.innerHTML += `
-        <div class="member-card">
-            <div style="font-size:24px; margin-right:10px;">👤</div>
-            <div>
-                <div style="font-weight:bold;">${u.name}</div>
-                <div style="font-size:12px;color:#00ff88;">
-                    ${u.status}
+        if(u.room === roomId){
+            userList.innerHTML += `
+            <div class="member-card">
+                <div style="font-size:24px; margin-right:10px;">👤</div>
+                <div>
+                    <div style="font-weight:bold;">${u.name}</div>
+                    <div style="font-size:12px;color:#00ff88;">
+                        ${u.status}
+                    </div>
                 </div>
             </div>
-        </div>
-        `;
+            `;
+        }
+    });
+
+});
+
+onSnapshot(collection(db,"users"), snap => {
+
+    const board=document.getElementById("leaderboard");
+    if(!board) return;
+
+    let users=[];
+
+    snap.forEach(doc=>{
+        users.push(doc.data());
+    });
+
+    users.sort((a,b)=>(b.focusTime||0)-(a.focusTime||0));
+
+    board.innerHTML="";
+
+    users.slice(0,5).forEach(u=>{
+        board.innerHTML+=`
+        <div>
+            🏆 ${u.name} — ${Math.floor((u.focusTime||0)/60)} min
+        </div>`;
     });
 
 });
