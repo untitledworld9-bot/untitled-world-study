@@ -5,7 +5,11 @@ import {
   getFirestore,
   collection,
   addDoc,
-  onSnapshot
+  onSnapshot,
+  doc,
+  setDoc,
+  updateDoc,
+  increment
 } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { doc, setDoc } from
@@ -103,14 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
     startBtn.addEventListener("click", () => {
 
     updateDoc(doc(db,"users",currentUser),{
-    status:"Focusing"
+  status:"Focusing 👋"
 });
-
-    addDoc(collection(db,"users"),{
-        name: currentUser,
-        status: "Focusing 👋",
-        room: roomId
-    });
         if (!isRunning) {
             isRunning = true;
             startBtn.style.display = "none";
@@ -140,11 +138,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     stopBtn.addEventListener("click", () => {
 
-    addDoc(collection(db,"users"),{
-        name: currentUser,
-        status: "Online",
-        room: roomId
-    });
+    updateDoc(doc(db,"users",currentUser),{
+  status:"Online",
+  focusTime: increment(seconds)
+});
       
         clearInterval(timerInterval);
         isRunning = false;
