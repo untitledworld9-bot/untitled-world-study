@@ -184,24 +184,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     inviteBtn.addEventListener("click", () => {
-        const url = "https://untitledworld.us.cc";
+        const url = "https://untitledworld.us.cc/timer";
         navigator.clipboard.writeText(url).then(() => {
             alert("Link Copied!");
         });
     });
 
-    function renderUser() {
-        userList.innerHTML = `
-            <div class="member-card">
-                <div style="font-size:24px; margin-right:10px;">👤</div>
-                <div>
-                    <div style="font-weight:bold;">${currentUser} (You)</div>
-                    <div style="font-size:12px; color:#00ff88;">Focusing Now...</div>
+    onSnapshot(collection(db,"users"), (snapshot) => {
+
+    userList.innerHTML = "";
+
+    snapshot.forEach(doc => {
+        const u = doc.data();
+
+        userList.innerHTML += `
+        <div class="member-card">
+            <div style="font-size:24px; margin-right:10px;">👤</div>
+            <div>
+                <div style="font-weight:bold;">${u.name}</div>
+                <div style="font-size:12px;color:#00ff88;">
+                    ${u.status}
                 </div>
             </div>
-            <div style="text-align:center; margin-top:20px; color:#aaa;">
-                Waiting for others...
-            </div>
+        </div>
         `;
-    }
+    });
+
+});
 });
