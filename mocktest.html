@@ -1,58 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mock Test Platform</title>
-    <style>
-        body {
-            background: #0f2027; 
-            background: -webkit-linear-gradient(to right, #2c5364, #203a43, #0f2027);  
-            background: linear-gradient(to right, #2c5364, #203a43, #0f2027); 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock Test Platform</title>
 
-            color: white;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin: 0 0 15px 0;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        p {
-            font-size: 1.2rem;
-            margin: 0;
-            font-weight: 300;
-            opacity: 0.9;
-        }
-
-        .coming-box{
-  text-align:center;
-  padding:120px 20px;
+<style>
+body {
+    background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* Coming Soon Box */
+.coming-box{
+  text-align:center;
+}
+
+/* Title */
 .coming-box h1{
   font-size:42px;
   margin-bottom:20px;
+  font-weight:700;
+  letter-spacing:1px;
 }
 
+/* Icon */
 .coming-icon{
   font-size:60px;
   animation:float 2s ease-in-out infinite;
 }
 
+/* Text */
 .coming-text{
   font-size:20px;
   opacity:0.8;
@@ -63,27 +47,24 @@
 @keyframes float{
   0%,100%{transform:translateY(0);}
   50%{transform:translateY(-10px);}
-        }
+}
 
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-            }
-            p {
-                font-size: 1rem;
-            }
-        }
-    </style>
+/* Mobile */
+@media (max-width:600px){
+  .coming-box h1{font-size:32px;}
+  .coming-text{font-size:16px;}
+}
+</style>
+
 </head>
+
 <body>
-    <div class="coming-box">
+
+<div class="coming-box">
   <h1>Mock Test Platform</h1>
-  
   <div class="coming-icon">🚀</div>
-  
-  <p class="coming-text">
-    Coming Soon
-  </p>
-    </div>
+  <p class="coming-text">Coming Soon</p>
+</div>
+
 </body>
 </html>
