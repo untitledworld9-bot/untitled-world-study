@@ -1,22 +1,13 @@
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
-    authDomain: "untitled-world-2e645.firebaseapp.com",
-    projectId: "untitled-world-2e645",
-    storageBucket: "untitled-world-2e645.firebasestorage.app",
-    messagingSenderId: "990115586087",
-    appId: "1:990115586087:web:963f68bd59dec5ef0c6e02"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script>
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
+  authDomain: "untitled-world-2e645.firebaseapp.com",
+  projectId: "untitled-world-2e645",
+  storageBucket: "untitled-world-2e645.firebasestorage.app",
+  messagingSenderId: "990115586087",
+  appId: "1:990115586087:web:963f68bd59dec5ef0c6e02",
+  measurementId: "G-X2PB6L0C75"
+};
 document.addEventListener("DOMContentLoaded", () => {
     
     // --- VARIABLES ---
