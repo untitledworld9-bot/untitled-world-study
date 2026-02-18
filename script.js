@@ -104,64 +104,67 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- 3. START / STOP LOGIC ---
-    startBtn.addEventListener("click", () => {
+    startBtn.addEventListener("click", async () => {
 
-    updateDoc(doc(db,"users",currentUser),{
-  status:"Focusing 👋"
-});
-        if (!isRunning) {
-            isRunning = true;
-            startBtn.style.display = "none";
-            stopBtn.style.display = "block";
-            ring.classList.add("active");
+    if(!currentUser){
+        alert("Login first");
+        return;
+    }
 
-            // Disable presets
-            presetBtns.forEach(b => b.style.pointerEvents = "none");
+    // Update status only
+    await updateDoc(doc(db,"users",currentUser),{
+        status:"Focusing 👋"
+    });
 
-            timerInterval = setInterval(() => {
-                if (mode === "countdown") {
-                    if (seconds > 0) {
-                        seconds--;
-                        updateDisplay();
-                    } else {
-                        finishTimer();
-                    }
-                } else {
-                    // Stopwatch Mode
-                    seconds++;
+    if (!isRunning) {
+        isRunning = true;
+        startBtn.style.display = "none";
+        stopBtn.style.display = "block";
+        ring.classList.add("active");
+
+        presetBtns.forEach(b => b.style.pointerEvents = "none");
+
+        timerInterval = setInterval(() => {
+            if (mode === "countdown") {
+                if (seconds > 0) {
+                    seconds--;
                     updateDisplay();
-                    modeLabel.innerText = "Focus Time (Infinite)";
+                } else {
+                    finishTimer();
                 }
-            }, 1000);
-        }
-    });
-
-    stopBtn.addEventListener("click", () => {
-
-    updateDoc(doc(db,"users",currentUser),{
-  status:"Online",
-  focusTime: increment(seconds)
+            } else {
+                seconds++;
+                updateDisplay();
+            }
+        }, 1000);
+    }
 });
-      
-        clearInterval(timerInterval);
-        isRunning = false;
-        
-        startBtn.style.display = "block";
-        stopBtn.style.display = "none";
-        ring.classList.remove("active");
-        
-        // Re-enable presets
-        presetBtns.forEach(b => b.style.pointerEvents = "auto");
 
-        // Reset Logic
-        if (mode === "countdown") {
-            seconds = initialSeconds;
-        } else {
-            seconds = 0;
-            display.innerText = "00:00";
-        }
-        updateDisplay();
+    stopBtn.addEventListener("click", async () => {
+
+    await updateDoc(doc(db,"users",currentUser),{
+        status:"Online",
+        focusTime: increment(seconds)
     });
+
+    clearInterval(timerInterval);
+    isRunning = false;
+
+    startBtn.style.display = "block";
+    stopBtn.style.display = "none";
+    ring.classList.remove("active");
+
+    presetBtns.forEach(b => b.style.pointerEvents = "auto");
+
+    if (mode === "countdown") {
+        seconds = initialSeconds;
+    } else {
+        seconds = 0;
+        display.innerText = "00:00";
+    }
+
+    updateDisplay();
+});
 
     function finishTimer() {
         clearInterval(timerInterval);
