@@ -3,36 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Focus Mode - Untitled World</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
+    <title>Untitled World Focus Mode</title>
+    
+    <link rel="icon" href="icon.png">
+    <meta property="og:title" content="Untitled World Focus Mode">
+    <meta property="og:description" content="Join my study session on Untitled World. Distraction-free focus timer.">
+    <meta property="og:image" content="https://untitledworld.us.cc/icon.png">
+    <meta property="og:url" content="https://untitledworld.us.cc/timer.html">
     <meta name="theme-color" content="#0f2027">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- MODERN APP CSS --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body {
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            background: #0f2027;
             color: white;
             height: 100vh;
-            overflow: hidden; /* Scroll band taaki app feel aaye */
             display: flex;
             flex-direction: column;
+            overflow: hidden; /* No scroll on main body */
         }
 
-        /* Header */
+        /* --- HEADER --- */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px;
             background: rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
         }
         .brand { font-size: 18px; font-weight: 700; color: #00f2fe; }
         .menu-btn { font-size: 24px; cursor: pointer; }
 
-        /* Dropdown Menu */
+        /* Menu Dropdown */
         .dropdown {
             position: absolute;
             top: 60px; right: 20px;
@@ -50,263 +54,431 @@
             color: white;
             text-decoration: none;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 14px;
         }
         .dropdown a:last-child { border: none; }
-        .dropdown a:hover { background: rgba(255,255,255,0.1); }
 
-        /* Main Timer Area */
+        /* --- TIMER SECTION --- */
         .timer-container {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
+            position: relative;
+            top: -20px;
         }
-        
+
         .timer-circle {
-            width: 280px;
-            height: 280px;
+            width: 260px;
+            height: 260px;
             border-radius: 50%;
-            border: 8px solid rgba(255,255,255,0.1);
+            border: 6px solid rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 60px;
+            font-size: 50px;
             font-weight: 700;
             color: #00ff88;
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
-            margin-bottom: 30px;
-            position: relative;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+            transition: 0.3s;
+        }
+        .timer-circle.active {
+            border-color: #00ff88;
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.3);
         }
 
+        /* Timer Input (Hidden when running) */
+        .time-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .input-box {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #00f2fe;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            width: 80px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .quick-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #ccc;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .quick-btn:active { background: rgba(255,255,255,0.1); }
+
+        /* Controls */
         .controls { display: flex; gap: 15px; }
-        .btn {
-            padding: 12px 30px;
-            border: none;
+        .main-btn {
+            padding: 12px 35px;
             border-radius: 30px;
+            border: none;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            min-width: 120px;
         }
         .btn-start { background: #00ff88; color: #000; }
         .btn-pause { background: #ffcc00; color: #000; display: none; }
-        .btn-reset { background: #ff4757; color: #fff; }
-        
-        /* Friends Button (Bottom) */
-        .friends-trigger {
-            background: rgba(255,255,255,0.1);
+        .btn-reset { background: #ff4757; color: white; display: none; }
+
+        /* --- GROUP STUDY BUTTON (Bottom) --- */
+        .group-trigger {
+            width: 90%;
+            margin: 0 auto 20px auto;
+            background: linear-gradient(90deg, #1f3c44, #2c5364);
+            border: 1px solid #00f2fe;
             padding: 15px;
+            border-radius: 15px;
             text-align: center;
             cursor: pointer;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            backdrop-filter: blur(5px);
-            animation: slideUp 0.5s ease-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .friends-trigger h4 { color: #00f2fe; }
+        .group-text { font-weight: 600; color: #00f2fe; font-size: 14px; }
+        .group-icon { font-size: 18px; }
 
-        /* Friends Section Overlay (Popup) */
-        .friends-panel {
+        /* --- GROUP STUDY PANEL (Overlay) --- */
+        .study-panel {
             position: fixed;
             bottom: -100%;
             left: 0;
             width: 100%;
-            height: 70%;
+            height: 60%;
             background: #101820;
             border-top-left-radius: 25px;
             border-top-right-radius: 25px;
-            transition: 0.3s ease-in-out;
+            transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            z-index: 200;
             padding: 20px;
-            z-index: 50;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-            overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
         }
-        .friends-panel.open { bottom: 0; }
-        
+        .study-panel.open { bottom: 0; }
+
         .panel-header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
         }
-        .close-btn { font-size: 24px; cursor: pointer; }
+        .share-btn {
+            background: #00f2fe;
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
-        /* Friend List Item */
+        /* Friends List */
+        .friends-list { overflow-y: auto; flex: 1; }
         .friend-item {
             display: flex;
             align-items: center;
-            padding: 15px;
             background: rgba(255,255,255,0.05);
+            padding: 12px;
             border-radius: 12px;
             margin-bottom: 10px;
         }
         .avatar {
             width: 40px; height: 40px;
-            background: #555;
+            background: #444;
             border-radius: 50%;
-            margin-right: 15px;
+            margin-right: 12px;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
         }
         .status-dot {
-            width: 12px; height: 12px;
-            background: #00ff88; /* Online Green */
+            width: 10px; height: 10px;
+            background: #00ff88;
             border-radius: 50%;
             position: absolute;
             bottom: 0; right: 0;
             border: 2px solid #101820;
         }
-        .offline .status-dot { background: #777; }
-        
-        .info { flex: 1; }
-        .name { font-weight: 600; font-size: 14px; }
-        .status-text { font-size: 12px; color: #aaa; }
+        .offline .status-dot { background: #666; }
 
-        .wave-btn {
-            padding: 5px 15px;
-            border-radius: 15px;
-            border: 1px solid #00f2fe;
+        .f-info { flex: 1; }
+        .f-name { font-size: 14px; font-weight: 600; }
+        .f-status { font-size: 11px; color: #aaa; }
+
+        .action-btn {
             background: transparent;
-            color: #00f2fe;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            margin-left: 5px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
         }
-        .wave-btn.waved {
-            background: #00f2fe;
-            color: #000;
+        .action-btn:hover { background: rgba(255,255,255,0.1); }
+        
+        /* Backdrop for panel */
+        .backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+            z-index: 150;
+            display: none;
         }
+        .backdrop.active { display: block; }
 
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand">Untitled Focus</div>
+        <div class="brand">Untitled World Focus Mode</div>
         <div class="menu-btn" onclick="toggleMenu()">⋮</div>
     </header>
 
     <div class="dropdown" id="menu">
         <a href="#" onclick="alert('Firebase Login Coming Soon!')">🔐 Login / Signup</a>
         <a href="mailto:untitledworld9@gmail.com">📧 Contact Us</a>
+        <a href="#" onclick="logout()">🚪 Logout</a>
         <a href="index.html">🏠 Back to Home</a>
     </div>
 
     <div class="timer-container">
-        <h2 style="margin-bottom: 10px; font-weight:300;">Focus Session</h2>
-        <div class="timer-circle" id="display">25:00</div>
-        
+        <div class="timer-circle" id="display">00:00</div>
+
+        <div class="time-input-group" id="inputGroup">
+            <input type="number" id="customMin" class="input-box" placeholder="Min" min="1" max="180">
+            <button class="quick-btn" onclick="setQuickTime(60)">1 Hr</button>
+            <button class="quick-btn" onclick="setQuickTime(120)">2 Hr</button>
+        </div>
+
         <div class="controls">
-            <button class="btn btn-start" id="startBtn" onclick="startTimer()">Start Focus</button>
-            <button class="btn btn-pause" id="pauseBtn" onclick="pauseTimer()">Pause</button>
-            <button class="btn btn-reset" onclick="resetTimer()">Reset</button>
+            <button class="main-btn btn-start" id="startBtn" onclick="startTimer()">Start</button>
+            <button class="main-btn btn-pause" id="pauseBtn" onclick="pauseTimer()">Pause</button>
+            <button class="main-btn btn-reset" id="resetBtn" onclick="resetTimer()">Reset</button>
         </div>
     </div>
 
-    <div class="friends-trigger" onclick="toggleFriends()">
-        <h4>👥 Focus with Friends</h4>
-        <p style="font-size: 12px; color: #ccc;">Tap to see who is studying</p>
+    <div class="group-trigger" onclick="openPanel()">
+        <span class="group-text">🚀 Start Group Study</span>
+        <span class="group-icon">👥 ➡️</span>
     </div>
 
-    <div class="friends-panel" id="friendsPanel">
+    <div class="backdrop" id="backdrop" onclick="closePanel()"></div>
+
+    <div class="study-panel" id="studyPanel">
         <div class="panel-header">
-            <h3>Study Buddies (3 Online)</h3>
-            <div class="close-btn" onclick="toggleFriends()">⬇️</div>
+            <h3 style="font-size: 16px; color:#00f2fe;">Smart Study with Group</h3>
+            <button class="share-btn" onclick="shareLink()">
+                🔗 Share Link
+            </button>
         </div>
 
-        <div class="friend-item">
-            <div class="avatar"><div class="status-dot"></div></div>
-            <div class="info">
-                <div class="name">Rahul JEE</div>
-                <div class="status-text">Studying Physics...</div>
+        <div class="friends-list">
+            <div class="friend-item">
+                <div class="avatar">👦<div class="status-dot"></div></div>
+                <div class="f-info">
+                    <div class="f-name">Rahul JEE</div>
+                    <div class="f-status">Focusing...</div>
+                </div>
+                <button class="action-btn" onclick="wave(this)">👋</button>
+                <button class="action-btn" onclick="sendNote()">📝</button>
             </div>
-            <button class="wave-btn" onclick="wave(this)">👋 Wave</button>
-        </div>
 
-        <div class="friend-item">
-            <div class="avatar"><div class="status-dot"></div></div>
-            <div class="info">
-                <div class="name">Sneha Neet</div>
-                <div class="status-text">Focus Mode ON</div>
+            <div class="friend-item">
+                <div class="avatar">👧<div class="status-dot"></div></div>
+                <div class="f-info">
+                    <div class="f-name">Sneha Medical</div>
+                    <div class="f-status">Online</div>
+                </div>
+                <button class="action-btn" onclick="wave(this)">👋</button>
+                <button class="action-btn" onclick="sendNote()">📝</button>
             </div>
-            <button class="wave-btn" onclick="wave(this)">👋 Wave</button>
-        </div>
 
-        <div class="friend-item offline">
-            <div class="avatar"><div class="status-dot"></div></div>
-            <div class="info">
-                <div class="name">Amit (Offline)</div>
-                <div class="status-text">Last seen 2h ago</div>
+            <div class="friend-item offline">
+                <div class="avatar" style="opacity:0.5;">😴<div class="status-dot"></div></div>
+                <div class="f-info" style="opacity:0.5;">
+                    <div class="f-name">Amit (Offline)</div>
+                    <div class="f-status">Last seen 1h ago</div>
+                </div>
+                <button class="action-btn" disabled style="opacity:0.3;">👋</button>
             </div>
-            <button class="wave-btn" style="opacity:0.5;">💤</button>
+        </div>
+        
+        <div style="text-align:center; padding-top:10px;">
+            <button onclick="closePanel()" style="background:none; border:none; color:#ccc; font-size:12px;">⬇️ Close Panel</button>
         </div>
     </div>
 
     <script>
-        // --- Timer Logic ---
+        // --- TIMER LOGIC ---
         let timer;
-        let timeLeft = 25 * 60; // 25 minutes default
+        let timeLeft = 0;
         let isRunning = false;
 
-        function updateDisplay() {
-            let m = Math.floor(timeLeft / 60);
-            let s = timeLeft % 60;
-            document.getElementById('display').innerText = 
-                `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        const display = document.getElementById('display');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const inputGroup = document.getElementById('inputGroup');
+        const customInput = document.getElementById('customMin');
+
+        function updateDisplay(seconds) {
+            let h = Math.floor(seconds / 3600);
+            let m = Math.floor((seconds % 3600) / 60);
+            let s = seconds % 60;
+            
+            // Format: HH:MM:SS or MM:SS if less than hour
+            if (h > 0) {
+                display.innerText = `${h}:${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            } else {
+                display.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            }
         }
 
+        function setQuickTime(mins) {
+            if(isRunning) return;
+            timeLeft = mins * 60;
+            updateDisplay(timeLeft);
+            customInput.value = mins;
+        }
+
+        customInput.addEventListener('input', function() {
+            if(!isRunning) {
+                timeLeft = this.value * 60;
+                updateDisplay(timeLeft);
+            }
+        });
+
         function startTimer() {
-            if (isRunning) return;
+            if (timeLeft <= 0) {
+                // If user didn't set time, default to 25 mins
+                if(!customInput.value) {
+                    setQuickTime(25);
+                } else {
+                    alert("Please set a time!");
+                    return;
+                }
+            }
+
             isRunning = true;
-            document.getElementById('startBtn').style.display = 'none';
-            document.getElementById('pauseBtn').style.display = 'inline-block';
-            
+            inputGroup.style.display = 'none'; // Hide inputs
+            startBtn.style.display = 'none';
+            resetBtn.style.display = 'none';
+            pauseBtn.style.display = 'block';
+            pauseBtn.innerText = "Pause";
+            document.querySelector('.timer-circle').classList.add('active');
+
             timer = setInterval(() => {
                 if (timeLeft > 0) {
                     timeLeft--;
-                    updateDisplay();
+                    updateDisplay(timeLeft);
                 } else {
                     clearInterval(timer);
                     alert("Focus Session Complete! 🎉");
-                    isRunning = false;
-                    resetUI();
+                    resetTimer();
                 }
             }, 1000);
         }
 
         function pauseTimer() {
-            clearInterval(timer);
-            isRunning = false;
-            resetUI();
+            if(isRunning) {
+                clearInterval(timer);
+                isRunning = false;
+                pauseBtn.innerText = "Resume";
+                document.querySelector('.timer-circle').classList.remove('active');
+            } else {
+                startTimer();
+            }
         }
 
         function resetTimer() {
             clearInterval(timer);
             isRunning = false;
-            timeLeft = 25 * 60;
-            updateDisplay();
-            resetUI();
+            timeLeft = 0;
+            updateDisplay(0);
+            inputGroup.style.display = 'flex';
+            startBtn.style.display = 'block';
+            pauseBtn.style.display = 'none';
+            resetBtn.style.display = 'none';
+            document.querySelector('.timer-circle').classList.remove('active');
+            customInput.value = '';
         }
 
-        function resetUI() {
-            document.getElementById('startBtn').style.display = 'inline-block';
-            document.getElementById('startBtn').innerText = isRunning ? "Resume" : "Start Focus";
-            document.getElementById('pauseBtn').style.display = 'none';
-        }
+        // Show Reset button only when paused
+        pauseBtn.addEventListener('click', () => {
+             if(!isRunning) resetBtn.style.display = 'block';
+        });
 
-        // --- Menu & Friends Logic ---
+
+        // --- UI & FRIENDS LOGIC ---
         function toggleMenu() {
             document.getElementById('menu').classList.toggle('active');
         }
 
-        function toggleFriends() {
-            document.getElementById('friendsPanel').classList.toggle('open');
+        function logout() {
+            alert("Logged out");
+            window.location.href = "index.html";
+        }
+
+        function openPanel() {
+            document.getElementById('studyPanel').classList.add('open');
+            document.getElementById('backdrop').classList.add('active');
+        }
+
+        function closePanel() {
+            document.getElementById('studyPanel').classList.remove('open');
+            document.getElementById('backdrop').classList.remove('active');
         }
 
         function wave(btn) {
-            btn.innerText = "Waved! 👋";
-            btn.classList.add("waved");
-            // Yahan backend code aayega future mein
+            btn.innerText = "👋 Sent";
+            btn.style.color = "#00ff88";
+            setTimeout(() => {
+                btn.innerText = "👋";
+                btn.style.color = "white";
+            }, 2000);
+        }
+
+        function sendNote() {
+            let note = prompt("Enter a short note to send:");
+            if(note) alert("Note sent: " + note);
+        }
+
+        function shareLink() {
+            const link = "https://untitledworld.us.cc/timer.html";
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join my Study Group',
+                    text: 'Come focus with me on Untitled World!',
+                    url: link,
+                });
+            } else {
+                navigator.clipboard.writeText(link);
+                alert("Link copied to clipboard!");
+            }
         }
     </script>
 </body>
-</html>
+    </html>
+        
