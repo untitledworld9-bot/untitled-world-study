@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Focus Mode - Untitled World</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f2027">
+    
+    <style>
+        /* --- MODERN APP CSS --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            height: 100vh;
+            overflow: hidden; /* Scroll band taaki app feel aaye */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+        .brand { font-size: 18px; font-weight: 700; color: #00f2fe; }
+        .menu-btn { font-size: 24px; cursor: pointer; }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: absolute;
+            top: 60px; right: 20px;
+            background: #1f3c44;
+            border-radius: 10px;
+            display: none;
+            flex-direction: column;
+            width: 200px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+        .dropdown.active { display: flex; }
+        .dropdown a {
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .dropdown a:last-child { border: none; }
+        .dropdown a:hover { background: rgba(255,255,255,0.1); }
+
+        /* Main Timer Area */
+        .timer-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .timer-circle {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            border: 8px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            font-weight: 700;
+            color: #00ff88;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .controls { display: flex; gap: 15px; }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-start { background: #00ff88; color: #000; }
+        .btn-pause { background: #ffcc00; color: #000; display: none; }
+        .btn-reset { background: #ff4757; color: #fff; }
+        
+        /* Friends Button (Bottom) */
+        .friends-trigger {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            backdrop-filter: blur(5px);
+            animation: slideUp 0.5s ease-out;
+        }
+        .friends-trigger h4 { color: #00f2fe; }
+
+        /* Friends Section Overlay (Popup) */
+        .friends-panel {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: #101820;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            transition: 0.3s ease-in-out;
+            padding: 20px;
+            z-index: 50;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+        .friends-panel.open { bottom: 0; }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .close-btn { font-size: 24px; cursor: pointer; }
+
+        /* Friend List Item */
+        .friend-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .avatar {
+            width: 40px; height: 40px;
+            background: #555;
+            border-radius: 50%;
+            margin-right: 15px;
+            position: relative;
+        }
+        .status-dot {
+            width: 12px; height: 12px;
+            background: #00ff88; /* Online Green */
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0; right: 0;
+            border: 2px solid #101820;
+        }
+        .offline .status-dot { background: #777; }
+        
+        .info { flex: 1; }
+        .name { font-weight: 600; font-size: 14px; }
+        .status-text { font-size: 12px; color: #aaa; }
+
+        .wave-btn {
+            padding: 5px 15px;
+            border-radius: 15px;
+            border: 1px solid #00f2fe;
+            background: transparent;
+            color: #00f2fe;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .wave-btn.waved {
+            background: #00f2fe;
+            color: #000;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">Untitled Focus</div>
+        <div class="menu-btn" onclick="toggleMenu()">⋮</div>
+    </header>
+
+    <div class="dropdown" id="menu">
+        <a href="#" onclick="alert('Firebase Login Coming Soon!')">🔐 Login / Signup</a>
+        <a href="mailto:untitledworld9@gmail.com">📧 Contact Us</a>
+        <a href="index.html">🏠 Back to Home</a>
+    </div>
+
+    <div class="timer-container">
+        <h2 style="margin-bottom: 10px; font-weight:300;">Focus Session</h2>
+        <div class="timer-circle" id="display">25:00</div>
+        
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn" onclick="startTimer()">Start Focus</button>
+            <button class="btn btn-pause" id="pauseBtn" onclick="pauseTimer()">Pause</button>
+            <button class="btn btn-reset" onclick="resetTimer()">Reset</button>
+        </div>
+    </div>
+
+    <div class="friends-trigger" onclick="toggleFriends()">
+        <h4>👥 Focus with Friends</h4>
+        <p style="font-size: 12px; color: #ccc;">Tap to see who is studying</p>
+    </div>
+
+    <div class="friends-panel" id="friendsPanel">
+        <div class="panel-header">
+            <h3>Study Buddies (3 Online)</h3>
+            <div class="close-btn" onclick="toggleFriends()">⬇️</div>
+        </div>
+
+        <div class="friend-item">
+            <div class="avatar"><div class="status-dot"></div></div>
+            <div class="info">
+                <div class="name">Rahul JEE</div>
+                <div class="status-text">Studying Physics...</div>
+            </div>
+            <button class="wave-btn" onclick="wave(this)">👋 Wave</button>
+        </div>
+
+        <div class="friend-item">
+            <div class="avatar"><div class="status-dot"></div></div>
+            <div class="info">
+                <div class="name">Sneha Neet</div>
+                <div class="status-text">Focus Mode ON</div>
+            </div>
+            <button class="wave-btn" onclick="wave(this)">👋 Wave</button>
+        </div>
+
+        <div class="friend-item offline">
+            <div class="avatar"><div class="status-dot"></div></div>
+            <div class="info">
+                <div class="name">Amit (Offline)</div>
+                <div class="status-text">Last seen 2h ago</div>
+            </div>
+            <button class="wave-btn" style="opacity:0.5;">💤</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Timer Logic ---
+        let timer;
+        let timeLeft = 25 * 60; // 25 minutes default
+        let isRunning = false;
+
+        function updateDisplay() {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById('display').innerText = 
+                `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'inline-block';
+            
+            timer = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateDisplay();
+                } else {
+                    clearInterval(timer);
+                    alert("Focus Session Complete! 🎉");
+                    isRunning = false;
+                    resetUI();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            resetUI();
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            timeLeft = 25 * 60;
+            updateDisplay();
+            resetUI();
+        }
+
+        function resetUI() {
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('startBtn').innerText = isRunning ? "Resume" : "Start Focus";
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+
+        // --- Menu & Friends Logic ---
+        function toggleMenu() {
+            document.getElementById('menu').classList.toggle('active');
+        }
+
+        function toggleFriends() {
+            document.getElementById('friendsPanel').classList.toggle('open');
+        }
+
+        function wave(btn) {
+            btn.innerText = "Waved! 👋";
+            btn.classList.add("waved");
+            // Yahan backend code aayega future mein
+        }
+    </script>
+</body>
+</html>
