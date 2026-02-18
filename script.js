@@ -12,8 +12,6 @@ import {
   increment
 } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { doc, setDoc } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
@@ -89,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(err);
         alert("Firebase error, try again");
     }
-});
 });
 
     // --- 2. TIMER PRESET LOGIC ---
@@ -268,5 +265,4 @@ onSnapshot(collection(db,"users"), snap => {
         </div>`;
     });
 
-});
 });
