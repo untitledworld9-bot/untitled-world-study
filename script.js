@@ -183,7 +183,7 @@ joinRoom.addEventListener("click", async () => {
 
     await updateDoc(doc(db,"users",currentUser),{
         status:"Online",
-        focusTime: increment(0)
+        focusTime: increment(Math.floor(seconds/60))
     });
 
     clearInterval(timerInterval);
@@ -300,18 +300,16 @@ onSnapshot(collection(db,"users"), snap => {
     board.innerHTML="";
 
     users.slice(0,5).forEach(u=>{
-        board.innerHTML+=`
-        <div>
-            const totalMin = Math.floor(u.focusTime||0);
-const h = Math.floor(totalMin/60);
-const m = totalMin%60;
 
-board.innerHTML += `
-<div>
+ const totalMin = Math.floor(u.focusTime||0);
+ const h = Math.floor(totalMin/60);
+ const m = totalMin%60;
+
+ board.innerHTML += `
+ <div>
  🏆 ${u.name} — ${h}h ${m}m
-</div>`;
-        </div>`;
-    });
+ </div>`;
+});
 
 });
 
