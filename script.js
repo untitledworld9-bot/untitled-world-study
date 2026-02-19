@@ -60,6 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const backdrop = document.getElementById("backdrop");
     const userList = document.getElementById("userList");
     const inviteBtn = document.getElementById("inviteBtn");
+    const createRoom = document.getElementById("createRoom");
+    const joinRoom = document.getElementById("joinRoom");
+    const roomInput = document.getElementById("roomInput");
 
     // --- 1. LOGIN LOGIC ---
     loginBtn.addEventListener("click", async (e) => {
@@ -88,6 +91,28 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Firebase error, try again");
     }
 });
+
+createBtn.addEventListener("click", async () => {
+ const newRoom = Math.random().toString(36).substring(2,8);
+
+ await updateDoc(doc(db,"users",currentUser),{
+  room:newRoom
+ });
+
+ location.href=`/timer?room=${newRoom}`;
+});
+
+joinBtn.addEventListener("click", async () => {
+ const id = roomInput.value.trim();
+ if(!id) return alert("Enter Room ID");
+
+ await updateDoc(doc(db,"users",currentUser),{
+  room:id
+ });
+
+ location.href=`/timer?room=${id}`;
+});
+
 
     // --- 2. TIMER PRESET LOGIC ---
     presetBtns.forEach(btn => {
@@ -141,6 +166,13 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 seconds++;
                 updateDisplay();
+              
+               if(seconds%60===0){
+                 
+              updateDoc(doc(db,"users",currentUser),{
+ status:"Focusing 👋",
+ focusTime: increment(1)
+});
             }
         }, 1000);
     }
@@ -150,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     await updateDoc(doc(db,"users",currentUser),{
         status:"Online",
-        focusTime: increment(seconds)
+        focusTime: increment(Math.floor(seconds/60))
     });
 
     clearInterval(timerInterval);
@@ -261,10 +293,16 @@ onSnapshot(collection(db,"users"), snap => {
     users.slice(0,5).forEach(u=>{
         board.innerHTML+=`
         <div>
-            🏆 ${u.name} — ${Math.floor((u.focusTime||0)/60)} min
+            🏆 ${u.name} — ${Math.floor((u.focusTime||0)/60)}h ${(u.focusTime||0)%60}m
         </div>`;
     });
 
 });
+
+window.wave = async (name)=>{
+ await updateDoc(doc(db,"users",name),{
+  status:"👋 Wave sent"
+ });
+};
 });
   
