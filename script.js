@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         loginOverlay.style.display = "none";
+        roomInput.value = "";
 
     } catch(err) {
         console.log(err);
@@ -93,6 +94,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 createRoom.addEventListener("click", async () => {
+
+ if(!currentUser){
+  alert("Login first");
+  return;
+ }
+
  const newRoom = Math.random().toString(36).substring(2,8);
 
  await updateDoc(doc(db,"users",currentUser),{
@@ -105,7 +112,10 @@ createRoom.addEventListener("click", async () => {
 joinRoom.addEventListener("click", async () => {
  const id = roomInput.value.trim();
  if(!id) return alert("Enter Room ID");
-
+if(!currentUser) {
+ alert("Login first");
+ return;
+}
  await updateDoc(doc(db,"users",currentUser),{
   room:id
  });
@@ -252,7 +262,9 @@ joinRoom.addEventListener("click", async () => {
         });
     });
 
- onSnapshot(collection(db,"users"), (snapshot) => {
+ doc.data());
+    });
+onSnapshot(collection(db,"users"), (snapshot) => {
 
     userList.innerHTML = "";
 
@@ -260,19 +272,29 @@ joinRoom.addEventListener("click", async () => {
         const u = doc.data();
 
         if(u.room === roomId){
-            userList.innerHTML += `
-            <div class="member-card">
-                <div style="font-size:24px; margin-right:10px;">👤</div>
-                <div>
-                    <div style="font-weight:bold;">${u.name}</div>
-                    <div style="font-size:12px;color:#00ff88;">
-                        ${u.status}
-                    </div>
-                </div>
-            </div>
-            `;
-        }
+    userList.innerHTML += `
+    <div class="member-card">
+        <div style="font-size:24px;margin-right:10px;">👤</div>
 
+        <div style="flex:1">
+            <div style="font-weight:bold;">${u.name}</div>
+            <div style="font-size:12px;color:#00ff88;">
+                ${u.status}
+            </div>
+        </div>
+
+        ${u.name !== currentUser ? 
+          `<button onclick="wave('${u.name}')"
+            style="background:#00f2fe;border:none;
+            padding:6px 12px;border-radius:20px;
+            cursor:pointer;font-size:12px;">
+            👋 Wave
+          </button>`
+          : ""
+        }
+    </div>
+    `;
+        }
       if(u.status.includes("👋") && u.name !== currentUser){
  const pop=document.createElement("div");
  pop.className="wave-popup";
@@ -286,10 +308,10 @@ joinRoom.addEventListener("click", async () => {
 
 onSnapshot(collection(db,"users"), snap => {
 
-    const board=document.getElementById("leaderboard");
+    const board = document.getElementById("leaderboard");
     if(!board) return;
 
-    let users=[];
+    let users = [];
 
     snap.forEach(doc=>{
         users.push(doc.data());
@@ -297,22 +319,21 @@ onSnapshot(collection(db,"users"), snap => {
 
     users.sort((a,b)=>(b.focusTime||0)-(a.focusTime||0));
 
-    board.innerHTML="";
+    board.innerHTML = "";
 
     users.slice(0,5).forEach(u=>{
 
- const totalMin = Math.floor(u.focusTime||0);
- const h = Math.floor(totalMin/60);
- const m = totalMin%60;
+        const totalMin = Math.floor(u.focusTime||0);
+        const h = Math.floor(totalMin/60);
+        const m = totalMin%60;
 
- board.innerHTML += `
- <div>
- 🏆 ${u.name} — ${h}h ${m}m
- </div>`;
+        board.innerHTML += `
+        <div>
+        🏆 ${u.name} — ${h}h ${m}m
+        </div>`;
+    });
+
 });
-
-});
-
 window.wave = async (name)=>{
  await updateDoc(doc(db,"users",name),{
   status:"👋 Wave sent"
