@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-createBtn.addEventListener("click", async () => {
+createRoom.addEventListener("click", async () => {
  const newRoom = Math.random().toString(36).substring(2,8);
 
  await updateDoc(doc(db,"users",currentUser),{
@@ -102,7 +102,7 @@ createBtn.addEventListener("click", async () => {
  location.href=`/timer?room=${newRoom}`;
 });
 
-joinBtn.addEventListener("click", async () => {
+joinRoom.addEventListener("click", async () => {
  const id = roomInput.value.trim();
  if(!id) return alert("Enter Room ID");
 
@@ -173,6 +173,7 @@ joinBtn.addEventListener("click", async () => {
  status:"Focusing 👋",
  focusTime: increment(1)
 });
+               }
             }
         }, 1000);
     }
@@ -182,7 +183,7 @@ joinBtn.addEventListener("click", async () => {
 
     await updateDoc(doc(db,"users",currentUser),{
         status:"Online",
-        focusTime: increment(Math.floor(seconds/60))
+        focusTime: increment(0)
     });
 
     clearInterval(timerInterval);
@@ -301,7 +302,14 @@ onSnapshot(collection(db,"users"), snap => {
     users.slice(0,5).forEach(u=>{
         board.innerHTML+=`
         <div>
-            🏆 ${u.name} — ${Math.floor((u.focusTime||0)/60)}h ${(u.focusTime||0)%60}m
+            const totalMin = Math.floor(u.focusTime||0);
+const h = Math.floor(totalMin/60);
+const m = totalMin%60;
+
+board.innerHTML += `
+<div>
+ 🏆 ${u.name} — ${h}h ${m}m
+</div>`;
         </div>`;
     });
 
