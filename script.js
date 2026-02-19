@@ -271,6 +271,14 @@ joinBtn.addEventListener("click", async () => {
             </div>
             `;
         }
+
+      if(u.status.includes("👋") && u.name !== currentUser){
+ const pop=document.createElement("div");
+ pop.className="wave-popup";
+ pop.innerText=`👋 ${u.name} waved at you`;
+ document.body.appendChild(pop);
+ setTimeout(()=>pop.remove(),3000);
+            }
     });
 
 });
