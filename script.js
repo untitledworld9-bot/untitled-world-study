@@ -86,6 +86,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         loginOverlay.style.display = "none";
         roomInput.value = "";
+      // User exit detect
+window.addEventListener("beforeunload", async () => {
+  await updateDoc(doc(db,"users",currentUser),{
+    status:"Offline"
+  });
+});
 
     } catch(err) {
         console.log(err);
@@ -269,7 +275,7 @@ onSnapshot(collection(db,"users"), (snapshot) => {
     snapshot.forEach(doc => {
         const u = doc.data();
 
-        if(u.room === roomId){
+        if(u.room === roomId && u.status !== "Offline"){
     userList.innerHTML += `
     <div class="member-card">
         <div style="font-size:24px;margin-right:10px;">👤</div>
