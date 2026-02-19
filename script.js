@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const startBtn = document.getElementById("startBtn");
     const stopBtn = document.getElementById("stopBtn");
-    const presetBtns = document.querySelectorAll(".preset-btn");
+    const presetBtns = [];
     
     const menuToggle = document.getElementById("menuToggle");
     const navMenu = document.getElementById("navMenu");
