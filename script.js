@@ -262,8 +262,6 @@ if(!currentUser) {
         });
     });
 
- doc.data());
-    });
 onSnapshot(collection(db,"users"), (snapshot) => {
 
     userList.innerHTML = "";
