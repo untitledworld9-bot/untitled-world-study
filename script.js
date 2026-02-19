@@ -339,10 +339,18 @@ onSnapshot(collection(db,"users"), snap => {
 
 });
 window.wave = async (name)=>{
- await updateDoc(doc(db,"users",name),{
-  status:"👋 Wave sent"
- });
+    await updateDoc(doc(db,"users",name),{
+        status:"👋 Wave sent"
+    });
 };
-  
+
+window.addEventListener("beforeunload", async () => {
+    if(currentUser){
+        await updateDoc(doc(db,"users",currentUser),{
+            status:"Offline"
+        });
+    }
+});
+
 });
   
