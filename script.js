@@ -318,5 +318,6 @@ window.wave = async (name)=>{
   status:"👋 Wave sent"
  });
 };
+  
 });
   
