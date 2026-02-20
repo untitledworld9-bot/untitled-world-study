@@ -379,21 +379,26 @@ window.sendMsg = async ()=>{
 };
 
 onSnapshot(collection(db,"messages"), snap=>{
- const box=document.getElementById("chatMessages");
- if(!box) return;
-
- box.innerHTML="";
-
  snap.forEach(d=>{
   const m=d.data();
 
-  if(m.room===roomId &&
-    (m.to===currentUser || m.from===currentUser)){
+  if(
+    m.room===roomId &&
+    m.to===currentUser &&
+    m.from!==currentUser
+  ){
 
-    box.innerHTML+=`
-    <div>
-    <b>${m.from}:</b> ${m.text}
-    </div>`;
+    const box=document.getElementById("chatNotify");
+    const txt=document.getElementById("notifyText");
+
+    txt.innerText = `${m.from}: ${m.text}`;
+    box.style.display="block";
+    box.classList.add("active");
+
+    setTimeout(()=>{
+      box.style.display="none";
+      box.classList.remove("active");
+    },4000);
   }
  });
 });
