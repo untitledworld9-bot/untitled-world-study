@@ -288,14 +288,22 @@ onSnapshot(collection(db,"users"), (snapshot) => {
         </div>
 
         ${u.name !== currentUser ? 
-          `<button onclick="wave('${u.name}')"
-            style="background:#00f2fe;border:none;
-            padding:6px 12px;border-radius:20px;
-            cursor:pointer;font-size:12px;">
-            👋 Wave
-          </button>`
-          : ""
-        }
+`
+<button onclick="wave('${u.name}')"
+style="background:#00f2fe;border:none;
+padding:6px 12px;border-radius:20px;
+cursor:pointer;font-size:12px;">
+👋 Wave
+</button>
+
+<button onclick="openChat('${u.name}')"
+style="background:#00ff88;border:none;
+padding:6px 12px;border-radius:20px;
+cursor:pointer;font-size:12px;margin-left:5px;">
+💬 Msg
+</button>
+`
+: ""}
     </div>
     `;
         }
@@ -343,6 +351,52 @@ window.wave = async (name)=>{
         status:"👋 Wave sent"
     });
 };
+
+let chattingWith="";
+
+window.openChat = (name)=>{
+ chattingWith=name;
+ document.getElementById("chatBox").style.display="block";
+};
+
+window.closeChat = ()=>{
+ document.getElementById("chatBox").style.display="none";
+};
+
+window.sendMsg = async ()=>{
+ const txt=document.getElementById("chatInput").value;
+ if(!txt) return;
+
+ await addDoc(collection(db,"messages"),{
+  from:currentUser,
+  to:chattingWith,
+  text:txt,
+  room:roomId,
+  time:Date.now()
+ });
+
+ document.getElementById("chatInput").value="";
+};
+
+onSnapshot(collection(db,"messages"), snap=>{
+ const box=document.getElementById("chatMessages");
+ if(!box) return;
+
+ box.innerHTML="";
+
+ snap.forEach(d=>{
+  const m=d.data();
+
+  if(m.room===roomId &&
+    (m.to===currentUser || m.from===currentUser)){
+
+    box.innerHTML+=`
+    <div>
+    <b>${m.from}:</b> ${m.text}
+    </div>`;
+  }
+ });
+});
 
 window.addEventListener("beforeunload", async () => {
     if(currentUser){
