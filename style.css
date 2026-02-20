@@ -238,3 +238,13 @@ header {
     align-items: center;
     gap: 10px;
 }
+
+@keyframes blinkMsg {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+#chatNotify.active {
+  animation: blinkMsg 1s infinite;
+}
