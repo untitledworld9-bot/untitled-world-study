@@ -91,6 +91,31 @@
 <script>eruda.init();</script>
     <script type="module" src="script.js"></script>
 
+    <div id="chatBox" style="
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:#0f2027;
+display:none;
+padding:10px;
+border-top:2px solid #00f2fe;
+z-index:9999;
+">
+
+<div id="chatMessages"
+style="height:200px;overflow:auto;margin-bottom:8px;">
+</div>
+
+<input id="chatInput"
+placeholder="Type message..."
+style="width:70%;padding:8px;">
+
+<button onclick="sendMsg()">Send</button>
+<button onclick="closeChat()">❌</button>
+
+    </div>
+
 </body>
     </html>
     
