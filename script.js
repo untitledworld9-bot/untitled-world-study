@@ -363,6 +363,28 @@ window.closeChat = ()=>{
  document.getElementById("chatBox").style.display="none";
 };
 
+onSnapshot(collection(db,"messages"), snap=>{
+ const chatArea=document.getElementById("chatMessages");
+ if(!chatArea) return;
+
+ chatArea.innerHTML="";
+
+ snap.forEach(d=>{
+  const m=d.data();
+
+  if(
+    m.room===roomId &&
+    (m.from===currentUser && m.to===chattingWith ||
+     m.from===chattingWith && m.to===currentUser)
+  ){
+   chatArea.innerHTML += `
+   <div style="margin:4px 0;">
+     <b>${m.from}:</b> ${m.text}
+   </div>`;
+  }
+ });
+});
+
 window.sendMsg = async ()=>{
  const txt=document.getElementById("chatInput").value;
  if(!txt) return;
@@ -374,6 +396,33 @@ window.sendMsg = async ()=>{
   room:roomId,
   time:Date.now()
  });
+
+let lastMsgTime = 0;
+
+onSnapshot(collection(db,"messages"), snap=>{
+ snap.forEach(d=>{
+  const m=d.data();
+
+  if(
+    m.room===roomId &&
+    m.to===currentUser &&
+    m.from!==currentUser &&
+    m.time>lastMsgTime
+  ){
+    lastMsgTime=m.time;
+
+    const box=document.getElementById("chatNotify");
+    const txt=document.getElementById("notifyText");
+
+    txt.innerText=`${m.from}: ${m.text}`;
+    box.style.display="block";
+
+    setTimeout(()=>{
+      box.style.display="none";
+    },4000);
+  }
+ });
+});
 
  document.getElementById("chatInput").value="";
 };
