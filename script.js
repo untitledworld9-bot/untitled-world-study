@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const roomInput = document.getElementById("roomInput");
 
     // --- 1. LOGIN LOGIC ---
-    loginBtn.addEventListener("click", async (e) => {
+loginBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
     const name = usernameInput.value.trim();
@@ -95,7 +95,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         loginOverlay.style.display = "none";
         roomInput.value = "";
-    });
+
+    } catch(err) {
+        console.log(err);
+        alert("Firebase error, try again");
+    }
+});
   
 // 👇 YAHAN ADD GOOGLE LOGIN
 document.getElementById("googleLogin")
@@ -114,20 +119,6 @@ document.getElementById("googleLogin")
  });
 
  loginOverlay.style.display="none";
-});
-
-onAuthStateChanged(auth, async user=>{
- if(user){
-   currentUser = user.displayName;
-
-   loginOverlay.style.display="none";
-
-   await setDoc(doc(db,"users",currentUser),{
-     name: currentUser,
-     status:"Online",
-     room: roomId
-   },{merge:true});
- }
 });
   
       // User exit detect
@@ -311,6 +302,21 @@ if(!currentUser) {
             alert("Link Copied!");
         });
     });
+
+onAuthStateChanged(auth, async user=>{
+ if(user){
+   currentUser = user.displayName;
+
+   loginOverlay.style.display="none";
+
+   await setDoc(doc(db,"users",currentUser),{
+     name: currentUser,
+     status:"Online",
+     room: roomId
+   },{merge:true});
+ }
+});
+  
 
 onSnapshot(collection(db,"users"), (snapshot) => {
 
