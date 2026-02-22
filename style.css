@@ -261,3 +261,13 @@ header {
  z-index:9999;
  font-weight:bold;
     }
+
+.google{
+ margin-top:12px;
+ display:block;
+ width:100%;
+}
+
+.login-card button{
+ margin-bottom:10px;
+    }
