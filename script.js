@@ -141,13 +141,7 @@ window.addEventListener("beforeunload", async () => {
     status:"Offline"
   });
 });
-
-    } catch(err) {
-        console.log(err);
-        alert("Firebase error, try again");
-    }
-});
-
+  
 createRoom.addEventListener("click", async () => {
 
  if(!currentUser){
@@ -445,6 +439,9 @@ window.sendMsg = async ()=>{
   room:roomId,
   time:Date.now()
  });
+  
+ document.getElementById("chatInput").value="";
+};
 
 let lastMsgTime = 0;
 
@@ -463,6 +460,8 @@ onSnapshot(collection(db,"messages"), snap=>{
     const box=document.getElementById("chatNotify");
     const txt=document.getElementById("notifyText");
 
+    if(!box || !txt) return;
+
     txt.innerText=`${m.from}: ${m.text}`;
     box.style.display="block";
 
@@ -472,10 +471,7 @@ onSnapshot(collection(db,"messages"), snap=>{
   }
  });
 });
-
- document.getElementById("chatInput").value="";
-};
-
+  
 onSnapshot(collection(db,"messages"), snap=>{
  snap.forEach(d=>{
   const m=d.data();
