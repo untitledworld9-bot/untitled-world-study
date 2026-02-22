@@ -74,34 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const roomInput = document.getElementById("roomInput");
 
     // --- 1. LOGIN LOGIC ---
-loginBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    const name = usernameInput.value.trim();
-    if (!name) {
-        alert("Please enter your name!");
-        return;
-    }
-
-    currentUser = name;
-
-    try {
-        await setDoc(doc(db,"users",currentUser), {
-            name: currentUser,
-            focusTime: 0,
-            status: "Online",
-            room: roomId
-        });
-
-        loginOverlay.style.display = "none";
-        roomInput.value = "";
-
-    } catch(err) {
-        console.log(err);
-        alert("Firebase error, try again");
-    }
-});
-  
 // 👇 YAHAN ADD GOOGLE LOGIN
 document.getElementById("googleLogin")
 .addEventListener("click", async ()=>{
