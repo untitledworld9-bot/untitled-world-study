@@ -453,50 +453,26 @@ onSnapshot(collection(db,"messages"), snap=>{
     m.room===roomId &&
     m.to===currentUser &&
     m.from!==currentUser &&
-    m.time>lastMsgTime
+    m.time > lastMsgTime
   ){
-    lastMsgTime=m.time;
 
-    const box=document.getElementById("chatNotify");
-    const txt=document.getElementById("notifyText");
+    lastMsgTime = m.time;
+
+    const box = document.getElementById("chatNotify");
+    const txt = document.getElementById("notifyText");
 
     if(!box || !txt) return;
 
-    txt.innerText=`${m.from}: ${m.text}`;
-    box.style.display="block";
+    txt.innerText = `${m.from}: ${m.text}`;
+    box.style.display = "block";
 
     setTimeout(()=>{
-      box.style.display="none";
+      box.style.display = "none";
     },4000);
   }
  });
 });
   
-onSnapshot(collection(db,"messages"), snap=>{
- snap.forEach(d=>{
-  const m=d.data();
-
-  if(
-    m.room===roomId &&
-    m.to===currentUser &&
-    m.from!==currentUser
-  ){
-
-    const box=document.getElementById("chatNotify");
-    const txt=document.getElementById("notifyText");
-
-    txt.innerText = `${m.from}: ${m.text}`;
-    box.style.display="block";
-    box.classList.add("active");
-
-    setTimeout(()=>{
-      box.style.display="none";
-      box.classList.remove("active");
-    },4000);
-  }
- });
-});
-
 window.addEventListener("beforeunload", async () => {
     if(currentUser){
         await updateDoc(doc(db,"users",currentUser),{
@@ -505,5 +481,4 @@ window.addEventListener("beforeunload", async () => {
     }
 });
 
-});
   
