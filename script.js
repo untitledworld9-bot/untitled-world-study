@@ -120,6 +120,20 @@ document.getElementById("googleLogin")
 
  loginOverlay.style.display="none";
 });
+
+onAuthStateChanged(auth, async user=>{
+ if(user){
+   currentUser = user.displayName;
+
+   loginOverlay.style.display="none";
+
+   await setDoc(doc(db,"users",currentUser),{
+     name: currentUser,
+     status:"Online",
+     room: roomId
+   },{merge:true});
+ }
+});
   
       // User exit detect
 window.addEventListener("beforeunload", async () => {
@@ -302,22 +316,7 @@ if(!currentUser) {
             alert("Link Copied!");
         });
     });
-
-onAuthStateChanged(auth, async user=>{
- if(user){
-   currentUser = user.displayName;
-
-   loginOverlay.style.display="none";
-
-   await setDoc(doc(db,"users",currentUser),{
-     name: currentUser,
-     status:"Online",
-     room: roomId
-   },{merge:true});
- }
-});
   
-
 onSnapshot(collection(db,"users"), (snapshot) => {
 
     userList.innerHTML = "";
