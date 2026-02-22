@@ -13,6 +13,13 @@ import {
 } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+import { 
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
   authDomain: "untitled-world-2e645.firebaseapp.com",
@@ -25,6 +32,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 // ROOM SYSTEM
 const params = new URLSearchParams(location.search);
 const roomId = params.get("room") || "default";
@@ -86,6 +95,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
         loginOverlay.style.display = "none";
         roomInput.value = "";
+    });
+  
+// 👇 YAHAN ADD GOOGLE LOGIN
+document.getElementById("googleLogin")
+.addEventListener("click", async ()=>{
+
+ const result = await signInWithPopup(auth, provider);
+ const user = result.user;
+
+ currentUser = user.displayName;
+
+ await setDoc(doc(db,"users",currentUser),{
+   name: currentUser,
+   focusTime: 0,
+   status:"Online",
+   room: roomId
+ });
+
+ loginOverlay.style.display="none";
+});
+
+onAuthStateChanged(auth, async user=>{
+ if(user){
+   currentUser = user.displayName;
+
+   loginOverlay.style.display="none";
+
+   await setDoc(doc(db,"users",currentUser),{
+     name: currentUser,
+     status:"Online",
+     room: roomId
+   },{merge:true});
+ }
+});
+  
       // User exit detect
 window.addEventListener("beforeunload", async () => {
   await updateDoc(doc(db,"users",currentUser),{
