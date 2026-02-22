@@ -229,6 +229,18 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
   opacity:1;
   text-decoration:underline;
 }
+
+.yt-open{
+  background:#ff0000;
+  color:white;
+  border:none;
+  border-radius:50%;
+  width:45px;
+  height:45px;
+  font-size:18px;
+  cursor:pointer;
+  margin-right:10px;
+  }
   
 /* --- CSS END --- */
 </style>
@@ -274,6 +286,8 @@ Start Learning 👇
 <h2>Your Study Playlist</h2>
 <div class="input-container">
     <input type="text" id="ytLink" placeholder="Paste YouTube URL here (e.g. https://youtu.be/xyz...)">
+    <!-- YouTube Open Button -->
+    <button class="yt-open" onclick="openYouTube()">▶</button>
     <button class="add-btn" onclick="addVideo()">Add Video</button>
 </div>
 
@@ -538,6 +552,10 @@ window.addEventListener("load", function(){
 function logout(){
   localStorage.removeItem("loggedIn");
   window.location="login.html";
+}
+
+function openYouTube(){
+  window.open("https://m.youtube.com", "_blank");
 }
 </script>
 <script>
