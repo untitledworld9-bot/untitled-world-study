@@ -17,7 +17,8 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import { getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -449,20 +450,20 @@ onSnapshot(collection(db,"users"), snap => {
 
     board.innerHTML = "";
 
-    users.slice(0,10).forEach(u=>{
+    users.slice(0,10).forEach((u, index)=>{
 
-        const totalMin = Math.floor(u.focusTime||0);
-        const h = Math.floor(totalMin/60);
-        const m = totalMin%60;
+    const totalMin = Math.floor(u.focusTime||0);
+    const h = Math.floor(totalMin/60);
+    const m = totalMin%60;
 
-        const badge =
- i===0?'💎':
- i===1?'🥇':
- i===2?'🥈':'';
+    const badge =
+ index===0?'💎':
+ index===1?'🥇':
+ index===2?'🥈':'';
 
-board.innerHTML += `
-<div>${badge} ${u.name} — ${h}h ${m}m</div>`;
-    });
+    board.innerHTML += `
+    <div>${badge} ${u.name} — ${h}h ${m}m</div>`;
+});
 
 });
 window.wave = async (name)=>{
@@ -560,18 +561,18 @@ window.addEventListener("beforeunload", () => {
  }
 });
 
-import { signOut } from 
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
 window.logoutUser = async ()=>{
  await signOut(auth);
  window.location.href="login.html";
 };
 
-document.getElementById("statusCard")
-.addEventListener("click", ()=>{
-  window.location.href="leaderboard.html";
-});
+const statusBtn=document.getElementById("statusCard");
+
+if(statusBtn){
+ statusBtn.addEventListener("click", ()=>{
+   window.location.href="leaderboard.html";
+ });
+}
 
 });
 
