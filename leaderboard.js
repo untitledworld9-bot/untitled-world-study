@@ -27,6 +27,9 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 const board = document.getElementById("board");
+if(!board){
+ console.log("Leaderboard element missing");
+}
 
 let users = [];
 
@@ -63,8 +66,7 @@ onSnapshot(collection(db,"users"), snap=>{
    margin-bottom:8px;
    background:rgba(255,255,255,0.05);
    border-radius:10px;">
-   <b>#${rank}</b> ${u.name} — ${h}h ${m}m 
-   ${badge}
+   <b>#${rank}</b> ${badge ? badge+" | " : ""}${u.name} — ${h}h ${m}m
   </div>`;
  });
 
