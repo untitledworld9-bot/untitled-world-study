@@ -553,17 +553,21 @@ onSnapshot(collection(db,"messages"), snap=>{
 });
   
 // USER EXIT
-window.addEventListener("beforeunload", () => {
+window.addEventListener("beforeunload", async () => {
  if(currentUser){
-   updateDoc(doc(db,"users",currentUser),{
-     status:"Offline"
-   });
+   try{
+     await updateDoc(doc(db,"users",currentUser),{
+       status:"Offline"
+     });
+   }catch(e){}
  }
 });
 
 window.logoutUser = async ()=>{
  await signOut(auth);
- window.location.href="login.html";
+
+ localStorage.removeItem("userName");  // 👈 ADD THIS
+ location.reload();                    // 👈 CHANGE THIS
 };
 
 const statusBtn=document.getElementById("statusCard");
