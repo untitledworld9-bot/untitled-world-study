@@ -181,13 +181,27 @@ document.getElementById("joinRoomBtn")
  const id = prompt("Enter Room ID");
  if(!id) return;
 
+ // ✅ ROOM EXIST CHECK
+ const usersSnap = await getDocs(collection(db,"users"));
+ let roomExists = false;
+
+ usersSnap.forEach(docSnap=>{
+   if(docSnap.data().room === id){
+     roomExists = true;
+   }
+ });
+
+ if(!roomExists){
+   alert("Room not found ❌");
+   return;
+ }
+
  await updateDoc(doc(db,"users",currentUser),{
    room:id
  });
 
  location.href=`/timer?room=${id}`;
 });
-
 
     // --- 2. TIMER PRESET LOGIC ---
     presetBtns.forEach(btn => {
@@ -331,8 +345,8 @@ onSnapshot(collection(db,"users"), (snapshot) => {
 
     userList.innerHTML = "";
 
-    snapshot.forEach(doc => {
-        const u = doc.data();
+    snapshot.forEach(docSnap => {
+    const u = docSnap.data();
 
         if(u.room === roomId && u.status !== "Offline"){
     userList.innerHTML += `
@@ -402,24 +416,27 @@ onSnapshot(collection(db,"users"), snap => {
 
     let users = [];
 
-    snap.forEach(doc=>{
-        users.push(doc.data());
-    });
+    snap.forEach(docSnap=>{
+    users.push(docSnap.data());
+});
 
     users.sort((a,b)=>(b.focusTime||0)-(a.focusTime||0));
 
     board.innerHTML = "";
 
-    users.slice(0,5).forEach(u=>{
+    users.slice(0,10).forEach(u=>{
 
         const totalMin = Math.floor(u.focusTime||0);
         const h = Math.floor(totalMin/60);
         const m = totalMin%60;
 
-        board.innerHTML += `
-        <div>
-        🏆 ${u.name} — ${h}h ${m}m
-        </div>`;
+        const badge =
+ i===0?'💎':
+ i===1?'🥇':
+ i===2?'🥈':'';
+
+board.innerHTML += `
+<div>${badge} ${u.name} — ${h}h ${m}m</div>`;
     });
 
 });
@@ -523,6 +540,18 @@ window.logoutUser = ()=>{
  localStorage.removeItem("userName");
  location.reload();
 };
+
+// 👇 YAHAN GRAPH CODE PASTE KARNA
+new Chart(document.getElementById("progressChart"),{
+ type:'line',
+ data:{
+  labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+  datasets:[{
+   label:'Focus Minutes',
+   data:[0,0,0,0,0,0,0]
+  }]
+ }
+});
 
 });
 
