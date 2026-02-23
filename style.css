@@ -356,6 +356,8 @@ header {
  backdrop-filter:blur(10px);
  box-shadow:0 0 8px rgba(0,242,254,0.3);
  transition:0.3s;
+ pointer-events:auto;
+touch-action: manipulation;
 }
 
 .room-controls button:hover{
