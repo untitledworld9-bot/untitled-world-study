@@ -72,6 +72,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const createRoom = document.getElementById("createRoom");
     const joinRoom = document.getElementById("joinRoom");
     const roomInput = document.getElementById("roomInput");
+    const savedName = localStorage.getItem("userName");
+
+if(savedName){
+  currentUser = savedName;
+  loginOverlay.style.display="none";
+}
 
     // --- 1. LOGIN LOGIC ---
 // 👇 YAHAN ADD GOOGLE LOGIN
@@ -82,6 +88,7 @@ document.getElementById("googleLogin")
  const user = result.user;
 
  currentUser = user.displayName;
+ localStorage.setItem("userName", user.displayName);
 
  await setDoc(doc(db,"users",currentUser),{
    name: currentUser,
