@@ -20,6 +20,8 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+import { getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
   authDomain: "untitled-world-2e645.firebaseapp.com",
@@ -46,6 +48,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let isRunning = false;
     let mode = "stopwatch"; // 'stopwatch' or 'countdown'
     let initialSeconds = 0;
+  
+function getTodayDate(){
+  const d = new Date();
+  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
 
     // --- DOM ELEMENTS ---
     const loginOverlay = document.getElementById("loginOverlay");
@@ -102,14 +109,34 @@ document.getElementById("googleLogin")
 
 onAuthStateChanged(auth, async user=>{
  if(user){
-   currentUser = user.displayName;
 
+   currentUser = user.displayName;
    loginOverlay.style.display="none";
 
-   await setDoc(doc(db,"users",currentUser),{
-     name: currentUser,
+   const today = getTodayDate();
+   const userRef = doc(db,"users",currentUser);
+
+   // 👇 OLD DATA CHECK
+   const snap = await getDoc(userRef);
+
+   if(snap.exists()){
+     const data = snap.data();
+
+     // 👇 DATE CHANGE → RESET
+     if(data.lastActiveDate !== today){
+       await updateDoc(userRef,{
+         focusTime: 0,
+         lastActiveDate: today
+       });
+     }
+   }
+
+   // 👇 ALWAYS UPDATE USER STATUS
+   await setDoc(userRef,{
+     name:currentUser,
      status:"Online",
-     room: roomId
+     room:roomId,
+     lastActiveDate: today
    },{merge:true});
  }
 });
@@ -121,31 +148,26 @@ window.addEventListener("beforeunload", async () => {
   });
 });
   
-createRoom.addEventListener("click", async () => {
-
- if(!currentUser){
-  alert("Login first");
-  return;
- }
+document.getElementById("createRoomBtn")
+.addEventListener("click", async ()=>{
 
  const newRoom = Math.random().toString(36).substring(2,8);
 
  await updateDoc(doc(db,"users",currentUser),{
-  room:newRoom
+   room:newRoom
  });
 
  location.href=`/timer?room=${newRoom}`;
 });
 
-joinRoom.addEventListener("click", async () => {
- const id = roomInput.value.trim();
- if(!id) return alert("Enter Room ID");
-if(!currentUser) {
- alert("Login first");
- return;
-}
+document.getElementById("joinRoomBtn")
+.addEventListener("click", async ()=>{
+
+ const id = prompt("Enter Room ID");
+ if(!id) return;
+
  await updateDoc(doc(db,"users",currentUser),{
-  room:id
+   room:id
  });
 
  location.href=`/timer?room=${id}`;
@@ -329,13 +351,30 @@ cursor:pointer;font-size:12px;margin-left:5px;">
     </div>
     `;
         }
-      if(u.status.includes("👋") && u.name !== currentUser){
+    let lastWaveTime = 0;
+
+if(
+ u.waveFrom &&
+ u.name === currentUser &&
+ u.waveTime > lastWaveTime
+){
+ lastWaveTime = u.waveTime;
+
  const pop=document.createElement("div");
  pop.className="wave-popup";
- pop.innerText=`👋 ${u.name} waved at you`;
+ pop.innerText=`👋 ${u.waveFrom} waved at you`;
+
  document.body.appendChild(pop);
- setTimeout(()=>pop.remove(),3000);
-            }
+
+ setTimeout(()=>{
+   pop.remove();
+   
+ updateDoc(doc(db,"users",currentUser),{
+  waveFrom:"",
+  waveTime:0
+ });
+},5000);
+}
     });
 
 });
@@ -369,9 +408,10 @@ onSnapshot(collection(db,"users"), snap => {
 
 });
 window.wave = async (name)=>{
-    await updateDoc(doc(db,"users",name),{
-        status:"👋 Wave sent"
-    });
+ await updateDoc(doc(db,"users",name),{
+   waveFrom: currentUser,
+   waveTime: Date.now()
+ });
 };
 
 let chattingWith="";
