@@ -436,3 +436,36 @@ touch-action: manipulation;
  cursor:pointer;
  backdrop-filter:blur(6px);
 }
+
+#statusCard{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ margin:25px auto;
+ padding:14px 18px;
+ width:85%;
+ border-radius:18px;
+ background:rgba(255,255,255,0.07);
+ backdrop-filter:blur(8px);
+ cursor:pointer;
+ transition:0.3s;
+}
+
+#statusCard:hover{
+ transform:scale(1.03);
+ background:rgba(0,255,170,0.15);
+}
+
+.status-left{
+ font-size:22px;
+}
+
+.status-title{
+ font-weight:600;
+ font-size:15px;
+}
+
+.status-sub{
+ font-size:12px;
+ opacity:0.7;
+}
