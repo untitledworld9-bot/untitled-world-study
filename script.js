@@ -326,9 +326,10 @@ onSnapshot(collection(db,"users"), (snapshot) => {
 
         <div style="flex:1">
             <div style="font-weight:bold;">${u.name}</div>
-            <div style="font-size:12px;color:#00ff88;">
-                ${u.status}
-            </div>
+            <div style="font-size:12px;">
+ <span class="status-dot ${u.status==='Online'?'online':'offline'}"></span>
+ ${u.status}
+</div>
         </div>
 
         ${u.name !== currentUser ? 
@@ -440,9 +441,10 @@ onSnapshot(collection(db,"messages"), snap=>{
      m.from===chattingWith && m.to===currentUser)
   ){
    chatArea.innerHTML += `
-   <div style="margin:4px 0;">
-     <b>${m.from}:</b> ${m.text}
-   </div>`;
+<div class="${m.from===currentUser?'msg-me':'msg-other'}">
+ <b>${m.from}</b>
+ ${m.text}
+</div>`;
   }
  });
 });
