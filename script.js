@@ -63,6 +63,15 @@ function getTodayDate(){
   return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
 }
 
+function getWeekNumber(){
+ const d=new Date();
+ d.setHours(0,0,0,0);
+ d.setDate(d.getDate()+4-(d.getDay()||7));
+ const yearStart=new Date(d.getFullYear(),0,1);
+ const week=Math.ceil((((d-yearStart)/86400000)+1)/7);
+ return d.getFullYear()+"-W"+week;
+}
+
     // --- DOM ELEMENTS ---
     const usernameInput = document.getElementById("username");
     const loginBtn = document.getElementById("loginBtn");
@@ -87,6 +96,13 @@ function getTodayDate(){
     const createRoom = document.getElementById("createRoom");
     const joinRoom = document.getElementById("joinRoom");
     const roomInput = document.getElementById("roomInput");
+    const progressLink = document.getElementById("progressLink");
+
+if(progressLink){
+  progressLink.addEventListener("click", ()=>{
+     window.location.href="leaderboard.html";
+  });
+}
 
     // --- 1. LOGIN LOGIC ---
 // 👇 YAHAN ADD GOOGLE LOGIN
@@ -129,24 +145,33 @@ onAuthStateChanged(auth, async user=>{
    loginOverlay.style.display="none";
 
    const today = getTodayDate();
+   const currentWeek = getWeekNumber();
    const userRef = doc(db,"users",currentUser);
 
    // 👇 OLD DATA CHECK
    const snap = await getDoc(userRef);
-
+   
    if(snap.exists()){
-     const data = snap.data();
+ const data = snap.data();
+  
+  // DAILY RESET (optional)
+ if(data.lastActiveDate !== today){
+   await updateDoc(userRef,{
+     focusTime:0,
+     lastActiveDate:today
+   });
+ }
 
-     // 👇 DATE CHANGE → RESET
-     if(data.lastActiveDate !== today){
-       await updateDoc(userRef,{
-         focusTime: 0,
-         lastActiveDate: today
-       });
-     }
+ // 👇 WEEKLY RESET (MAIN FEATURE)
+ if(data.lastActiveWeek !== currentWeek){
+   await updateDoc(userRef,{
+     focusTime:0,
+     lastActiveWeek:currentWeek
+   });
+ }
    }
-
-   // 👇 ALWAYS UPDATE USER STATUS
+    
+  // 👇 ALWAYS UPDATE USER STATUS
    await setDoc(userRef,{
      name:currentUser,
      status:"Online",
