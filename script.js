@@ -568,7 +568,7 @@ window.logoutUser = async ()=>{
  window.location.href="login.html";
 };
 
-document.getElementById("leaderboardBtn")
+document.getElementById("statusCard")
 .addEventListener("click", ()=>{
   window.location.href="leaderboard.html";
 });
