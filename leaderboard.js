@@ -73,15 +73,15 @@ onSnapshot(collection(db,"users"), snap=>{
 
 // ⭐ Current user rank
 onAuthStateChanged(auth,user=>{
- if(user && users.length>0){
+ if(!user) return;
 
-  const currentName=user.displayName;
+ const currentName=user.displayName;
 
+ setTimeout(()=>{
   const position=
    users.findIndex(u=>u.name===currentName)+1;
 
   if(position>15){
-
    board.innerHTML+=`
    <div style="
     margin-top:20px;
@@ -91,5 +91,10 @@ onAuthStateChanged(auth,user=>{
     Your Rank: #${position}
    </div>`;
   }
- }
+ },1000);
 });
+
+});
+
+
+
