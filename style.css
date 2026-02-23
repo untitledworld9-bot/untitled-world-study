@@ -394,3 +394,33 @@ touch-action: manipulation;
 .offline{
  background:#777;
 }
+
+.rank-card{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:14px;
+ margin-bottom:10px;
+ background:rgba(255,255,255,0.05);
+ border-radius:14px;
+ backdrop-filter:blur(8px);
+ animation:fadeUp 0.5s ease forwards;
+ opacity:0;
+ transform:translateY(15px);
+}
+
+.rank-card:nth-child(1){
+ background:linear-gradient(45deg,#00f2fe30,#00ff8830);
+ box-shadow:0 0 15px #00ff88;
+}
+
+@keyframes fadeUp{
+ to{
+  opacity:1;
+  transform:translateY(0);
+ }
+}
+
+.rank-badge{
+ font-weight:bold;
+    }
