@@ -17,7 +17,7 @@ import {
 
 // ⭐ Correct Firebase config
 const firebaseConfig = {
- apiKey: "YOUR_REAL_API_KEY",
+ apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
  authDomain: "untitled-world-2e645.firebaseapp.com",
  projectId: "untitled-world-2e645"
 };
