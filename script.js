@@ -124,6 +124,9 @@ onAuthStateChanged(auth, async user=>{
  if(user){
 
    currentUser = user.displayName;
+   
+   localStorage.setItem("userName", user.displayName);
+   
    loginOverlay.style.display="none";
 
    const today = getTodayDate();
@@ -513,6 +516,10 @@ window.addEventListener("beforeunload", async () => {
             status:"Offline"
         });
     }
+      window.logoutUser = ()=>{
+ localStorage.removeItem("userName");
+ location.reload();
+};
 });
 
 });
