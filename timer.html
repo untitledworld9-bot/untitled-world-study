@@ -35,15 +35,6 @@
             </button>
             
             <hr style="margin:10px 0;opacity:.3">
-
-<input type="text" id="roomInput"
- placeholder="Enter Room ID (optional)"
- class="login-input">
-
-<div style="display:flex;gap:10px;margin-top:8px;">
-  <button id="createRoom" class="login-btn">Create Room</button>
-  <button id="joinRoom" class="login-btn">Join Room</button>
-</div>
         </div>
     </div>
     
@@ -68,10 +59,15 @@
         </div>
     </div>
 
+    <div class="room-controls">
+  <button id="createRoomBtn">＋</button>
+  <button id="joinRoomBtn">🔗</button>
+    </div>
+
     <div class="group-fab" id="openPanelBtn">
         <div class="fab-content">
             <span class="fab-title">👥 Group Study Room</span>
-            <span class="fab-sub">Tap to see friends</span>
+            <span class="fab-sub">Tap to see friends & leaderboard</span>
         </div>
     </div>
 
@@ -133,11 +129,9 @@ font-size:13px;
 font-weight:600;
 box-shadow:0 0 10px rgba(0,255,136,0.6);
 ">
-💬 <span id="notifyText"></span>
-</div>
     
 <div id="chatNotify">
-  <span id="notifyText"></span>
+💬 <span id="notifyText"></span>
 </div>
     
 </body>
