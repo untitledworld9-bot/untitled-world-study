@@ -424,3 +424,15 @@ touch-action: manipulation;
 .rank-badge{
  font-weight:bold;
     }
+
+#leaderboardBtn{
+ position:absolute;
+ left:20px;
+ top:90px;
+ font-size:22px;
+ background:rgba(255,255,255,0.1);
+ padding:10px 14px;
+ border-radius:50%;
+ cursor:pointer;
+ backdrop-filter:blur(6px);
+}
