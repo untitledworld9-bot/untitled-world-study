@@ -87,6 +87,14 @@
         <button class="close-sheet-btn" id="closePanelBtn">⬇️ Close Panel</button>
     </div>
 
+    <script>
+firebase.auth().onAuthStateChanged(function(user) {
+    if (!user) {
+        window.location.href = "login.html";
+    }
+});
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>eruda.init();</script>
     <script type="module" src="script.js"></script>
