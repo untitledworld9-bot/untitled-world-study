@@ -18,10 +18,16 @@ body {
 
 /* --- LOGIN SCREEN --- */
 #loginOverlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #0f2027;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(15,32,39,0.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     z-index: 9999;
-    display: flex; justify-content: center; align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
 }
 
@@ -71,7 +77,14 @@ header {
     align-items: center; justify-content: center;
     margin-bottom: 30px;
 }
-.timer-ring.active { border-color: var(--neon-green); box-shadow: 0 0 30px rgba(0, 255, 136, 0.2); }
+.timer-ring.active {
+    border-color: var(--neon-green);
+    box-shadow:
+        0 0 10px rgba(0,255,136,0.4),
+        0 0 30px rgba(0,255,136,0.3),
+        0 0 60px rgba(0,255,136,0.15);
+    transition: 0.4s ease;
+}
 
 .time-display { font-size: 55px; font-weight: 700; }
 #modeLabel { color: #aaa; font-size: 14px; margin-top: -5px; }
@@ -270,4 +283,26 @@ header {
 
 .login-card button{
  margin-bottom:10px;
+    }
+
+.room-controls{
+ position:fixed;
+ top:80px;
+ right:15px;
+ display:flex;
+ flex-direction:column;
+ gap:10px;
+ z-index:999;
+}
+
+.room-controls button{
+ width:40px;
+ height:40px;
+ border-radius:50%;
+ border:none;
+ background:#00f2fe;
+ color:#000;
+ font-size:18px;
+ cursor:pointer;
+ box-shadow:0 0 10px #00f2fe;
     }
