@@ -49,6 +49,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let mode = "stopwatch"; // 'stopwatch' or 'countdown'
     let initialSeconds = 0;
   
+const loginOverlay = document.getElementById("loginOverlay");
+
+const savedName = localStorage.getItem("userName");
+
+if(savedName){
+  currentUser = savedName;
+  loginOverlay.style.display="none";
+}
+  
 function getTodayDate(){
   const d = new Date();
   return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
@@ -79,12 +88,6 @@ function getTodayDate(){
     const createRoom = document.getElementById("createRoom");
     const joinRoom = document.getElementById("joinRoom");
     const roomInput = document.getElementById("roomInput");
-    const savedName = localStorage.getItem("userName");
-
-if(savedName){
-  currentUser = savedName;
-  loginOverlay.style.display="none";
-}
 
     // --- 1. LOGIN LOGIC ---
 // 👇 YAHAN ADD GOOGLE LOGIN
