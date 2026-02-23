@@ -91,24 +91,34 @@ function getTodayDate(){
 
     // --- 1. LOGIN LOGIC ---
 // 👇 YAHAN ADD GOOGLE LOGIN
-document.getElementById("googleLogin")
-.addEventListener("click", async ()=>{
+const googleBtn = document.getElementById("googleLogin");
 
- const result = await signInWithPopup(auth, provider);
- const user = result.user;
+if(googleBtn){
+ googleBtn.addEventListener("click", async ()=>{
 
- currentUser = user.displayName;
- localStorage.setItem("userName", user.displayName);
+  try{
+   const result = await signInWithPopup(auth, provider);
+   const user = result.user;
 
- await setDoc(doc(db,"users",currentUser),{
-   name: currentUser,
-   focusTime: 0,
-   status:"Online",
-   room: roomId
+   currentUser = user.displayName;
+
+   localStorage.setItem("userName", user.displayName);
+
+   loginOverlay.style.display="none";
+
+   await setDoc(doc(db,"users",currentUser),{
+     name: currentUser,
+     focusTime: 0,
+     status:"Online",
+     room: roomId
+   });
+
+  }catch(err){
+    console.log(err);
+  }
+
  });
-
- loginOverlay.style.display="none";
-});
+}
 
 onAuthStateChanged(auth, async user=>{
  if(user){
