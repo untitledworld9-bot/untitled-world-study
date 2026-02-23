@@ -64,7 +64,6 @@ function getTodayDate(){
 }
 
     // --- DOM ELEMENTS ---
-    const loginOverlay = document.getElementById("loginOverlay");
     const usernameInput = document.getElementById("username");
     const loginBtn = document.getElementById("loginBtn");
     
@@ -510,17 +509,20 @@ onSnapshot(collection(db,"messages"), snap=>{
  });
 });
   
+// USER EXIT
 window.addEventListener("beforeunload", async () => {
     if(currentUser){
         await updateDoc(doc(db,"users",currentUser),{
             status:"Offline"
         });
     }
-      window.logoutUser = ()=>{
+});
+
+// LOGOUT BUTTON FUNCTION
+window.logoutUser = ()=>{
  localStorage.removeItem("userName");
  location.reload();
 };
-});
 
 });
 
