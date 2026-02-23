@@ -552,30 +552,25 @@ onSnapshot(collection(db,"messages"), snap=>{
 });
   
 // USER EXIT
-window.addEventListener("beforeunload", async () => {
-    if(currentUser){
-        await updateDoc(doc(db,"users",currentUser),{
-            status:"Offline"
-        });
-    }
+window.addEventListener("beforeunload", () => {
+ if(currentUser){
+   updateDoc(doc(db,"users",currentUser),{
+     status:"Offline"
+   });
+ }
 });
 
-// LOGOUT BUTTON FUNCTION
-window.logoutUser = ()=>{
- localStorage.removeItem("userName");
- location.reload();
+import { signOut } from 
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+window.logoutUser = async ()=>{
+ await signOut(auth);
+ window.location.href="login.html";
 };
 
-// 👇 YAHAN GRAPH CODE PASTE KARNA
-new Chart(document.getElementById("progressChart"),{
- type:'line',
- data:{
-  labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-  datasets:[{
-   label:'Focus Minutes',
-   data:[0,0,0,0,0,0,0]
-  }]
- }
+document.getElementById("leaderboardBtn")
+.addEventListener("click", ()=>{
+  window.location.href="leaderboard.html";
 });
 
 });
