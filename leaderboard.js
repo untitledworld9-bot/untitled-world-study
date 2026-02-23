@@ -63,3 +63,21 @@ onSnapshot(collection(db,"users"), snap=>{
   });
 
 });
+
+onAuthStateChanged(auth,user=>{
+ if(user && users.length>0){
+
+  const currentName=user.displayName;
+  const position = users.findIndex(u=>u.name===currentName)+1;
+
+  if(position>15){
+   board.innerHTML+=`
+<div class="rank-card">
+ <span class="rank-no">#${rank}</span>
+ <span class="rank-name">${u.name}</span>
+ <span class="rank-time">${h}h ${m}m</span>
+ <span class="rank-badge">${badge}</span>
+</div>`;
+  }
+ }
+});
