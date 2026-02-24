@@ -1,16 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Weekly Leaderboard</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Leaderboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #121212; /* Dark theme ke liye */
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        h2 {
+            text-align: center;
+            color: #00f2fe;
+            margin-bottom: 30px;
+        }
+    </style>
 </head>
-<body style="padding:20px;">
+<body>
 
-<h2>🏆 Weekly Leaderboard (Top 15)</h2>
+    <h2>🏆 Weekly Leaderboard (Top 15)</h2>
 
-<div id="board"></div>
+    <div id="board">Loading leaderboard...</div>
 
-<script type="module" src="leaderboard.js"></script>
+    <script type="module" src="leaderboard.js"></script>
 </body>
 </html>
