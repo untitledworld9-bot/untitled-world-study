@@ -407,7 +407,7 @@ cursor:pointer;font-size:12px;margin-left:5px;">
     </div>
     `;
         }
-    let lastWaveTime = 0;
+    let lastWaveTime = Date.now();
 
 if(
  u.waveFrom &&
