@@ -431,7 +431,7 @@ function saveAndRender(){
         
         let html = `
             <div class="video-card">
-               <iframe src="${
+                <iframe src="${
 video.id.startsWith('playlist:')
 ? `https://www.youtube.com/embed/videoseries?list=${video.id.replace('playlist:','')}`
 : `https://www.youtube.com/embed/${video.id}`
