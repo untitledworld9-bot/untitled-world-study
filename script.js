@@ -522,35 +522,37 @@ window.sendMsg = async ()=>{
  document.getElementById("chatInput").value="";
 };
 
-let lastMsgTime = 0;
+let lastMsgTime = Date.now(); // ✅ FIXED: 0 ko Date.now() kar diya taaki purane msg na aayein
 
 onSnapshot(collection(db,"messages"), snap=>{
- snap.forEach(d=>{
-  const m=d.data();
+    snap.forEach(d=>{
+        const m=d.data();
 
-  if(
-    m.room===roomId &&
-    m.to===currentUser &&
-    m.from!==currentUser &&
-    m.time > lastMsgTime
-  ){
+        if(
+            m.room===roomId &&
+            m.to===currentUser &&
+            m.from!==currentUser &&
+            m.time > lastMsgTime
+        ){
+            lastMsgTime = m.time;
 
-    lastMsgTime = m.time;
+            const box = document.getElementById("chatNotify");
+            const txt = document.getElementById("notifyText");
 
-    const box = document.getElementById("chatNotify");
-    const txt = document.getElementById("notifyText");
+            if(!box || !txt) return;
 
-    if(!box || !txt) return;
+            txt.innerText = `${m.from}: ${m.text}`;
+            box.style.display = "block";
+            box.classList.add("active"); // CSS blink animation trigger karne ke liye
 
-    txt.innerText = `${m.from}: ${m.text}`;
-    box.style.display = "block";
-
-    setTimeout(()=>{
-      box.style.display = "none";
-    },4000);
-  }
- });
+            setTimeout(()=>{
+                box.style.display = "none";
+                box.classList.remove("active");
+            },4000);
+        }
+    });
 });
+
   
 // USER EXIT
 window.addEventListener("beforeunload", async () => {
