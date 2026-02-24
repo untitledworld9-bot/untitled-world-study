@@ -522,7 +522,7 @@ window.sendMsg = async ()=>{
  document.getElementById("chatInput").value="";
 };
 
-let lastMsgTime = Date.now(); // ✅ FIXED: 0 ko Date.now() kar diya taaki purane msg na aayein
+let lastMsgTime = 0; // ✅ FIXED: 0 ko Date.now() kar diya taaki purane msg na aayein
 
 onSnapshot(collection(db,"messages"), snap=>{
     snap.forEach(d=>{
