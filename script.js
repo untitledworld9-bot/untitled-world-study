@@ -580,6 +580,23 @@ if(statusBtn){
  });
 }
 
+onSnapshot(collection(db,"announcements"), snap=>{
+ snap.forEach(d=>{
+
+  const a=d.data();
+  if(!a.active) return;
+
+  const box=document.createElement("div");
+  box.className="admin-msg";
+  box.innerText="📢 "+a.text;
+
+  document.body.appendChild(box);
+
+  setTimeout(()=>box.remove(),5000);
+
+ });
+});
+
 });
 
   
