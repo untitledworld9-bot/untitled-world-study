@@ -148,7 +148,7 @@ onAuthStateChanged(auth, async user=>{
 
    const today = getTodayDate();
    const currentWeek = getWeekNumber();
-   const userRef = doc(db,"users",user.uid);
+   const userRef = doc(db,"users", currentusers);
 
    // 👇 OLD DATA CHECK
    const snap = await getDoc(userRef);
