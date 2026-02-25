@@ -123,11 +123,12 @@ if(googleBtn){
    loginOverlay.style.display="none";
 
    await setDoc(doc(db,"users",currentUser),{
-     name: currentUser,
-     focusTime: 0,
-     status:"Online",
-     room: roomId
-   });
+  name: currentUser,
+  email: user.email,   // ✅ YE ADD KARNA HAI
+  focusTime: 0,
+  status:"Online",
+  room: roomId
+},{merge:true});        // ✅ YE BHI ADD KARO
 
   }catch(err){
     console.log(err);
@@ -175,6 +176,7 @@ onAuthStateChanged(auth, async user=>{
   // 👇 ALWAYS UPDATE USER STATUS
    await setDoc(userRef,{
      name:currentUser,
+     email: user.email,
      status:"Online",
      room:roomId,
      lastActiveDate: today
