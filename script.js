@@ -1,16 +1,17 @@
 import { initializeApp } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-import { 
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot,
-  doc,
-  setDoc,
-  updateDoc,
-  increment
-} from 
+import {
+ getFirestore,
+ collection,
+ addDoc,
+ onSnapshot,
+ doc,
+ setDoc,
+ updateDoc,
+ increment,
+ deleteDoc
+}from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 import { 
@@ -148,7 +149,7 @@ onAuthStateChanged(auth, async user=>{
 
    const today = getTodayDate();
    const currentWeek = getWeekNumber();
-   const userRef = doc(db,"users", currentusers);
+   const userRef = doc(db,"users", currentuser);
 
    // 👇 OLD DATA CHECK
    const snap = await getDoc(userRef);
@@ -368,6 +369,8 @@ document.getElementById("joinRoomBtn")
             alert("Link Copied!");
         });
     });
+
+let lastWaveTime = 0;
   
 onSnapshot(collection(db,"users"), (snapshot) => {
 
@@ -409,8 +412,7 @@ cursor:pointer;font-size:12px;margin-left:5px;">
     </div>
     `;
         }
-    let lastWaveTime = Date.now();
-
+    
 if(
  u.waveFrom &&
  u.name === currentUser &&
@@ -480,13 +482,19 @@ let chattingWith="";
 window.openChat = (name)=>{
  chattingWith=name;
  document.getElementById("chatBox").style.display="block";
+
+ document.getElementById("chatMessages").innerHTML =
+ "<div style='text-align:center;opacity:.6'>Loading chat...</div>";
 };
 
 window.closeChat = ()=>{
  document.getElementById("chatBox").style.display="none";
 };
 
-onSnapshot(collection(db,"messages"), snap=>{
+import { query, orderBy } from 
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+onSnapshot(query(collection(db,"messages"),orderBy("time")), snap=>{
  const chatArea=document.getElementById("chatMessages");
  if(!chatArea) return;
 
@@ -496,31 +504,65 @@ onSnapshot(collection(db,"messages"), snap=>{
   const m=d.data();
 
   if(
-    m.room===roomId &&
-    (m.from===currentUser && m.to===chattingWith ||
-     m.from===chattingWith && m.to===currentUser)
-  ){
-   chatArea.innerHTML += `
+ m.room===roomId &&
+ (m.from===currentUser && m.to===chattingWith ||
+  m.from===chattingWith && m.to===currentUser)
+){
+
+ chatArea.innerHTML += `
 <div class="${m.from===currentUser?'msg-me':'msg-other'}">
  <b>${m.from}</b>
  ${m.text}
+ <span style="font-size:10px;margin-left:6px;">
+  ${m.status==="seen"?"✔✔":
+    m.status==="delivered"?"✔✔":
+    "✔"}
+ </span>
 </div>`;
-  }
+
+ // ✅ DELIVERED UPDATE
+ if(m.to===currentUser && m.status==="sent"){
+  updateDoc(doc(db,"messages",d.id),{
+   status:"delivered"
+  });
+ }
+
+ // ✅ SEEN UPDATE
+ if(m.to===currentUser && m.from===chattingWith){
+  updateDoc(doc(db,"messages",d.id),{
+   status:"seen"
+  });
+ }
+
+}
+
+const inputBox=document.getElementById("chatInput");
+
+if(inputBox){
+ inputBox.addEventListener("input", async ()=>{
+  if(!chattingWith) return;
+
+  await setDoc(doc(db,"typing",currentUser+"_"+chattingWith),{
+   from:currentUser,
+   to:chattingWith,
+   typing:true,
+   time:Date.now()
+  });
  });
-});
+}
 
 window.sendMsg = async ()=>{
  const txt=document.getElementById("chatInput").value;
  if(!txt) return;
 
- await addDoc(collection(db,"messages"),{
-  from:currentUser,
-  to:chattingWith,
-  text:txt,
-  room:roomId,
-  time:Date.now()
- });
-  
+await addDoc(collection(db,"messages"),{
+ from:currentUser,
+ to:chattingWith,
+ text:txt,
+ room:roomId,
+ time:Date.now(),
+ status:"sent"   // 👈 ADD THIS
+});
  document.getElementById("chatInput").value="";
 };
 
@@ -555,6 +597,29 @@ onSnapshot(collection(db,"messages"), snap=>{
     });
 });
 
+onSnapshot(collection(db,"typing"), snap=>{
+ snap.forEach(d=>{
+  const t=d.data();
+
+  if(t.to===currentUser && t.from===chattingWith){
+
+   let el=document.getElementById("typingIndicator");
+
+   if(!el){
+    el=document.createElement("div");
+    el.id="typingIndicator";
+    el.style.opacity=".7";
+    el.style.fontSize="12px";
+    el.innerText=t.from+" typing...";
+    document.getElementById("chatMessages").appendChild(el);
+   }
+
+   setTimeout(()=>{
+    if(el) el.remove();
+   },2000);
+  }
+ });
+});
   
 // USER EXIT
 window.addEventListener("beforeunload", async () => {
@@ -596,6 +661,16 @@ onSnapshot(collection(db,"announcements"), snap=>{
 
   setTimeout(()=>box.remove(),5000);
 
+ });
+});
+
+onSnapshot(collection(db,"messages"), snap=>{
+ snap.forEach(async d=>{
+  const m=d.data();
+
+  if(Date.now()-m.time > 172800000){
+   await deleteDoc(doc(db,"messages",d.id));
+  }
  });
 });
 
