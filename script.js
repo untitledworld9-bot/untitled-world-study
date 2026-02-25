@@ -10,7 +10,10 @@ import {
  setDoc,
  updateDoc,
  increment,
- deleteDoc
+ deleteDoc,
+ query,
+ orderBy,
+ getDocs
 }from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -490,9 +493,6 @@ window.openChat = (name)=>{
 window.closeChat = ()=>{
  document.getElementById("chatBox").style.display="none";
 };
-
-import { query, orderBy } from 
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 onSnapshot(query(collection(db,"messages"),orderBy("time")), snap=>{
  const chatArea=document.getElementById("chatMessages");
