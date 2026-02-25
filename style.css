@@ -285,6 +285,14 @@ header {
   100% { opacity: 1; }
 }
 
+#chatMessages{
+ height:200px;
+ overflow:auto;
+ padding:10px;
+ background:linear-gradient(135deg,#0f2027,#203a43);
+ border-radius:12px;
+}
+
 #chatMessages div{
  max-width:75%;
  padding:8px 12px;
@@ -293,20 +301,28 @@ header {
  font-size:14px;
 }
 
-#chatMessages div b{
- display:block;
- font-size:11px;
- opacity:0.6;
-}
-
 .msg-me{
  background:#00f2fe;
  color:black;
  margin-left:auto;
+ border-radius:15px 15px 0 15px;
+}
+
+.msg-me span{
+ color:#00ff88;
 }
 
 .msg-other{
  background:rgba(255,255,255,0.1);
+}
+
+#chatBox button{
+ padding:12px 20px;
+ font-size:16px;
+ border-radius:20px;
+ background:#00ff88;
+ color:black;
+ font-weight:bold;
 }
 
 #chatNotify.active {
