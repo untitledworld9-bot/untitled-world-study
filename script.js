@@ -535,6 +535,8 @@ onSnapshot(query(collection(db,"messages"),orderBy("time")), snap=>{
  }
 
 }
+});   
+});  
 
 const inputBox=document.getElementById("chatInput");
 
@@ -674,6 +676,5 @@ onSnapshot(collection(db,"messages"), snap=>{
  });
 });
 
-});
 
   
