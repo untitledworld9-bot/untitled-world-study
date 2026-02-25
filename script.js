@@ -27,6 +27,8 @@ import {
 
 import { getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+import { where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
   authDomain: "untitled-world-2e645.firebaseapp.com",
@@ -494,7 +496,7 @@ window.closeChat = ()=>{
  document.getElementById("chatBox").style.display="none";
 };
 
-onSnapshot(query(collection(db,"messages"),orderBy("time")), snap=>{
+onSnapshot(query(collection(db,"messages"), where("room", "==", roomId), orderBy("time")), snap=>{
  const chatArea=document.getElementById("chatMessages");
  if(!chatArea) return;
 
@@ -568,7 +570,8 @@ await addDoc(collection(db,"messages"),{
  document.getElementById("chatInput").value="";
 };
 
-let lastMsgTime = 0; // ✅ FIXED: 0 ko Date.now() kar diya taaki purane msg na aayein
+let lastMsgTime = Date.now(); // Now it actually matches your comment!
+
 
 onSnapshot(collection(db,"messages"), snap=>{
     snap.forEach(d=>{
