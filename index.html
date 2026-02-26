@@ -241,6 +241,12 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
   cursor:pointer;
   margin-right:10px;
   }
+
+.site-title{
+  font-size: clamp(16px, 3.2vw, 30px);
+  font-weight: 700;
+  line-height: 1.2;
+}
   
 /* --- CSS END --- */
 </style>
@@ -249,7 +255,7 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 <body>
 
 <header>
-<h1>Untitled World</h1>
+<h1 class="site-title">Untitled World - Smart Study Platform</h1>
 <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 <nav id="navMenu">
 <a href="timer.html">Focus Timer</a>
