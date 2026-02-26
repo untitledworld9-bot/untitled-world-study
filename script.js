@@ -621,7 +621,21 @@ onSnapshot(collection(db,"typing"), snap=>{
   
 // USER EXIT
 window.addEventListener("visibilitychange", async ()=>{
- if(document.visibilityState==="hidden" && currentUser){
+ if(!currentUser) return;
+
+ if(document.visibilityState==="hidden"){
+  await updateDoc(doc(db,"users",currentUser),{
+   status:"Offline"
+  });
+ } else {
+  await updateDoc(doc(db,"users",currentUser),{
+   status:"Online"
+  });
+ }
+});
+
+window.addEventListener("beforeunload", async ()=>{
+ if(currentUser){
   await updateDoc(doc(db,"users",currentUser),{
    status:"Offline"
   });
