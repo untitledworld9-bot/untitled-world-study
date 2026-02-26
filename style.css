@@ -670,3 +670,29 @@ header {
 .rank-card:nth-child(8){animation-delay:.8s;}
 .rank-card:nth-child(9){animation-delay:.9s;}
 .rank-card:nth-child(10){animation-delay:1s;}
+
+/* ===== TOP 3 PODIUM BOUNCE ANIMATION ===== */
+
+@keyframes podiumBounce {
+  0%   { transform:translateY(20px) scale(0.9); opacity:0; }
+  50%  { transform:translateY(-10px) scale(1.05); }
+  70%  { transform:translateY(5px) scale(0.98); }
+  100% { transform:translateY(0) scale(1); opacity:1; }
+}
+
+/* Rank 1 (center biggest) */
+.podium-1{
+ animation:podiumBounce .8s ease forwards;
+}
+
+/* Rank 2 */
+.podium-2{
+ animation:podiumBounce .8s ease forwards;
+ animation-delay:.2s;
+}
+
+/* Rank 3 */
+.podium-3{
+ animation:podiumBounce .8s ease forwards;
+ animation-delay:.4s;
+}
