@@ -182,39 +182,81 @@ onAuthStateChanged(auth, async user=>{
  },{merge:true});
 });
   
+const roomModal=document.getElementById("roomModal");
+const confirmBtn=document.getElementById("confirmCreateRoom");
+
 document.getElementById("createRoomBtn")
-.addEventListener("click", async ()=>{
-
- if(!currentUser){
-   alert("Login first");
-   return;
- }
-
- const newRoom=Math.random().toString(36).substring(2,8);
-
- await setDoc(doc(db,"users",currentUser),{
-  room:newRoom
- },{merge:true});
-
- location.href=`/timer?room=${newRoom}`;
+.addEventListener("click",(e)=>{
+ e.preventDefault();
+ roomModal.style.display="flex";
 });
 
-document.getElementById("joinRoomBtn")
-.addEventListener("click", async ()=>{
+confirmBtn.addEventListener("click", async ()=>{
 
- if(!currentUser){
-   alert("Login first");
+ const name=document.getElementById("roomNameInput").value.trim();
+ const pass=document.getElementById("roomPassInput").value.trim();
+
+ if(!name || !pass){
+   alert("Fill all fields");
    return;
  }
 
- const id=prompt("Enter Room ID");
- if(!id) return;
+ const roomId=name+"_"+Math.random().toString(36).substring(2,5);
 
- const q=query(collection(db,"users"), where("room","==",id));
- const snap=await getDocs(q);
+ await setDoc(doc(db,"rooms",roomId),{
+   name:name,
+   password:pass,
+   createdBy:currentUser,
+   createdAt:Date.now()
+ });
 
- if(snap.empty){
+ await updateDoc(doc(db,"users",currentUser),{
+   room:roomId
+ });
+
+ roomModal.style.display="none";
+
+ location.href=`/timer?room=${roomId}`;
+});
+
+document.getElementById("roomPassInput")
+.addEventListener("keydown",e=>{
+ if(e.key==="Enter"){
+   confirmBtn.click();
+ }
+});
+
+const joinModal=document.getElementById("joinModal");
+const confirmJoinBtn=document.getElementById("confirmJoinRoom");
+
+document.getElementById("joinRoomBtn")
+.addEventListener("click",(e)=>{
+ e.preventDefault();
+ joinModal.style.display="flex";
+});
+
+confirmJoinBtn.addEventListener("click", async ()=>{
+
+ const id=document.getElementById("joinRoomName").value.trim();
+ const pass=document.getElementById("joinRoomPass").value.trim();
+
+ if(!id || !pass){
+   alert("Fill all fields");
+   return;
+ }
+
+ const roomRef=doc(db,"rooms",id);
+ const snap=await getDoc(roomRef);
+
+ if(!snap.exists()){
    alert("Room not found ❌");
+   return;
+ }
+
+ const data=snap.data();
+
+ if(data.password!==pass){
+   alert("Wrong password ❌");
    return;
  }
 
@@ -222,7 +264,16 @@ document.getElementById("joinRoomBtn")
    room:id
  });
 
+ joinModal.style.display="none";
+
  location.href=`/timer?room=${id}`;
+});
+
+document.getElementById("joinRoomPass")
+.addEventListener("keydown",e=>{
+ if(e.key==="Enter"){
+   confirmJoinBtn.click();
+ }
 });
 
     // --- 2. TIMER PRESET LOGIC ---
