@@ -275,7 +275,7 @@ document.getElementById("joinRoomBtn")
 
         presetBtns.forEach(b => b.style.pointerEvents = "none");
 
-        timerInterval = setInterval(() => {
+        timerInterval = setInterval(async () => {
             if (mode === "countdown") {
                 if (seconds > 0) {
                     seconds--;
