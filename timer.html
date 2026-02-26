@@ -117,15 +117,17 @@ z-index:9999;
 style="height:200px;overflow:auto;margin-bottom:8px;">
 </div>
 
-<input id="chatInput"
-placeholder="Type message..."
-style="width:70%;padding:8px;">
+<div style="display:flex;align-items:center;gap:10px;">
+  
+ <input id="chatInput"
+ placeholder="Type message..."
+ style="flex:1;padding:12px;border-radius:12px;border:none;">
 
-<button onclick="sendMsg()">Send🚀</button>
-        
-<button onclick="closeChat()">❌</button>
+ <button onclick="sendMsg()">Send🚀</button>
+ <button onclick="closeChat()">❌</button>
 
-    </div>
+</div>
+    
     
 <div id="chatNotify" style="
 position:absolute;
