@@ -56,7 +56,7 @@
 
     <div class="dropdown" id="navMenu">
         <a href="mailto:support@untitledworld.us.cc">Contact Us</a>
-        <a onclick="logoutUser()">Exit Session</a>
+        <a onclick="logoutUser()">Logout</a>
     </div>
 
     <div class="timer-wrapper">
@@ -71,9 +71,29 @@
     </div>
 
     <div class="room-controls">
-  <button id="createRoomBtn">Create</button>
-  <button id="joinRoomBtn">Room</button>
-    </div>
+  <button type="button" id="createRoomBtn">Create</button>
+  <button type="button" id="joinRoomBtn">Room</button>
+</div>
+
+<!-- CREATE ROOM MODAL -->
+<div id="createModal" class="room-modal">
+  <div class="room-card">
+    <h3>Create Study Room</h3>
+    <input id="roomName" placeholder="Room Name">
+    <button id="confirmCreate">Enter Room 🚀</button>
+    <span class="closeModal">❌</span>
+  </div>
+</div>
+
+<!-- JOIN ROOM MODAL -->
+<div id="joinModal" class="room-modal">
+  <div class="room-card">
+    <h3>Join Room</h3>
+    <input id="joinRoomInput" placeholder="Enter Room ID">
+    <button id="confirmJoin">Join 🚀</button>
+    <span class="closeModal">❌</span>
+  </div>
+</div>
 
     <div class="group-fab" id="openPanelBtn">
         <div class="fab-content">
