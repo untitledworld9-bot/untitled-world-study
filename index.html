@@ -247,6 +247,16 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
   font-weight: 700;
   line-height: 1.2;
 }
+
+.logo-icon{
+  background: linear-gradient(45deg,#00f2fe,#4facfe);
+  padding:4px 8px;
+  border-radius:6px;
+  margin-right:8px;
+  font-size:14px;
+  font-weight:700;
+  color:#000;
+}
   
 /* --- CSS END --- */
 </style>
@@ -255,7 +265,10 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 <body>
 
 <header>
-<h1 class="site-title">Untitled World - Smart Study Platform</h1>
+<h1 class="site-title">
+  <span class="logo-icon">U/W</span>
+  Untitled World - Smart Study Platform
+</h1>
 <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 <nav id="navMenu">
 <a href="timer.html">Focus Timer</a>
@@ -267,7 +280,7 @@ footer{text-align:center;padding:15px;background:rgba(0,0,0,.5);font-size:14px;}
 </header>
 
 <section class="hero">
-<h2>Welcome Untitled World</h2>
+<h2>Welcome To Untitled World</h2>
 <p>Distraction Free Study + Smart Progress Tracking</p>
 <button class="btn" onclick="goToStudy()" aria-label="Start Learning">
 Start Learning 👇
