@@ -144,52 +144,57 @@ if(googleBtn){
 }
 
 onAuthStateChanged(auth, async user=>{
- if(user){
-
-   currentUser = user.displayName;
-   
-   localStorage.setItem("userName", user.displayName);
-   
-   loginOverlay.style.display="none";
-
-   const today = getTodayDate();
-   const currentWeek = getWeekNumber();
-   const userRef = doc(db,"users", currentUser);
-
-   // 👇 OLD DATA CHECK
-   const snap = await getDoc(userRef);
-   
-   if(snap.exists()){
- const data = snap.data();
-  
-  // DAILY RESET (optional)
- if(data.lastActiveDate !== today){
-   await updateDoc(userRef,{
-     focusTime:0,
-     lastActiveDate:today
-   });
+ if(!user){
+   loginOverlay.style.display="flex";
+   return;
  }
-  
-  // 👇 ALWAYS UPDATE USER STATUS
-   await setDoc(userRef,{
-     name:currentUser,
-     email: user.email,
-     status:"Online",
-     room:roomId,
-     lastActiveDate: today,
-     lastActiveWeek: currentWeek
-   },{merge:true});
+
+ currentUser = user.displayName;
+ localStorage.setItem("userName", currentUser);
+ loginOverlay.style.display="none";
+
+ const today = getTodayDate();
+ const currentWeek = getWeekNumber();
+ const userRef = doc(db,"users", currentUser);
+
+ const snap = await getDoc(userRef);
+
+ // ✅ DAILY RESET only if document exists
+ if(snap.exists()){
+   const data = snap.data();
+
+   if(data.lastActiveDate !== today){
+     await updateDoc(userRef,{
+       focusTime:0,
+       lastActiveDate:today
+     });
+   }
  }
+
+ // ✅ ALWAYS create/update user (important)
+ await setDoc(userRef,{
+   name:currentUser,
+   email:user.email,
+   status:"Online",
+   room:roomId,
+   lastActiveDate:today,
+   lastActiveWeek:currentWeek
+ },{merge:true});
 });
   
 document.getElementById("createRoomBtn")
 .addEventListener("click", async ()=>{
 
- const newRoom = Math.random().toString(36).substring(2,8);
+ if(!currentUser){
+   alert("Login first");
+   return;
+ }
 
- await updateDoc(doc(db,"users",currentUser),{
-   room:newRoom
- });
+ const newRoom=Math.random().toString(36).substring(2,8);
+
+ await setDoc(doc(db,"users",currentUser),{
+  room:newRoom
+ },{merge:true});
 
  location.href=`/timer?room=${newRoom}`;
 });
@@ -197,20 +202,18 @@ document.getElementById("createRoomBtn")
 document.getElementById("joinRoomBtn")
 .addEventListener("click", async ()=>{
 
- const id = prompt("Enter Room ID");
+ if(!currentUser){
+   alert("Login first");
+   return;
+ }
+
+ const id=prompt("Enter Room ID");
  if(!id) return;
 
- // ✅ ROOM EXIST CHECK
- const usersSnap = await getDocs(collection(db,"users"));
- let roomExists = false;
+ const q=query(collection(db,"users"), where("room","==",id));
+ const snap=await getDocs(q);
 
- usersSnap.forEach(docSnap=>{
-   if(docSnap.data().room === id){
-     roomExists = true;
-   }
- });
-
- if(!roomExists){
+ if(snap.empty){
    alert("Room not found ❌");
    return;
  }
