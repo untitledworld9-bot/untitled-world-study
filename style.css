@@ -641,3 +641,32 @@ header {
  font-weight:600;
  z-index:9999;
 }
+
+/* ===== Rank Entry Animation ===== */
+
+@keyframes rankFadeUp {
+  from{
+    opacity:0;
+    transform:translateY(20px) scale(0.95);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.rank-card{
+  animation:rankFadeUp .5s ease forwards;
+}
+
+/* Delay effect (top to bottom entry) */
+.rank-card:nth-child(1){animation-delay:.1s;}
+.rank-card:nth-child(2){animation-delay:.2s;}
+.rank-card:nth-child(3){animation-delay:.3s;}
+.rank-card:nth-child(4){animation-delay:.4s;}
+.rank-card:nth-child(5){animation-delay:.5s;}
+.rank-card:nth-child(6){animation-delay:.6s;}
+.rank-card:nth-child(7){animation-delay:.7s;}
+.rank-card:nth-child(8){animation-delay:.8s;}
+.rank-card:nth-child(9){animation-delay:.9s;}
+.rank-card:nth-child(10){animation-delay:1s;}
