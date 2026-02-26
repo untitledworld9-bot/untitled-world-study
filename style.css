@@ -795,3 +795,70 @@ header {
   50%{ text-shadow:0 0 20px gold,0 0 35px gold; }
   100%{ text-shadow:0 0 6px gold; }
 }
+
+/* ===== ROOM MODAL SAFE PATCH (NO CONFLICT) ===== */
+
+.room-modal{
+ position:fixed;
+ inset:0;
+ display:none;
+ justify-content:center;
+ align-items:center;
+ background:rgba(0,0,0,.55);
+ backdrop-filter:blur(12px);
+ z-index:10000;
+}
+
+.room-card{
+ background:rgba(20,40,50,.75);
+ border:1px solid #00f2fe;
+ border-radius:20px;
+ padding:25px 20px;
+ width:90%;
+ max-width:320px;
+ text-align:center;
+ animation:modalPop .25s ease;
+}
+
+.room-card h3{
+ margin-bottom:12px;
+ color:#00f2fe;
+}
+
+.room-card input{
+ width:100%;
+ padding:10px;
+ margin:10px 0 14px;
+ border-radius:10px;
+ border:none;
+ outline:none;
+ background:#0f2027;
+ color:white;
+}
+
+.room-card button{
+ background:#00ff88;
+ border:none;
+ padding:10px 18px;
+ border-radius:20px;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.room-card .closeModal{
+ display:block;
+ margin-top:10px;
+ cursor:pointer;
+ opacity:.7;
+}
+
+@keyframes modalPop{
+ from{
+  transform:scale(.85);
+  opacity:0;
+ }
+ to{
+  transform:scale(1);
+  opacity:1;
+ }
+}
