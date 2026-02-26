@@ -19,11 +19,38 @@ if(!board){
 }
 
 // 🔥 IMPORTANT — WAIT FOR AUTH
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
 
  if(!user){
-   board.innerHTML = "<div style='text-align:center; padding:20px;'>Login required to view leaderboard</div>";
+   board.innerHTML="<div style='text-align:center;padding:20px;'>Login required</div>";
    return;
+ }
+
+ // ⭐ WEEKLY RESET CHECK
+ const { doc, getDoc, updateDoc } =
+ await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+
+ const getWeekNumber=()=>{
+  const d=new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate()+4-(d.getDay()||7));
+  const yearStart=new Date(d.getFullYear(),0,1);
+  return Math.ceil((((d-yearStart)/86400000)+1)/7);
+ };
+
+ const ref=doc(db,"users",user.displayName);
+ const snap=await getDoc(ref);
+
+ if(snap.exists()){
+  const data=snap.data();
+  const week=getWeekNumber();
+
+  if(data.lastActiveWeek!==week){
+   await updateDoc(ref,{
+    focusTime:0,
+    lastActiveWeek:week
+   });
+  }
  }
 
  // 🔥 SNAPSHOT AFTER AUTH
@@ -49,11 +76,12 @@ onAuthStateChanged(auth, user => {
   }
 
   // Helper Function for Time Formatting
-  const formatTime = (totalMin) => {
-      const h = Math.floor(totalMin || 0 / 60);
-      const m = Math.floor(totalMin || 0) % 60;
-      return `${h}h ${m}m`;
-  };
+  const formatTime=(totalMin)=>{
+ const t=totalMin||0;
+ const h=Math.floor(t/60);
+ const m=t%60;
+ return `${h}h ${m}m`;
+};
 
   // =========================================================
   // 1. GENERATE TOP 3 PODIUM HTML
