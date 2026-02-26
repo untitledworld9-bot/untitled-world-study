@@ -312,12 +312,18 @@ if(seconds % 120 === 0 && isRunning){
 
 stopBtn.addEventListener("click", async () => {
 
-    await updateDoc(doc(db,"users",currentUser),{
-        status:"Online"
-    });
-
     clearInterval(timerInterval);
     isRunning = false;
+
+    // ✅ SAVE FINAL TIME BEFORE RESET
+    const mins = Math.floor(seconds/60);
+
+    if(mins > 0){
+      await updateDoc(doc(db,"users",currentUser),{
+        status:"Online",
+        focusTime: increment(mins)
+      });
+    }
 
     startBtn.style.display = "block";
     stopBtn.style.display = "none";
@@ -334,26 +340,6 @@ stopBtn.addEventListener("click", async () => {
 
     updateDisplay();
 });
-
-    function finishTimer() {
-        clearInterval(timerInterval);
-        alert("Session Complete!");
-        stopBtn.click(); // Trigger reset
-    }
-
-    function updateDisplay() {
-        let h = Math.floor(seconds / 3600);
-        let m = Math.floor((seconds % 3600) / 60);
-        let s = seconds % 60;
-        
-        let timeStr = "";
-        if (h > 0) {
-            timeStr = `${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-        } else {
-            timeStr = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-        }
-        display.innerText = timeStr;
-    }
 
     // --- 4. PANEL & MENU LOGIC ---
     openPanelBtn.addEventListener("click", () => {
