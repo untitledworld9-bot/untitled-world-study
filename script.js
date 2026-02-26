@@ -109,6 +109,19 @@ if(progressLink){
   });
 }
 
+let initialSeconds = 0;
+
+function updateDisplay(){
+  const mins = Math.floor(seconds/60);
+  const secs = seconds % 60;
+
+  display.innerText =
+    String(mins).padStart(2,"0") + ":" +
+    String(secs).padStart(2,"0");
+}
+
+
+
     // --- 1. LOGIN LOGIC ---
 // 👇 YAHAN ADD GOOGLE LOGIN
 const googleBtn = document.getElementById("googleLogin");
