@@ -100,9 +100,7 @@ function getWeekNumber(){
     const backdrop = document.getElementById("backdrop");
     const userList = document.getElementById("userList");
     const inviteBtn = document.getElementById("inviteBtn");
-    const createRoom = document.getElementById("createRoom");
-    const joinRoom = document.getElementById("joinRoom");
-    const roomInput = document.getElementById("roomInput");
+
     const progressLink = document.getElementById("progressLink");
 
 if(progressLink){
@@ -182,108 +180,79 @@ onAuthStateChanged(auth, async user=>{
  },{merge:true});
 });
   
-const roomModal = document.getElementById("roomModal");
-const confirmBtn = document.getElementById("confirmCreateRoom");
+// ===== CREATE ROOM =====
+const createModal = document.getElementById("createModal");
 const createBtn = document.getElementById("createRoomBtn");
+const confirmCreate = document.getElementById("confirmCreate");
 
-if(createBtn && roomModal){
- createBtn.addEventListener("click",(e)=>{
-   e.preventDefault();
-   roomModal.style.display="flex";
- });
+if(createBtn){
+ createBtn.onclick = () => {
+   createModal.style.display = "flex";
+ };
 }
 
-if(confirmBtn){
- confirmBtn.addEventListener("click", async ()=>{
+if(confirmCreate){
+ confirmCreate.onclick = async () => {
 
- const name=document.getElementById("roomNameInput").value.trim();
- const pass=document.getElementById("roomPassInput").value.trim();
+   const name = document.getElementById("roomName").value.trim();
 
- if(!name || !pass){
-   alert("Fill all fields");
-   return;
- }
+   if(!name){
+     alert("Enter room name");
+     return;
+   }
 
- const roomId=name+"_"+Math.random().toString(36).substring(2,5);
+   const newRoomId = name + "_" + Math.random().toString(36).substring(2,5);
 
- await setDoc(doc(db,"rooms",roomId),{
-   name:name,
-   password:pass,
-   createdBy:currentUser,
-   createdAt:Date.now()
- });
+   await setDoc(doc(db,"rooms",newRoomId),{
+     name:name,
+     createdBy:currentUser,
+     createdAt:Date.now()
+   });
 
- await updateDoc(doc(db,"users",currentUser),{
-   room:roomId
- });
+   await updateDoc(doc(db,"users",currentUser),{
+     room:newRoomId
+   });
 
- roomModal.style.display="none";
-
- location.href=`/timer?room=${roomId}`;
-});
+   location.href=`/timer?room=${newRoomId}`;
+ };
 }
 
-document.getElementById("roomPassInput")
-.addEventListener("keydown",e=>{
- if(e.key==="Enter"){
-   confirmBtn.click();
- }
-});
 
-const joinModal=document.getElementById("joinModal");
-const confirmJoinBtn=document.getElementById("confirmJoinRoom");
-
+// ===== JOIN ROOM =====
+const joinModal = document.getElementById("joinModal");
 const joinBtn = document.getElementById("joinRoomBtn");
+const confirmJoin = document.getElementById("confirmJoin");
 
-if(joinBtn && joinModal){
- joinBtn.addEventListener("click",(e)=>{
- e.preventDefault();
- joinModal.style.display="flex";
-});
+if(joinBtn){
+ joinBtn.onclick = () => {
+   joinModal.style.display = "flex";
+ };
 }
 
-if(confirmJoinBtn){
- confirmJoinBtn.addEventListener("click", async ()=>{
+if(confirmJoin){
+ confirmJoin.onclick = async () => {
 
- const id=document.getElementById("joinRoomName").value.trim();
- const pass=document.getElementById("joinRoomPass").value.trim();
+   const id = document.getElementById("joinRoomInput").value.trim();
 
- if(!id || !pass){
-   alert("Fill all fields");
-   return;
- }
+   if(!id){
+     alert("Enter Room ID");
+     return;
+   }
 
- const roomRef=doc(db,"rooms",id);
- const snap=await getDoc(roomRef);
+   const snap = await getDoc(doc(db,"rooms",id));
 
- if(!snap.exists()){
-   alert("Room not found ❌");
-   return;
- }
+   if(!snap.exists()){
+     alert("Room not found ❌");
+     return;
+   }
 
- const data=snap.data();
+   await updateDoc(doc(db,"users",currentUser),{
+     room:id
+   });
 
- if(data.password!==pass){
-   alert("Wrong password ❌");
-   return;
- }
-
- await updateDoc(doc(db,"users",currentUser),{
-   room:id
- });
-
- joinModal.style.display="none";
-
- location.href=`/timer?room=${id}`;
-});
+   location.href=`/timer?room=${id}`;
+ };
 }
-
-document.getElementById("joinRoomPass")
-.addEventListener("keydown",e=>{
- if(e.key==="Enter"){
-   confirmJoinBtn.click();
- }
-});
 
     // --- 2. TIMER PRESET LOGIC ---
     presetBtns.forEach(btn => {
@@ -409,31 +378,40 @@ stopBtn.addEventListener("click", async () => {
 });
 
     // --- 4. PANEL & MENU LOGIC ---
-    openPanelBtn.addEventListener("click", () => {
-        socialSheet.classList.add("open");
-        backdrop.style.display = "block";
-    });
+    if(openPanelBtn && socialSheet && backdrop){
+ openPanelBtn.addEventListener("click", () => {
+  socialSheet.classList.add("open");
+  backdrop.style.display = "block";
+ });
+}
 
-    closePanelBtn.addEventListener("click", () => {
-        socialSheet.classList.remove("open");
-        backdrop.style.display = "none";
-    });
-    
-    backdrop.addEventListener("click", () => {
-        socialSheet.classList.remove("open");
-        backdrop.style.display = "none";
-    });
+if(closePanelBtn && socialSheet && backdrop){
+ closePanelBtn.addEventListener("click", () => {
+  socialSheet.classList.remove("open");
+  backdrop.style.display = "none";
+ });
+}
 
-    menuToggle.addEventListener("click", () => {
-        navMenu.classList.toggle("active");
-    });
+if(backdrop && socialSheet){
+ backdrop.addEventListener("click", () => {
+  socialSheet.classList.remove("open");
+  backdrop.style.display = "none";
+ });
+}
 
-    inviteBtn.addEventListener("click", () => {
-        const url = `${location.origin}/timer?room=${roomId}`;
-        navigator.clipboard.writeText(url).then(() => {
-            alert("Link Copied!");
-        });
-    });
+if(menuToggle && navMenu){
+ menuToggle.addEventListener("click", () => {
+  navMenu.classList.toggle("active");
+ });
+}
+
+if(inviteBtn){
+ inviteBtn.addEventListener("click", () => {
+  const url = `${location.origin}/timer?room=${roomId}`;
+  navigator.clipboard.writeText(url);
+  alert("Link Copied!");
+ });
+}
 
 let lastWaveTime = 0;
   
