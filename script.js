@@ -169,19 +169,7 @@ onAuthStateChanged(auth, async user=>{
      lastActiveDate:today
    });
  }
-
- // 👇 WEEKLY RESET (MAIN FEATURE)
- if(data.lastActiveWeek !== currentWeek){
-
- await updateDoc(userRef,{
-   focusTime:0,
-   weeklyXP:0,   // ⭐ ADD THIS
-   lastActiveWeek:currentWeek
- });
-
-}
- }
-    
+  
   // 👇 ALWAYS UPDATE USER STATUS
    await setDoc(userRef,{
      name:currentUser,
@@ -261,6 +249,22 @@ document.getElementById("joinRoomBtn")
         alert("Login first");
         return;
     }
+
+    const currentWeek=getWeekNumber();
+const userRef=doc(db,"users",currentUser);
+const snap=await getDoc(userRef);
+
+if(snap.exists()){
+ const data=snap.data();
+
+ if(data.lastActiveWeek!==currentWeek){
+  await updateDoc(userRef,{
+   weeklyXP:0,
+   focusTime:0,
+   lastActiveWeek:currentWeek
+  });
+ }
+}
 
     // Update status only
     await updateDoc(doc(db,"users",currentUser),{
