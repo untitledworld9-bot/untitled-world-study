@@ -173,11 +173,11 @@ onAuthStateChanged(auth, async user=>{
  // 👇 WEEKLY RESET (MAIN FEATURE)
  if(data.lastActiveWeek !== currentWeek){
    await updateDoc(userRef,{
-     focusTime:0,
+     weeklyFocus:0,
      lastActiveWeek:currentWeek
    });
+}
  }
-   }
     
   // 👇 ALWAYS UPDATE USER STATUS
    await setDoc(userRef,{
@@ -185,16 +185,10 @@ onAuthStateChanged(auth, async user=>{
      email: user.email,
      status:"Online",
      room:roomId,
-     lastActiveDate: today
+     lastActiveDate: today,
+     lastActiveWeek: currentWeek
    },{merge:true});
  }
-});
-  
-      // User exit detect
-window.addEventListener("beforeunload", async () => {
-  await updateDoc(doc(db,"users",currentUser),{
-    status:"Offline"
-  });
 });
   
 document.getElementById("createRoomBtn")
@@ -290,23 +284,22 @@ document.getElementById("joinRoomBtn")
                 seconds++;
                 updateDisplay();
               
-               if(seconds%60===0){
-                 
-              updateDoc(doc(db,"users",currentUser),{
- status:"Focusing 👋",
- focusTime: increment(1)
-});
-               }
+               if(seconds%60===0 && isRunning){
+ updateDoc(doc(db,"users",currentUser),{
+  status:"Focusing 👋",
+  focusTime: increment(1),
+  weeklyFocus: increment(1)
+ });
+}
             }
         }, 1000);
     }
 });
 
-    stopBtn.addEventListener("click", async () => {
+stopBtn.addEventListener("click", async () => {
 
     await updateDoc(doc(db,"users",currentUser),{
-        status:"Online",
-        focusTime: increment(Math.floor(seconds/60))
+        status:"Online"
     });
 
     clearInterval(timerInterval);
@@ -384,7 +377,7 @@ onSnapshot(collection(db,"users"), (snapshot) => {
     snapshot.forEach(docSnap => {
     const u = docSnap.data();
 
-        if(u.room === roomId && u.status !== "Offline"){
+        if(u.room === roomId && (u.status === "Online" || u.status === "Focusing 👋")){
     userList.innerHTML += `
     <div class="member-card">
         <div style="font-size:24px;margin-right:10px;">👤</div>
@@ -627,13 +620,11 @@ onSnapshot(collection(db,"typing"), snap=>{
 });
   
 // USER EXIT
-window.addEventListener("beforeunload", async () => {
- if(currentUser){
-   try{
-     await updateDoc(doc(db,"users",currentUser),{
-       status:"Offline"
-     });
-   }catch(e){}
+window.addEventListener("visibilitychange", async ()=>{
+ if(document.visibilityState==="hidden" && currentUser){
+  await updateDoc(doc(db,"users",currentUser),{
+   status:"Offline"
+  });
  }
 });
 
