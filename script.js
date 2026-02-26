@@ -182,16 +182,19 @@ onAuthStateChanged(auth, async user=>{
  },{merge:true});
 });
   
-const roomModal=document.getElementById("roomModal");
-const confirmBtn=document.getElementById("confirmCreateRoom");
+const roomModal = document.getElementById("roomModal");
+const confirmBtn = document.getElementById("confirmCreateRoom");
+const createBtn = document.getElementById("createRoomBtn");
 
-document.getElementById("createRoomBtn")
-.addEventListener("click",(e)=>{
- e.preventDefault();
- roomModal.style.display="flex";
-});
+if(createBtn && roomModal){
+ createBtn.addEventListener("click",(e)=>{
+   e.preventDefault();
+   roomModal.style.display="flex";
+ });
+}
 
-confirmBtn.addEventListener("click", async ()=>{
+if(confirmBtn){
+ confirmBtn.addEventListener("click", async ()=>{
 
  const name=document.getElementById("roomNameInput").value.trim();
  const pass=document.getElementById("roomPassInput").value.trim();
@@ -218,6 +221,7 @@ confirmBtn.addEventListener("click", async ()=>{
 
  location.href=`/timer?room=${roomId}`;
 });
+}
 
 document.getElementById("roomPassInput")
 .addEventListener("keydown",e=>{
@@ -229,13 +233,17 @@ document.getElementById("roomPassInput")
 const joinModal=document.getElementById("joinModal");
 const confirmJoinBtn=document.getElementById("confirmJoinRoom");
 
-document.getElementById("joinRoomBtn")
-.addEventListener("click",(e)=>{
+const joinBtn = document.getElementById("joinRoomBtn");
+
+if(joinBtn && joinModal){
+ joinBtn.addEventListener("click",(e)=>{
  e.preventDefault();
  joinModal.style.display="flex";
 });
+}
 
-confirmJoinBtn.addEventListener("click", async ()=>{
+if(confirmJoinBtn){
+ confirmJoinBtn.addEventListener("click", async ()=>{
 
  const id=document.getElementById("joinRoomName").value.trim();
  const pass=document.getElementById("joinRoomPass").value.trim();
@@ -268,6 +276,7 @@ confirmJoinBtn.addEventListener("click", async ()=>{
 
  location.href=`/timer?room=${id}`;
 });
+}
 
 document.getElementById("joinRoomPass")
 .addEventListener("keydown",e=>{
