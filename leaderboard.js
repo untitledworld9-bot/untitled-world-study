@@ -63,7 +63,7 @@ onAuthStateChanged(auth, async user => {
   });
 
   // Sort by focusTime (Descending order)
-  users.sort((a,b) => (b.focusTime||0) - (a.focusTime||0));
+  users.sort((a,b)=>(b.weeklyXP||0)-(a.weeklyXP||0));
 
   board.innerHTML = ""; // Clear board
 
@@ -100,7 +100,7 @@ onAuthStateChanged(auth, async user => {
           <div class="podium-rank-badge">2</div>
           <div class="podium-name">${u2.name}</div>
           <div class="podium-score">🥇 Gold</div>
-          <div class="podium-score">${formatTime(u2.focusTime)}</div>
+          <div class="podium-score">⭐ ${u2.weeklyXP || 0}</div>
       </div>`;
   }
 
@@ -111,7 +111,7 @@ onAuthStateChanged(auth, async user => {
           <div class="podium-rank-badge">1</div>
           <div class="podium-name" style="font-size:16px;">${u1.name}</div>
           <div class="podium-score">💎 Diamond</div>
-          <div class="podium-score">${formatTime(u1.focusTime)}</div>
+          <div class="podium-score">⭐ ${u1.weeklyXP || 0}</div>
       </div>`;
   }
 
@@ -122,7 +122,7 @@ onAuthStateChanged(auth, async user => {
           <div class="podium-rank-badge">3</div>
           <div class="podium-name">${u3.name}</div>
           <div class="podium-score">🥈 Silver</div>
-          <div class="podium-score">${formatTime(u3.focusTime)}</div>
+          <div class="podium-score">⭐ ${u3.weeklyXP || 0}</div>
       </div>`;
   }
 
@@ -146,7 +146,9 @@ onAuthStateChanged(auth, async user => {
       <div class="rank-card edtech-list-card">
           <span class="rank-badge" style="font-size: 16px; width: 30px;">#${rank}</span>
           <span style="flex-grow: 1; padding-left: 15px; font-weight: 600;">${u.name}</span>
-          <span style="opacity: 0.8; font-size: 14px;">${formatTime(u.focusTime)}</span>
+          <span style="opacity:0.9;font-weight:bold;">
+⭐ ${u.weeklyXP || 0}
+</span>
       </div>`;
   }
 
