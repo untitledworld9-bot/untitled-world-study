@@ -172,10 +172,13 @@ onAuthStateChanged(auth, async user=>{
 
  // 👇 WEEKLY RESET (MAIN FEATURE)
  if(data.lastActiveWeek !== currentWeek){
-   await updateDoc(userRef,{
-     weeklyFocus:0,
-     lastActiveWeek:currentWeek
-   });
+
+ await updateDoc(userRef,{
+   focusTime:0,
+   weeklyXP:0,   // ⭐ ADD THIS
+   lastActiveWeek:currentWeek
+ });
+
 }
  }
     
@@ -284,12 +287,23 @@ document.getElementById("joinRoomBtn")
                 seconds++;
                 updateDisplay();
               
-               if(seconds%60===0 && isRunning){
- updateDoc(doc(db,"users",currentUser),{
+               if(seconds % 60 === 0 && isRunning){
+
+ // Daily focus time
+ await updateDoc(doc(db,"users",currentUser),{
   status:"Focusing 👋",
-  focusTime: increment(1),
-  weeklyFocus: increment(1)
+  focusTime: increment(1)
  });
+
+}
+
+// ⭐ Weekly XP (2 min = 1 XP)
+if(seconds % 120 === 0 && isRunning){
+
+ await updateDoc(doc(db,"users",currentUser),{
+  weeklyXP: increment(1)
+ });
+
 }
             }
         }, 1000);
