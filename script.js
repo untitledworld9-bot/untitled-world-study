@@ -55,6 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let isRunning = false;
     let mode = "stopwatch"; // 'stopwatch' or 'countdown'
     let initialSeconds = 0;
+
+function updateDisplay(){
+
+ const mins = Math.floor(seconds/60);
+ const secs = seconds%60;
+
+ display.innerText =
+  `${mins<10?"0"+mins:mins}:${secs<10?"0"+secs:secs}`;
+}
   
 const loginOverlay = document.getElementById("loginOverlay");
 
@@ -107,12 +116,6 @@ if(progressLink){
   progressLink.addEventListener("click", ()=>{
      window.location.href="leaderboard.html";
   });
-}
-
-function updateDisplay(){
-  const m = Math.floor(seconds/60).toString().padStart(2,"0");
-  const s = (seconds%60).toString().padStart(2,"0");
-  display.innerText = `${m}:${s}`;
 }
 
     // --- 1. LOGIN LOGIC ---
