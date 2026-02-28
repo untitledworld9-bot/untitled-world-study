@@ -47,6 +47,10 @@ const provider = new GoogleAuthProvider();
 const params = new URLSearchParams(location.search);
 const roomId = params.get("room") || "default";
 document.addEventListener("DOMContentLoaded", () => {
+// अगर welcome से नहीं आए हो तो timer load मत करो
+if(!window.location.search.includes("room=")){
+  window.location.href = "welcome.html";
+}
     
     // --- VARIABLES ---
     let currentUser = "";
