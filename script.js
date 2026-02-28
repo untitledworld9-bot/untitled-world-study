@@ -47,11 +47,7 @@ const provider = new GoogleAuthProvider();
 const params = new URLSearchParams(location.search);
 const roomId = params.get("room") || "default";
 document.addEventListener("DOMContentLoaded", () => {
-// अगर welcome से नहीं आए हो तो timer load मत करो
-if(!window.location.search.includes("room=")){
-  window.location.href = "welcome.html";
-}
-    
+  
     // --- VARIABLES ---
     let currentUser = "";
     let timerInterval;
@@ -145,7 +141,9 @@ if(googleBtn){
   focusTime: 0,
   status:"Online",
   room: roomId
-},{merge:true});        // ✅ YE BHI ADD KARO
+},{merge:true});        
+
+window.location.href = "welcome.html";
 
   }catch(err){
     console.log(err);
@@ -163,9 +161,6 @@ onAuthStateChanged(auth, async user=>{
  currentUser = user.displayName;
  localStorage.setItem("userName", currentUser);
  loginOverlay.style.display="none";
-if(!location.pathname.includes("welcome.html")){
-  window.location.href = "welcome.html";
-}
 
  const today = getTodayDate();
  const currentWeek = getWeekNumber();
