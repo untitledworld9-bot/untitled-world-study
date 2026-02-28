@@ -159,6 +159,9 @@ onAuthStateChanged(auth, async user=>{
  currentUser = user.displayName;
  localStorage.setItem("userName", currentUser);
  loginOverlay.style.display="none";
+if(!location.pathname.includes("welcome.html")){
+  window.location.href = "welcome.html";
+}
 
  const today = getTodayDate();
  const currentWeek = getWeekNumber();
