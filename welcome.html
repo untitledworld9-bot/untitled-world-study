@@ -1,179 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Untitled World - Focus 📳</title>
-    <style>
-        :root {
-            --bg-dark: #112228; 
-            --bg-light: #1d3c47; 
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-hover: rgba(255, 255, 255, 0.12);
-            --text-main: #ffffff;
-            --text-sub: rgba(255, 255, 255, 0.7);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome | Untitled World</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
+<style>
+/* Base Setup */
+body {
+ margin: 0;
+ font-family: 'Outfit', sans-serif;
+ background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+ color: #fff;
+ display: flex;
+ justify-content: center;
+ align-items: flex-start; /* Changed from center to push content up */
+ min-height: 100vh;
+ overflow-x: hidden;
+ padding-top: 10vh; /* Keeps heading nicely positioned near the top */
+ padding-bottom: 2rem;
+}
 
-        body {
-            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-main);
-            padding: 2rem 1.5rem;
-            overflow-x: hidden;
-        }
+/* Container responsive for Mobile, Tablet & Laptop */
+.container {
+ width: 92%;
+ max-width: 450px; /* Perfect width so it doesn't stretch on large screens */
+ text-align: center;
+}
 
-        .container {
-            width: 100%;
-            max-width: 550px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 6vh; 
-        }
+/* Heading styling */
+h1 {
+ font-size: clamp(22px, 5vw, 28px); /* Responsive text size */
+ margin-bottom: 40px;
+ font-weight: 700;
+ animation: fadeDown 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
 
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+/* Options (Buttons) Styling - Matching your Screenshot Vibe */
+.option {
+ border: 2px solid rgba(0, 242, 254, 0.3); /* Hollow neon border like the image */
+ padding: 18px 16px;
+ border-radius: 16px;
+ margin-bottom: 20px;
+ cursor: pointer;
+ transition: all 0.3s ease;
+ backdrop-filter: blur(12px);
+ -webkit-backdrop-filter: blur(12px);
+ background: rgba(255, 255, 255, 0.03); /* Very slight glass fill */
+ opacity: 0; /* For animation */
+ animation: slideUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+}
 
-        @keyframes slideUpCard {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+/* Staggered animation delays for that premium feel */
+.option:nth-child(2) { animation-delay: 0.1s; }
+.option:nth-child(3) { animation-delay: 0.2s; }
+.option:nth-child(4) { animation-delay: 0.3s; }
+.option:nth-child(5) { animation-delay: 0.4s; }
 
-        .header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-            animation: fadeDown 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
+/* Hover & Active Effects */
+.option:hover, .option:active {
+ transform: translateY(-4px);
+ border-color: #00f2fe; /* Bright cyan glow on interaction */
+ box-shadow: 0 0 20px rgba(0, 242, 254, 0.3), inset 0 0 10px rgba(0, 242, 254, 0.1);
+ background: rgba(0, 242, 254, 0.05);
+}
 
-        .header h1 {
-            font-size: clamp(1.6rem, 5vw, 2.2rem); 
-            font-weight: 700;
-            line-height: 1.4;
-            letter-spacing: 0.5px;
-        }
+.option h3 {
+ margin: 0;
+ font-size: 19px;
+ font-weight: 600;
+ display: flex;
+ align-items: center;
+ gap: 8px;
+}
 
-        .menu-options {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-        }
+.option p {
+ margin: 6px 0 0;
+ font-size: 13.5px;
+ opacity: 0.75;
+ font-weight: 400;
+}
 
-        /* Yaha Anchor tag (a) ke hisaab se styling update ki hai */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1.2rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: left;
-            opacity: 0; 
-            animation: slideUpCard 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
-            width: 100%;
-            color: white;
-            text-decoration: none; /* Line hatane ke liye */
-        }
+/* Animations */
+@keyframes fadeDown {
+ from { opacity: 0; transform: translateY(-20px); }
+ to { opacity: 1; transform: translateY(0); }
+}
 
-        .glass-card:hover {
-            background: var(--glass-hover);
-            transform: translateY(-4px);
-            border-color: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3);
-        }
-
-        .glass-card:nth-child(1) { animation-delay: 0.1s; }
-        .glass-card:nth-child(2) { animation-delay: 0.2s; }
-        .glass-card:nth-child(3) { animation-delay: 0.3s; }
-        .glass-card:nth-child(4) { animation-delay: 0.4s; }
-
-        .icon {
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-
-        .card-title {
-            font-size: 1.15rem;
-            font-weight: 600;
-        }
-
-        .card-desc {
-            font-size: 0.85rem;
-            color: var(--text-sub);
-            font-weight: 400;
-        }
-    </style>
+@keyframes slideUp {
+ from { opacity: 0; transform: translateY(30px); }
+ to { opacity: 1; transform: translateY(0); }
+}
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>Welcome to Untitled World<br>Focus Mode 📳</h1>
-        </div>
+<div class="container">
+<h1>Welcome to Untitled World Focus Mode 📳</h1>
 
-        <div class="menu-options">
-            
-            <a href="global_focus_page.html" class="glass-card">
-                <div class="icon">🌍</div>
-                <div class="card-content">
-                    <span class="card-title">Global Focus Mode</span>
-                    <span class="card-desc">Study with all active learners on the platform</span>
-                </div>
-            </a>
+<div class="option" onclick="goGlobal()">
+ <h3>🌍 Global Focus Mode</h3>
+ <p>Study with all active learners on the platform</p>
+</div>
 
-            <a href="create_room_page.html" class="glass-card">
-                <div class="icon">👥</div>
-                <div class="card-content">
-                    <span class="card-title">Create Room</span>
-                    <span class="card-desc">Study with friends privately</span>
-                </div>
-            </a>
+<div class="option" onclick="goCreate()">
+ <h3>👥 Create Room</h3>
+ <p>Study with friends privately</p>
+</div>
 
-            <a href="join_room_page.html" class="glass-card">
-                <div class="icon">🔑</div>
-                <div class="card-content">
-                    <span class="card-title">Join Room</span>
-                    <span class="card-desc">Enter room ID to join session</span>
-                </div>
-            </a>
+<div class="option" onclick="goJoin()">
+ <h3>🔑 Join Room</h3>
+ <p>Enter room ID to join session</p>
+</div>
 
-            <a href="leaderboard_page.html" class="glass-card">
-                <div class="icon">🏆</div>
-                <div class="card-content">
-                    <span class="card-title">Weekly Leaderboard</span>
-                    <span class="card-desc">Know your rank & ⭐ XP</span>
-                </div>
-            </a>
+<div class="option" onclick="goLeaderboard()">
+ <h3>🏆 Weekly Leaderboard</h3>
+ <p>Know your rank & ⭐ XP</p>
+</div>
 
-        </div>
-    </div>
+</div>
+
+<script>
+function goGlobal(){
+ window.location.href="/timer?room=global";
+}
+
+function goCreate(){
+ window.location.href="/timer?create=true";
+}
+
+function goJoin(){
+ window.location.href="/timer?join=true";
+}
+
+function goLeaderboard(){
+ window.location.href="/leaderboard.html";
+}
+</script>
 
 </body>
 </html>
