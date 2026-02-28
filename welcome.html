@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome | Untitled World</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+ margin:0;
+ font-family:'Outfit',sans-serif;
+ background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+ color:#fff;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ height:100vh;
+ overflow:hidden;
+}
+
+.container{
+ width:90%;
+ max-width:420px;
+ text-align:center;
+ animation:fadeIn 0.8s ease;
+}
+
+h1{
+ font-size:24px;
+ margin-bottom:40px;
+}
+
+.option{
+ border:2px solid rgba(255,255,255,0.2);
+ padding:16px;
+ border-radius:14px;
+ margin-bottom:18px;
+ cursor:pointer;
+ transition:0.3s;
+ backdrop-filter:blur(12px);
+ background:rgba(255,255,255,0.05);
+}
+
+.option:hover{
+ transform:translateY(-4px);
+ border-color:#00f2fe;
+ box-shadow:0 0 20px rgba(0,242,254,0.4);
+}
+
+.option h3{
+ margin:0;
+ font-size:18px;
+}
+
+.option p{
+ margin:4px 0 0;
+ font-size:13px;
+ opacity:0.7;
+}
+
+@keyframes fadeIn{
+ from{opacity:0; transform:translateY(20px);}
+ to{opacity:1; transform:translateY(0);}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Welcome to Untitled World Focus Mode 📳</h1>
+
+<div class="option" onclick="goGlobal()">
+ <h3>🌍 Global Focus Mode</h3>
+ <p>Study with all active learners on the platform</p>
+</div>
+
+<div class="option" onclick="goCreate()">
+ <h3>👥 Create Room</h3>
+ <p>Study with friends privately</p>
+</div>
+
+<div class="option" onclick="goJoin()">
+ <h3>🔑 Join Room</h3>
+ <p>Enter room ID to join session</p>
+</div>
+
+<div class="option" onclick="goLeaderboard()">
+ <h3>🏆 Weekly Leaderboard</h3>
+ <p>Know your rank & ⭐ XP</p>
+</div>
+
+</div>
+
+<script>
+function goGlobal(){
+ window.location.href="/timer?room=global";
+}
+
+function goCreate(){
+ window.location.href="/timer?create=true";
+}
+
+function goJoin(){
+ window.location.href="/timer?join=true";
+}
+
+function goLeaderboard(){
+ window.location.href="/leaderboard.html";
+}
+</script>
+
+</body>
+</html>
