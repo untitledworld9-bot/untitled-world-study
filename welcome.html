@@ -1,114 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Welcome | Untitled World</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untitled World - Focus Mode</title>
+    <style>
+        /* Base styling keeping your original dark teal vibe */
+        :root {
+            --bg-dark: #112228; 
+            --bg-light: #1d3c47; 
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-hover: rgba(255, 255, 255, 0.12);
+            --text-main: #ffffff;
+            --text-sub: rgba(255, 255, 255, 0.7);
+        }
 
-<style>
-body{
- margin:0;
- font-family:'Outfit',sans-serif;
- background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
- color:#fff;
- display:flex;
- justify-content:center;
- align-items:center;
- height:100vh;
- overflow:hidden;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
-.container{
- width:90%;
- max-width:420px;
- text-align:center;
- animation:fadeIn 0.8s ease;
-}
+        body {
+            /* Same color palette but as a rich gradient */
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-main);
+            padding: 2rem 1.5rem;
+            overflow-x: hidden;
+        }
 
-h1{
- font-size:24px;
- margin-bottom:40px;
-}
+        /* Container for responsiveness (Laptop & Mobile) */
+        .container {
+            width: 100%;
+            max-width: 550px; /* Restricts width on laptops so it doesn't stretch */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 6vh; /* Pushed the heading up as requested */
+        }
 
-.option{
- border:2px solid rgba(255,255,255,0.2);
- padding:16px;
- border-radius:14px;
- margin-bottom:18px;
- cursor:pointer;
- transition:0.3s;
- backdrop-filter:blur(12px);
- background:rgba(255,255,255,0.05);
-}
+        /* --- Page Load Animations --- */
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.option:hover{
- transform:translateY(-4px);
- border-color:#00f2fe;
- box-shadow:0 0 20px rgba(0,242,254,0.4);
-}
+        @keyframes slideUpCard {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.option h3{
- margin:0;
- font-size:18px;
-}
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeDown 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
 
-.option p{
- margin:4px 0 0;
- font-size:13px;
- opacity:0.7;
-}
+        .header h1 {
+            /* Responsive font size: scales perfectly between mobile and PC */
+            font-size: clamp(1.6rem, 5vw, 2.2rem); 
+            font-weight: 700;
+            line-height: 1.4;
+            letter-spacing: 0.5px;
+        }
 
-@keyframes fadeIn{
- from{opacity:0; transform:translateY(20px);}
- to{opacity:1; transform:translateY(0);}
-}
-</style>
+        /* --- Glassmorphism EdTech Cards --- */
+        .menu-options {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px); /* The "Glassy" effect */
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            opacity: 0; 
+            animation: slideUpCard 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+            width: 100%;
+            color: white;
+            outline: none;
+        }
+
+        /* Hover effect to make it feel interactive on Laptop */
+        .glass-card:hover {
+            background: var(--glass-hover);
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Staggered animation delays so cards load one after another */
+        .glass-card:nth-child(1) { animation-delay: 0.1s; }
+        .glass-card:nth-child(2) { animation-delay: 0.2s; }
+        .glass-card:nth-child(3) { animation-delay: 0.3s; }
+        .glass-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .icon {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            font-weight: 400;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-<h1>Welcome to Untitled World Focus Mode 📳</h1>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to Untitled World<br>Focus Mode 📱</h1>
+        </div>
 
-<div class="option" onclick="goGlobal()">
- <h3>🌍 Global Focus Mode</h3>
- <p>Study with all active learners on the platform</p>
-</div>
+        <div class="menu-options">
+            <button class="glass-card" onclick="/* Apne Global Focus ka logic yaha dalein */">
+                <div class="icon">🌍</div>
+                <div class="card-content">
+                    <span class="card-title">Global Focus Mode</span>
+                    <span class="card-desc">Study with all active learners on the platform</span>
+                </div>
+            </button>
 
-<div class="option" onclick="goCreate()">
- <h3>👥 Create Room</h3>
- <p>Study with friends privately</p>
-</div>
+            <button class="glass-card" onclick="/* Apne Create Room ka logic yaha dalein */">
+                <div class="icon">👥</div>
+                <div class="card-content">
+                    <span class="card-title">Create Room</span>
+                    <span class="card-desc">Study with friends privately</span>
+                </div>
+            </button>
 
-<div class="option" onclick="goJoin()">
- <h3>🔑 Join Room</h3>
- <p>Enter room ID to join session</p>
-</div>
+            <button class="glass-card" onclick="/* Apne Join Room ka logic yaha dalein */">
+                <div class="icon">🔑</div>
+                <div class="card-content">
+                    <span class="card-title">Join Room</span>
+                    <span class="card-desc">Enter room ID to join session</span>
+                </div>
+            </button>
 
-<div class="option" onclick="goLeaderboard()">
- <h3>🏆 Weekly Leaderboard</h3>
- <p>Know your rank & ⭐ XP</p>
-</div>
+            <button class="glass-card" onclick="/* Apne Leaderboard ka logic yaha dalein */">
+                <div class="icon">🏆</div>
+                <div class="card-content">
+                    <span class="card-title">Weekly Leaderboard</span>
+                    <span class="card-desc">Know your rank & ⭐ XP</span>
+                </div>
+            </button>
 
-</div>
-
-<script>
-function goGlobal(){
- window.location.href="/timer?room=global";
-}
-
-function goCreate(){
- window.location.href="/timer?create=true";
-}
-
-function goJoin(){
- window.location.href="/timer?join=true";
-}
-
-function goLeaderboard(){
- window.location.href="/leaderboard.html";
-}
-</script>
+        </div>
+    </div>
 
 </body>
 </html>
