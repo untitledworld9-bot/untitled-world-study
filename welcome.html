@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Untitled World - Focus Mode</title>
+    <title>Untitled World - Focus 📳</title>
     <style>
-        /* Base styling keeping your original dark teal vibe */
         :root {
             --bg-dark: #112228; 
             --bg-light: #1d3c47; 
@@ -24,7 +23,6 @@
         }
 
         body {
-            /* Same color palette but as a rich gradient */
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
             min-height: 100vh;
             display: flex;
@@ -35,17 +33,15 @@
             overflow-x: hidden;
         }
 
-        /* Container for responsiveness (Laptop & Mobile) */
         .container {
             width: 100%;
-            max-width: 550px; /* Restricts width on laptops so it doesn't stretch */
+            max-width: 550px; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 6vh; /* Pushed the heading up as requested */
+            margin-top: 6vh; 
         }
 
-        /* --- Page Load Animations --- */
         @keyframes fadeDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -63,14 +59,12 @@
         }
 
         .header h1 {
-            /* Responsive font size: scales perfectly between mobile and PC */
             font-size: clamp(1.6rem, 5vw, 2.2rem); 
             font-weight: 700;
             line-height: 1.4;
             letter-spacing: 0.5px;
         }
 
-        /* --- Glassmorphism EdTech Cards --- */
         .menu-options {
             width: 100%;
             display: flex;
@@ -78,9 +72,10 @@
             gap: 1.2rem;
         }
 
+        /* Yaha Anchor tag (a) ke hisaab se styling update ki hai */
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(16px); /* The "Glassy" effect */
+            backdrop-filter: blur(16px); 
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
@@ -96,10 +91,9 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
             width: 100%;
             color: white;
-            outline: none;
+            text-decoration: none; /* Line hatane ke liye */
         }
 
-        /* Hover effect to make it feel interactive on Laptop */
         .glass-card:hover {
             background: var(--glass-hover);
             transform: translateY(-4px);
@@ -107,7 +101,6 @@
             box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3);
         }
 
-        /* Staggered animation delays so cards load one after another */
         .glass-card:nth-child(1) { animation-delay: 0.1s; }
         .glass-card:nth-child(2) { animation-delay: 0.2s; }
         .glass-card:nth-child(3) { animation-delay: 0.3s; }
@@ -142,41 +135,42 @@
 
     <div class="container">
         <div class="header">
-            <h1>Welcome to Untitled World<br>Focus Mode 📱</h1>
+            <h1>Welcome to Untitled World<br>Focus Mode 📳</h1>
         </div>
 
         <div class="menu-options">
-            <button class="glass-card" onclick="/* Apne Global Focus ka logic yaha dalein */">
+            
+            <a href="global_focus_page.html" class="glass-card">
                 <div class="icon">🌍</div>
                 <div class="card-content">
                     <span class="card-title">Global Focus Mode</span>
                     <span class="card-desc">Study with all active learners on the platform</span>
                 </div>
-            </button>
+            </a>
 
-            <button class="glass-card" onclick="/* Apne Create Room ka logic yaha dalein */">
+            <a href="create_room_page.html" class="glass-card">
                 <div class="icon">👥</div>
                 <div class="card-content">
                     <span class="card-title">Create Room</span>
                     <span class="card-desc">Study with friends privately</span>
                 </div>
-            </button>
+            </a>
 
-            <button class="glass-card" onclick="/* Apne Join Room ka logic yaha dalein */">
+            <a href="join_room_page.html" class="glass-card">
                 <div class="icon">🔑</div>
                 <div class="card-content">
                     <span class="card-title">Join Room</span>
                     <span class="card-desc">Enter room ID to join session</span>
                 </div>
-            </button>
+            </a>
 
-            <button class="glass-card" onclick="/* Apne Leaderboard ka logic yaha dalein */">
+            <a href="leaderboard_page.html" class="glass-card">
                 <div class="icon">🏆</div>
                 <div class="card-content">
                     <span class="card-title">Weekly Leaderboard</span>
                     <span class="card-desc">Know your rank & ⭐ XP</span>
                 </div>
-            </button>
+            </a>
 
         </div>
     </div>
