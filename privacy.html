@@ -4,121 +4,194 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy Policy - Untitled World</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+*{margin:0;padding:0;box-sizing:border-box;}
 
-  body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f0f4f8;
-    color: #334155;
-    line-height: 1.6;
-    padding: 40px 20px;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-  }
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#ffffff;
+  min-height:100vh;
+  padding:40px 20px;
+}
 
-  .policy-container {
-    background: #ffffff;
-    max-width: 800px;
-    width: 100%;
-    padding: 50px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border-top: 6px solid #10b981;
-  }
+.container{
+  max-width:700px;
+  margin:0 auto;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;
+  padding:50px 40px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.4);
+  animation:fadeIn 1s ease-out;
+}
 
-  h1 {
-    color: #0f172a;
-    font-size: 32px;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
+h1{
+  font-size:36px;
+  font-weight:600;
+  margin-bottom:10px;
+  text-align:center;
+  background:linear-gradient(to right,#00f2fe,#4facfe);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 
-  .last-updated {
-    font-size: 14px;
-    color: #64748b;
-    margin-bottom: 40px;
-    display: block;
-    border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 20px;
-  }
+.last-updated{
+  display:block;
+  text-align:center;
+  font-size:14px;
+  opacity:0.7;
+  margin-bottom:35px;
+}
 
-  h2 {
-    color: #1e293b;
-    font-size: 20px;
-    margin-top: 30px;
-    margin-bottom: 15px;
-    font-weight: 500;
-  }
+h2{
+  font-size:20px;
+  margin-top:30px;
+  margin-bottom:15px;
+  font-weight:500;
+  color:#00f2fe;
+}
 
-  p {
-    margin-bottom: 15px;
-    font-size: 15px;
-    color: #475569;
-  }
+p{
+  line-height:1.8;
+  font-size:16px;
+  color:#e0e0e0;
+  margin-bottom:15px;
+  font-weight:300;
+}
 
-  .privacy-promise-box {
-    background-color: #ecfdf5;
-    border-left: 5px solid #10b981;
-    padding: 20px;
-    border-radius: 6px;
-    margin: 20px 0;
-    color: #064e3b;
-    font-weight: 500;
-  }
+.promise-box{
+  background:rgba(0,242,254,0.08);
+  border-left:4px solid #00f2fe;
+  padding:20px;
+  border-radius:10px;
+  margin:20px 0;
+  font-weight:400;
+}
 
-  .footer {
-    margin-top: 50px;
-    padding-top: 20px;
-    border-top: 1px solid #e2e8f0;
-    font-size: 14px;
-    color: #94a3b8;
-    text-align: center;
-  }
+.about-bottom{
+  margin-top:60px;
+  text-align:center;
+}
 
-  @media (max-width: 600px) {
-    .policy-container {
-      padding: 25px;
-    }
-    h1 {
-      font-size: 26px;
-    }
-  }
+.crafted{
+  margin-bottom:30px;
+  font-style:italic;
+  opacity:0.85;
+}
+
+.follow{
+  margin-top:20px;
+}
+
+.follow a{
+  color:white;
+  text-decoration:none;
+  border-bottom:1.5px dotted rgba(255,255,255,0.7);
+  padding-bottom:3px;
+}
+
+.follow img{
+  width:18px;
+  vertical-align:middle;
+  margin-right:6px;
+}
+
+.bottom-links{
+  margin-top:35px;
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  flex-wrap:wrap;
+}
+
+.bottom-links a{
+  color:white;
+  text-decoration:none;
+  border-bottom:1.5px dotted rgba(255,255,255,0.7);
+  padding-bottom:3px;
+}
+
+footer{
+  text-align:center;
+  margin-top:50px;
+  padding:20px;
+  background:rgba(0,0,0,.5);
+  font-size:15px;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@media(max-width:600px){
+  .container{padding:30px 20px;}
+  h1{font-size:28px;}
+  p{font-size:15px;}
+}
 </style>
 </head>
+
 <body>
 
-<div class="policy-container">
-  <h1>Privacy Policy</h1>
-  <span class="last-updated">Last Updated: February 17</span>
+<div class="container">
 
-  <p>At <strong>Untitled World</strong>, we value your trust and are committed to protecting your privacy. This policy outlines how we handle your information.</p>
+<h1>Privacy Policy</h1>
+<span class="last-updated">Last Updated: February 2026</span>
 
-  <h2>Our Core Promise</h2>
-  <div class="privacy-promise-box">
-    <p>Your data is safe. We don’t share personal info.</p>
-  </div>
+<p>At <strong>Untitled World</strong>, we value your trust and are committed to protecting your privacy. This policy explains how we handle your information responsibly.</p>
 
-  <h2>1. Information Collection</h2>
-  <p>We collect minimal information necessary to provide our educational services. This may include your name and email address when you sign up for courses.</p>
-
-  <h2>2. Data Security</h2>
-  <p>We implement industry-standard security measures to protect your data from unauthorized access, alteration, or disclosure.</p>
-
-  <h2>3. Contact Us</h2>
-  <p>If you have any questions regarding this Privacy Policy, please contact us at our support email.</p>
-
-  <div class="footer">
-    &copy; 2026 Untitled World. All rights reserved.
-  </div>
+<h2>Our Core Promise</h2>
+<div class="promise-box">
+  Your data is safe with us. We do not sell or share your personal information with third parties.
 </div>
+
+<h2>1. Information Collection</h2>
+<p>We collect minimal information necessary to provide our educational services. This may include your name and email address when you contact us or use our features.</p>
+
+<h2>2. Data Security</h2>
+<p>We implement appropriate technical and organizational security measures to protect your data from unauthorized access, misuse, or disclosure.</p>
+
+<h2>3. External Links</h2>
+<p>Our platform may contain links to third-party websites (such as YouTube). We are not responsible for the privacy practices of external websites.</p>
+
+<h2>4. Contact Us</h2>
+<p>If you have any questions regarding this Privacy Policy, please contact us at:</p>
+<p><strong>support@untitledworld.us.cc</strong></p>
+
+</div>
+
+<div class="about-bottom">
+
+  <p class="crafted">
+    Crafted with ❤️ for Focused Learners
+  </p>
+
+  <div class="follow">
+    <p style="margin-bottom:10px;">Follow us on</p>
+    <a href="https://youtube.com/@jexplain0001" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
+      Untitled World
+    </a>
+  </div>
+
+  <div class="bottom-links">
+    <a href="terms.html">Terms</a>
+    <a href="contact.html">Contact</a>
+    <a href="about.html">About Us</a>
+  </div>
+
+</div>
+
+<footer>
+© 2026 Untitled World. All rights reserved.
+</footer>
 
 </body>
 </html>
