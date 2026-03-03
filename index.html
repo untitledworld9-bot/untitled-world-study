@@ -153,10 +153,16 @@ iframe {
   font-weight:600;   /* THIS was missing */
 }
 
-.contact-section a{
-  color:white;
-  text-decoration: underline;
-  text-underline-offset:4px;   /* clean spacing */
+.contact-section a{  
+  color:white;  
+  text-decoration:none;  
+  border-bottom:2px dotted rgba(255,255,255,0.7);  
+  padding-bottom:3px;  
+}
+
+.contact-section a:hover{
+  border-bottom:2px dotted white;   /* brighter on hover */
+  opacity:0.9;
 }
 
 .contact-section img{
