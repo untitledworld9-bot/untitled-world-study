@@ -9,16 +9,17 @@
 <style>    
 * { margin: 0; padding: 0; box-sizing: border-box; }    
     
-body {    
-  font-family: 'Poppins', sans-serif;    
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);    
-  color: #ffffff;    
-  min-height: 100vh;    
-  display: flex;    
-  align-items: center;    
-  justify-content: center;    
-  padding: 20px;    
-}    
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #ffffff;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container{
+  margin: 0 auto;
+}  
     
 .container {    
   max-width: 700px;    
@@ -81,7 +82,57 @@ p {
   .container { padding: 30px 20px; }    
   h1 { font-size: 28px; }    
   p { font-size: 15px; }    
-}    
+}
+.about-bottom{
+  margin-top:60px;
+  text-align:center;
+}
+
+.crafted{
+  margin-bottom:30px;
+  font-style:italic;
+  opacity:0.85;
+}
+
+.follow{
+  margin-top:20px;
+}
+
+.follow a{
+  color:white;
+  text-decoration:none;
+  border-bottom:1.5px dotted rgba(255,255,255,0.7);
+  padding-bottom:3px;
+}
+
+.follow img{
+  width:18px;
+  vertical-align:middle;
+  margin-right:6px;
+}
+
+.bottom-links{
+  margin-top:35px;
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  flex-wrap:wrap;
+}
+
+.bottom-links a{
+  color:white;
+  text-decoration:none;
+  border-bottom:1.5px dotted rgba(255,255,255,0.7);
+  padding-bottom:3px;
+}
+
+footer{
+  text-align:center;
+  margin-top:50px;
+  padding:20px;
+  background:rgba(0,0,0,.5);
+  font-size:15px;
+}  
 </style>    
 </head>    
     
@@ -99,7 +150,33 @@ p {
   <p>This platform is built to help students stay consistent, motivated and productive.</p>    
     
   <a href="index.html" class="btn">⬅ Back to Home</a>    
-</div>    
+</div>
+
+<div class="about-bottom">
+
+  <p class="crafted">
+    Crafted with ❤️ for Focused Learners
+  </p>
+
+  <div class="follow">
+    <p style="margin-bottom:10px;">Follow us on</p>
+    <a href="https://youtube.com/@jexplain0001" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
+      Untitled World
+    </a>
+  </div>
+
+  <div class="bottom-links">
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+</div>
+
+<footer>
+© 2026 Untitled World. All rights reserved.
+</footer>  
     
 </body>    
 </html>
