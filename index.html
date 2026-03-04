@@ -301,21 +301,23 @@ footer{
   }
 
 .site-title{
-  font-size: clamp(16px, 3.2vw, 30px);
-  font-weight: 700;
-  line-height: 1.2;
+  display:flex;
+  align-items:center;
+  font-size: clamp(18px,3.5vw,28px);
+  font-weight:700;
+  line-height:1.2;
 }
 
 .logo-icon{
   background: linear-gradient(135deg,#00f2fe,#4facfe);
-  width:40px;
-  height:40px;
+  width:28px;
+  height:28px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  border-radius:12px;
-  margin-right:10px;
-  font-size:15px;
+  border-radius:7px;
+  margin-right:8px;
+  font-size:12px;
   font-weight:700;
   color:#000;
 }
@@ -331,12 +333,20 @@ footer{
 }
 
 .hero-sub{
-  margin-top:10px;
-  font-size:20px;
+  margin-top:6px;
+  font-size:18px;
   font-weight:400;
   opacity:0.9;
 }
 
+@media(max-width:768px){
+
+.hero-sub{
+  margin-top:4px;
+  font-size:16px;
+}
+
+}
 /* --- CSS END --- */
 </style>
 </head>
