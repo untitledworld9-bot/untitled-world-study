@@ -3,7 +3,7 @@
   "short_name": "Untitled World",
   "description": "Distraction free study platform for JEE, NEET & Boards with Focus Timer, YouTube study playlist and Mock Tests.",
   
-  "start_url": "/index.html",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
