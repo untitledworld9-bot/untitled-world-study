@@ -759,7 +759,7 @@ Notification.requestPermission().then(async permission => {
   });
 
   console.log("FCM TOKEN:",token);
-  alert("FCM TOKEN: " + token);
+
  }
 
 });
