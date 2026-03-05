@@ -742,5 +742,21 @@ onSnapshot(collection(db,"messages"), snap=>{
 
 });
 
+import { messaging, getToken, onMessage } from "./firebase.js";
+
+Notification.requestPermission().then(async permission => {
+
+ if(permission === "granted"){
+
+  const token = await getToken(messaging,{
+   vapidKey:"BDTkDBt3daAUhVvkAHvKuEJn1DI6MwZh5nYzMFu8ym7UQGKNaAbzCtH-RE6DiHCv3k22w_mfl7u8jY-KqN5aNpc"
+  });
+
+  console.log("FCM TOKEN:",token);
+
+ }
+
+});
+
 
   
