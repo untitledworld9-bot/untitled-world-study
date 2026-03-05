@@ -1,7 +1,9 @@
 self.addEventListener("install", e => {
 
+  self.skipWaiting();
+
   e.waitUntil(
-    caches.open("app-cache-v4").then(cache => {
+    caches.open("app-cache-v5").then(cache => {
       return cache.addAll([
         "/",
         "/index.html",
@@ -14,6 +16,10 @@ self.addEventListener("install", e => {
     })
   );
 
+});
+
+self.addEventListener("activate", e=>{
+  e.waitUntil(self.clients.claim());
 });
 
 self.addEventListener("fetch", e => {
