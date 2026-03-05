@@ -1,23 +1,27 @@
 self.addEventListener("install", e => {
-  console.log("App Installed");
 
   e.waitUntil(
-    // Maine yahan 'v3' kar diya hai taaki naya update turant dikhe
-    caches.open("app-cache-v3").then(cache => {
+    caches.open("app-cache-v4").then(cache => {
       return cache.addAll([
         "/",
         "/index.html",
-        "/timer.html",       // <-- Ye zaroori hai naye Timer ke liye
-        "/icon.png",
+        "/timer.html",
+        "/icon-192.png",
+        "/icon-512.png",
         "/background.webp",
-        "/manifest.json"     // <-- Ise bhi add kar lo
+        "/manifest.json"
       ]);
     })
   );
+
 });
 
 self.addEventListener("fetch", e => {
+
   e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
+    caches.match(e.request).then(response => {
+      return response || fetch(e.request);
+    })
   );
+
 });
