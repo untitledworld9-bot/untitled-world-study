@@ -43,6 +43,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+
+if ("serviceWorker" in navigator) {
+ navigator.serviceWorker.register("/firebase-messaging-sw.js")
+ .then(reg => console.log("SW registered"))
+ .catch(err => console.log("SW error", err));
+}
 // ROOM SYSTEM
 const params = new URLSearchParams(location.search);
 const roomId = params.get("room") || "default";
