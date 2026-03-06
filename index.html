@@ -27,6 +27,38 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script type="module">
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import { 
+getFirestore,
+collection,
+onSnapshot
+} from 
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+import { 
+getAuth,
+onAuthStateChanged
+} from 
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+ apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
+ authDomain: "untitled-world-2e645.firebaseapp.com",
+ projectId: "untitled-world-2e645"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+window.db = db;
+window.auth = auth;
+
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
 </script>
 
@@ -1380,7 +1412,7 @@ document.getElementById("pwaGoal").innerText="Goal: "+goal;
 }
 });
 
-// ===== LIVE XP + RANK =====
+// ===== LIVE XP RANK =====
 
 onAuthStateChanged(auth, user => {
 
@@ -1391,7 +1423,7 @@ onAuthStateChanged(auth, user => {
   let users = [];
 
   snap.forEach(docSnap=>{
-    users.push(docSnap.data());
+   users.push(docSnap.data());
   });
 
   users.sort((a,b)=>(b.weeklyXP||0)-(a.weeklyXP||0));
@@ -1412,12 +1444,13 @@ onAuthStateChanged(auth, user => {
 
 });
 
-window.addEventListener("load",function(){
+window.addEventListener("load",()=>{
 
-if(
- !window.matchMedia('(display-mode: standalone)').matches &&
- !window.navigator.standalone
-){
+const isStandalone =
+window.matchMedia('(display-mode: standalone)').matches
+|| window.navigator.standalone;
+
+if(!isStandalone){
  const box = document.getElementById("xpRankBox");
  if(box) box.style.display="none";
 }
