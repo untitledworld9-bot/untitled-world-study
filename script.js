@@ -746,6 +746,27 @@ onSnapshot(collection(db,"messages"), snap=>{
  });
 });
 
+/* ADMIN PUSH NOTIFICATION LISTENER */
+
+onSnapshot(collection(db,"notifications"), snap=>{
+
+snap.forEach(docSnap=>{
+
+const n = docSnap.data()
+
+if(n.user === currentUser){
+
+new Notification(n.title,{
+body:n.body,
+icon:"/icon-192.png"
+})
+
+}
+
+})
+
+})
+
 });
 
 import { messaging, getToken, onMessage } from "./firebase.js";
