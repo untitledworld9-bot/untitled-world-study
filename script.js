@@ -760,7 +760,7 @@ Notification.requestPermission().then(async permission => {
 
 await updateDoc(doc(db,"users",currentUser),{
  fcmToken: token
-})
+});
 
   console.log("FCM TOKEN:",token);
 
