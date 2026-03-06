@@ -123,17 +123,40 @@ Login with Google
 
 </div>
 
-<script>
+<script type="module">
 
-function login(){
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-let name = prompt("Enter your name");
+const firebaseConfig = {
+  apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
+  authDomain: "untitled-world-2e645.firebaseapp.com",
+  projectId: "untitled-world-2e645",
+  storageBucket: "untitled-world-2e645.firebasestorage.app",
+  messagingSenderId: "990115586087",
+  appId: "1:990115586087:web:963f68bd59dec5ef0c6e02"
+};
 
-if(name){
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-localStorage.setItem("userName",name);
+window.login = async function(){
 
-window.location="index.html";
+try{
+
+const result = await signInWithPopup(auth, provider);
+const user = result.user;
+
+localStorage.setItem("userName", user.displayName);
+localStorage.setItem("userEmail", user.email);
+
+window.location.href="index.html";
+
+}catch(err){
+
+console.log(err);
+alert("Login Failed");
 
 }
 
