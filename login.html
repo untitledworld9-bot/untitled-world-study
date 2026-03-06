@@ -34,17 +34,21 @@ color:white;
 }
 
 .login-box{
-
 text-align:center;
-max-width:350px;
-
+max-width:380px;
+width:85%;
 }
 
 .logo{
+width:95px;
+margin-bottom:22px;
+animation: floatLogo 3s ease-in-out infinite;
+}
 
-width:90px;
-margin-bottom:20px;
-
+@keyframes floatLogo{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-10px);}
+100%{transform:translateY(0px);}
 }
 
 h1{
@@ -74,27 +78,48 @@ display:flex;
 align-items:center;
 justify-content:center;
 
-gap:10px;
+width:100%;
+
+gap:12px;
 
 background:white;
 color:black;
 
 border:none;
 
-padding:14px 24px;
+padding:16px 20px;
 
-border-radius:30px;
+border-radius:40px;
 
 font-weight:600;
+font-size:16px;
 
 cursor:pointer;
 
+transition:0.25s;
+
+box-shadow:0 8px 25px rgba(0,0,0,0.25);
+}
+
+.google-btn:hover{
+transform:scale(1.03);
 }
 
 .google-btn img{
 
 width:20px;
 
+}
+
+.sub{
+opacity:.9;
+font-size:18px;
+animation:fadeIn 2s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;}
+to{opacity:.9;}
 }
 
 </style>
@@ -107,7 +132,7 @@ width:20px;
 
 <img src="/icon-512.png" class="logo">
 
-<h1>Welcome to Untitled World</h1>
+<h1 id="typing"></h1>
 
 <p class="sub">Smart Study Platform</p>
 
@@ -161,6 +186,19 @@ alert("Login Failed");
 }
 
 }
+
+const text="Welcome to Untitled World";
+let i=0;
+
+function typeText(){
+if(i<text.length){
+document.getElementById("typing").innerHTML += text.charAt(i);
+i++;
+setTimeout(typeText,60);
+}
+}
+
+typeText();
 
 </script>
 
