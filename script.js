@@ -758,6 +758,10 @@ Notification.requestPermission().then(async permission => {
    vapidKey:"BDTkDBt3daAUhVvkAHvKuEJn1DI6MwZh5nYzMFu8ym7UQGKNaAbzCtH-RE6DiHCv3k22w_mfl7u8jY-KqN5aNpc"
   });
 
+await updateDoc(doc(db,"users",currentUser),{
+ fcmToken: token
+})
+
   console.log("FCM TOKEN:",token);
 
  }
