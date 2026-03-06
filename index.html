@@ -1412,12 +1412,17 @@ onAuthStateChanged(auth, user => {
 
 });
 
+window.addEventListener("load",function(){
+
 if(
  !window.matchMedia('(display-mode: standalone)').matches &&
  !window.navigator.standalone
 ){
- document.getElementById("xpRankBox").style.display="none";
+ const box = document.getElementById("xpRankBox");
+ if(box) box.style.display="none";
 }
+
+});
 
 </script>
 
