@@ -28,6 +28,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+<script>
+if (!window.matchMedia('(display-mode: standalone)').matches) {
+document.documentElement.style.display = "none";
+}
+</script>
 
 <style>
 /* --- CSS START --- */
@@ -710,6 +715,12 @@ margin-top:2px;
 </head>
 
 <body>
+
+<script>
+if (window.matchMedia('(display-mode: standalone)').matches) {
+document.documentElement.style.display = "block";
+}
+</script>
 
 <header>
 <h1 class="site-title">
