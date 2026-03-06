@@ -847,13 +847,42 @@ if("serviceWorker" in navigator){
 </script>
 
 <script>
+// -------- PWA LOGIN SYSTEM --------
+
+function isPWA(){
+return window.matchMedia('(display-mode: standalone)').matches
+|| window.navigator.standalone;
+}
+
 if(isPWA()){
 
+// login check
 let user = localStorage.getItem("userName");
 
 if(!user){
 
 window.location="login.html";
+
+}
+
+// header username replace (only PWA)
+
+if(user){
+
+let title = document.querySelector(".site-title");
+
+title.innerHTML = `
+<img src="/icon-512.png" class="logo-img">
+${user}
+`;
+
+}
+
+// notification permission
+
+if(Notification.permission !== "granted"){
+
+Notification.requestPermission();
 
 }
 
