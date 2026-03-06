@@ -24,6 +24,25 @@
 </head>
 <body>
 
+<script>
+
+function isPWA(){
+return window.matchMedia('(display-mode: standalone)').matches
+|| window.navigator.standalone;
+}
+
+if(isPWA()){
+
+const logged = localStorage.getItem("userName");
+
+if(!logged){
+window.location.href="/login.html";
+}
+
+}
+
+</script>
+
     <div id="loginOverlay">
         <div class="login-card">
             <h2>Login to Untitled World</h2>
