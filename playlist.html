@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Your Study Playlist | Untitled World</title>
+<title>Study Playlist | Untitled World</title>
 
 <link rel="icon" href="/icon-192.png">
 
@@ -16,7 +16,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 
 body{
-background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 min-height:100vh;
 }
@@ -44,11 +44,11 @@ margin-right:10px;
 
 .study-section{
 text-align:center;
-padding:40px 10%;
+padding:30px 10%;
 }
 
 .input-container{
-margin-bottom:30px;
+margin-bottom:25px;
 }
 
 input{
@@ -86,9 +86,9 @@ cursor:pointer;
 
 .video-grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:30px;
-margin-top:30px;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:25px;
+margin-top:25px;
 }
 
 .video-card{
@@ -164,10 +164,10 @@ let videos = JSON.parse(localStorage.getItem("myVideos")) || [];
 function extractVideoID(url){
 try{
 
-let u = new URL(url);
+let u=new URL(url);
 
 if(u.searchParams.get("list")){
-return "playlist:" + u.searchParams.get("list");
+return "playlist:"+u.searchParams.get("list");
 }
 
 if(u.hostname.includes("youtu.be")){
@@ -176,6 +176,14 @@ return u.pathname.slice(1,12);
 
 if(u.searchParams.get("v")){
 return u.searchParams.get("v");
+}
+
+if(u.pathname.includes("/live/")){
+return u.pathname.split("/live/")[1].substring(0,11);
+}
+
+if(u.pathname.includes("/embed/")){
+return u.pathname.split("/embed/")[1].substring(0,11);
 }
 
 return false;
@@ -225,6 +233,12 @@ function toggleComplete(index){
 
 videos[index].completed=!videos[index].completed;
 
+if(videos[index].completed){
+updateGraph(1);
+}else{
+updateGraph(-1);
+}
+
 saveAndRender();
 
 }
@@ -247,8 +261,13 @@ let html=`
 
 <div class="video-card">
 
-<iframe src="https://www.youtube.com/embed/${video.id}"
+<iframe src="${
+video.id.startsWith('playlist:')
+? \`https://www.youtube.com/embed/videoseries?list=\${video.id.replace('playlist:','')}\`
+: \`https://www.youtube.com/embed/\${video.id}\`
+}"
 loading="lazy"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 allowfullscreen>
 </iframe>
 
@@ -275,6 +294,20 @@ saveAndRender();
 
 function openYouTube(){
 window.open("https://m.youtube.com","_blank");
+}
+
+let studyData = JSON.parse(localStorage.getItem("studyGraphData")) || [0,0,0,0,0,0,0];
+
+function updateGraph(val){
+
+let day=new Date().getDay();
+
+studyData[day]+=val;
+
+if(studyData[day]<0)studyData[day]=0;
+
+localStorage.setItem("studyGraphData",JSON.stringify(studyData));
+
 }
 
 </script>
