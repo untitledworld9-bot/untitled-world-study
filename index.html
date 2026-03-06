@@ -1412,15 +1412,29 @@ document.getElementById("pwaGoal").innerText="Goal: "+goal;
 }
 });
 
-// ===== LIVE XP RANK =====
+// ===== XP + RANK SYSTEM =====
 
+window.addEventListener("DOMContentLoaded", ()=>{
+
+const isStandalone =
+window.matchMedia('(display-mode: standalone)').matches
+|| window.navigator.standalone;
+
+// hide on website
+if(!isStandalone){
+ const box = document.getElementById("xpRankBox");
+ if(box) box.style.display="none";
+ return;
+}
+
+// wait firebase auth
 onAuthStateChanged(auth, user => {
 
  if(!user) return;
 
  onSnapshot(collection(db,"users"), snap => {
 
-  let users = [];
+  let users=[];
 
   snap.forEach(docSnap=>{
    users.push(docSnap.data());
@@ -1434,13 +1448,12 @@ onAuthStateChanged(auth, user => {
   const xp = me.weeklyXP || 0;
   const rank = users.findIndex(u=>u.name===user.displayName)+1;
 
-  const xpEl = document.getElementById("xpValue");
-  const rankEl = document.getElementById("rankValue");
-
-  if(xpEl) xpEl.innerText = xp;
-  if(rankEl) rankEl.innerText = rank;
+  document.getElementById("xpValue").textContent=xp;
+  document.getElementById("rankValue").textContent=rank;
 
  });
+
+});
 
 });
 
