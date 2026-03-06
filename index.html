@@ -467,6 +467,140 @@ background:rgba(0,255,136,.08);
 
 }
 
+/* PWA SIDEBAR */
+
+.pwa-sidebar{
+
+position:fixed;
+
+top:0;
+
+left:-270px;
+
+width:260px;
+
+height:100%;
+
+background:#0f2027;
+
+padding:20px;
+
+transition:.3s;
+
+z-index:1000;
+
+}
+
+.pwa-sidebar.active{
+
+left:0;
+
+}
+
+#pwaOverlay{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.4);
+
+display:none;
+
+z-index:999;
+
+}
+
+#pwaOverlay.active{
+
+display:block;
+
+}
+
+/* PROFILE */
+
+.pwa-profile{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+margin-bottom:25px;
+
+}
+
+.pwa-avatar{
+
+width:42px;
+
+height:42px;
+
+border-radius:50%;
+
+background:#4facfe;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-weight:bold;
+
+}
+
+.pwa-email{
+
+font-size:12px;
+
+opacity:.7;
+
+}
+
+/* LINKS */
+
+.pwa-links{
+
+display:flex;
+
+flex-direction:column;
+
+gap:16px;
+
+}
+
+.pwa-links a{
+
+text-decoration:none;
+
+color:white;
+
+}
+
+.pwa-links button{
+
+background:#e74c3c;
+
+border:none;
+
+color:white;
+
+padding:10px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+
 /* --- CSS END --- */
 </style>
 </head>
@@ -487,6 +621,37 @@ background:rgba(0,255,136,.08);
 <a href="about.html">About Us</a>
 </nav>
 </header>
+
+<div id="pwaSidebar" class="pwa-sidebar">
+
+<div class="pwa-profile">
+
+<div class="pwa-avatar" id="pwaAvatar">A</div>
+
+<div>
+<div id="pwaName">User</div>
+<div id="pwaEmail" class="pwa-email"></div>
+</div>
+
+</div>
+
+<div class="pwa-links">
+
+<a href="mocktest.html">📝 Mock Test</a>
+
+<a href="focus.html">⏳ Smart Focus Timer</a>
+
+<a href="playlist.html">🎬 Your Study Playlist</a>
+
+<a href="leaderboard.html">🏆 Leaderboard</a>
+
+<button onclick="logout()">🚪 Logout</button>
+
+</div>
+
+</div>
+
+<div id="pwaOverlay"></div>
 
 <section class="hero">
 <h2>Welcome To Untitled World</h2>
@@ -521,7 +686,7 @@ Install App 📲
 📝 Mock Test Platform
 </div>
 
-<div class="app-box focus" onclick="location.href='focus.html'">
+<div class="app-box focus" onclick="location.href='timer.html'">
 🤓 Smart Focus Timer ⏳
 </div>
 
@@ -634,7 +799,17 @@ Install App 📲
 
 <script>
 function toggleMenu(){
+
+if(isPWA()){
+
+openPwaMenu();
+
+}else{
+
 document.getElementById("navMenu").classList.toggle("active");
+
+}
+
 }
 
 function goToStudy(){
@@ -962,6 +1137,38 @@ document.querySelector(".hero").style.display="none";
 if(isPWA()){
 
 document.getElementById("pwaHome").style.display="block";
+
+}
+
+function openPwaMenu(){
+
+document.getElementById("pwaSidebar").classList.add("active");
+
+document.getElementById("pwaOverlay").classList.add("active");
+
+}
+
+function closePwaMenu(){
+
+document.getElementById("pwaSidebar").classList.remove("active");
+
+document.getElementById("pwaOverlay").classList.remove("active");
+
+}
+
+document.getElementById("pwaOverlay").onclick=closePwaMenu;
+
+if(isPWA()){
+
+let name = localStorage.getItem("userName") || "User";
+
+let email = localStorage.getItem("userEmail") || "";
+
+document.getElementById("pwaName").innerText=name;
+
+document.getElementById("pwaEmail").innerText=email;
+
+document.getElementById("pwaAvatar").innerText=name.charAt(0);
 
 }
 
