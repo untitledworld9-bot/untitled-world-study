@@ -1,6 +1,125 @@
-<section class="graph-section">
-<h2>Weekly Progress</h2>
-<div class="chart-box">
-    <canvas id="studyChart"></canvas>
-</div>
-</section>
+<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Weekly Study Progress | Untitled World</title><link rel="icon" href="/icon-192.png"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+min-height:100vh;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 10%;
+}
+
+.site-title{
+display:flex;
+align-items:center;
+font-size:clamp(18px,3.5vw,28px);
+font-weight:700;
+}
+
+.logo-img{
+width:36px;
+height:36px;
+border-radius:10px;
+margin-right:10px;
+object-fit:cover;
+box-shadow:0 4px 12px rgba(0,242,254,0.4);
+}
+
+.graph-section{
+text-align:center;
+padding:60px 10%;
+max-width:900px;
+margin:auto;
+}
+
+.chart-box{
+position:relative;
+height:420px;
+width:100%;
+background:rgba(255,255,255,0.05);
+border-radius:20px;
+padding:20px;
+backdrop-filter:blur(8px);
+}
+
+.back-btn{
+margin-top:30px;
+padding:12px 28px;
+border:none;
+border-radius:30px;
+background:linear-gradient(45deg,#00f2fe,#4facfe);
+cursor:pointer;
+font-weight:600;
+color:#fff;
+}
+
+.back-btn:hover{
+transform:scale(1.05);
+transition:.3s;
+}
+
+</style></head><body><header>
+<h1 class="site-title">
+<img src="/icon-512.png" class="logo-img">
+Untitled World
+</h1>
+</header><section class="graph-section"><h2>Weekly Study Progress 📊</h2><div class="chart-box">
+<canvas id="studyChart"></canvas>
+</div><button class="back-btn" onclick="window.location.href='index.html'">
+⬅ Back
+</button></section><script>
+
+let studyData = JSON.parse(localStorage.getItem("studyGraphData")) || [0,0,0,0,0,0,0];
+
+const ctx = document.getElementById('studyChart').getContext('2d');
+
+new Chart(ctx,{
+type:'bar',
+
+data:{
+labels:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+datasets:[{
+label:'Videos Completed',
+data:studyData,
+backgroundColor:'#00f2fe',
+borderRadius:6
+}]
+},
+
+options:{
+responsive:true,
+maintainAspectRatio:false,
+
+scales:{
+y:{
+beginAtZero:true,
+ticks:{color:'white'},
+grid:{color:'rgba(255,255,255,0.1)'}
+},
+
+x:{
+ticks:{color:'white'},
+grid:{display:false}
+}
+},
+
+plugins:{
+legend:{
+labels:{color:'white'}
+}
+}
+
+}
+
+});
+
+</script></body>
+</html>
