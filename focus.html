@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 
-/* --- ORIGINAL CSS (UNTOUCHED) --- */
+/* --- ORIGINAL CSS (UNTOUCHED EXCEPT TIMER FONT SIZE) --- */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 
 body{
@@ -46,7 +46,8 @@ padding:80px 10%;
 }
 
 .timer{
-font-size:60px;
+/* Timer ke digits bada kar diya hai (responsive size) */
+font-size:clamp(70px, 16vw, 120px); 
 margin:25px 0;
 font-weight:700;
 color:#00f2fe;
@@ -186,10 +187,6 @@ Untitled World
     <button class="btn" onclick="startCustomTime()">Set Time</button>
 </div>
 
-<button class="btn" onclick="startTimer(3600)">1 Hour</button>
-<button class="btn" onclick="startTimer(7200)">2 Hour</button>
-<button class="btn" onclick="startTimer(10800)">3 Hour</button>
-
 <br>
 <button class="btn pause-btn" id="pauseBtn" onclick="pauseTimer()">Pause</button>
 <button class="btn stop-btn" onclick="stopTimer()">Stop</button>
@@ -212,10 +209,10 @@ let isPaused=false;
 function startCustomTime() {
     let hrs = parseInt(document.getElementById("customHours").value) || 0;
     let mins = parseInt(document.getElementById("customMinutes").value) || 0;
-    
+
     // Calculate total seconds
     let totalSeconds = (hrs * 3600) + (mins * 60);
-    
+
     if (totalSeconds > 0) {
         startTimer(totalSeconds);
         // Clear inputs nicely after starting
