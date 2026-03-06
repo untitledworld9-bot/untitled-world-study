@@ -846,5 +846,19 @@ if("serviceWorker" in navigator){
 }
 </script>
 
+<script>
+if(isPWA()){
+
+let user = localStorage.getItem("userName");
+
+if(!user){
+
+window.location="login.html";
+
+}
+
+}
+</script>
+
 </body>
 </html>
