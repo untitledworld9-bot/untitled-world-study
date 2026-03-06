@@ -1,19 +1,29 @@
-import { auth, onAuthStateChanged } from "./firebase.js";
+import {
+auth,
+onAuthStateChanged,
+db,
+collection,
+onSnapshot,
+addDoc,
+getDoc,
+doc
+} from "./firebase.js";
+
+/* ADMIN PROTECTION */
 
 onAuthStateChanged(auth,user=>{
 
-if(!user || user.email!=="ayushgupt640@gmail.com"){
+if(!user){
+return
+}
+
+if(user.email!=="ayushgupt640@gmail.com"){
 location.href="/"
 }
 
 });
 
-import {
-db,
-collection,
-onSnapshot,
-addDoc
-} from "./firebase.js";
+/* ELEMENTS */
 
 const totalUsers=document.getElementById("totalUsers");
 const onlineUsers=document.getElementById("onlineUsers");
@@ -45,9 +55,9 @@ let online=0
 let focus=0
 let html=""
 
-snap.forEach(doc=>{
+snap.forEach(docSnap=>{
 
-const u=doc.data()
+const u=docSnap.data()
 
 total++
 
@@ -64,7 +74,10 @@ html+=`
 <td>${u.status}</td>
 <td>${u.focusTime||0}</td>
 </tr>
-`})
+
+`
+
+})
 
 totalUsers.innerText=total
 onlineUsers.innerText=online
@@ -88,16 +101,17 @@ messagesCount.innerText=snap.size
 
 let html=""
 
-snap.forEach(doc=>{
+snap.forEach(docSnap=>{
 
-const m=doc.data()
+const m=docSnap.data()
 
 html+=`
-
 <div>
 <b>${m.from}</b> → ${m.text}
 </div>
-`})
+`
+
+})
 
 chatLogs.innerHTML=html
 
@@ -121,12 +135,24 @@ alert("Announcement Sent")
 
 }
 
-async function sendUserNotification(){
+/* PUSH NOTIFICATION */
+
+window.sendUserNotification=async()=>{
 
 const name=document.getElementById("notifyUser").value
 const text=document.getElementById("notifyText").value
 
+if(!name || !text){
+alert("Enter username & message")
+return
+}
+
 const snap=await getDoc(doc(db,"users",name))
+
+if(!snap.exists()){
+alert("User not found")
+return
+}
 
 const token=snap.data().fcmToken
 
@@ -145,11 +171,14 @@ to:token,
 
 notification:{
 title:"Untitled World",
-body:text
+body:text,
+icon:"/icon-192.png"
 }
 
 })
 
 })
+
+alert("Notification Sent")
 
 }
