@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Profile - Untitled World</title>
+
+<style>
+
+body{
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+font-family:Poppins,sans-serif;
+color:white;
+margin:0;
+padding:0;
+}
+
+.profile-container{
+
+max-width:420px;
+margin:auto;
+padding:30px 20px;
+
+}
+
+.profile-card{
+
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(12px);
+
+border-radius:20px;
+
+padding:25px;
+
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
+
+}
+
+.profile-header{
+
+display:flex;
+align-items:center;
+gap:15px;
+margin-bottom:20px;
+
+}
+
+.avatar{
+
+width:60px;
+height:60px;
+
+border-radius:50%;
+
+background:#4facfe;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:24px;
+
+font-weight:bold;
+
+}
+
+.name{
+
+font-size:18px;
+font-weight:600;
+
+}
+
+.email{
+
+font-size:13px;
+opacity:.7;
+
+}
+
+.goal-section{
+
+margin-top:25px;
+
+}
+
+.goal-section h3{
+
+margin-bottom:10px;
+
+}
+
+.goal-option{
+
+display:flex;
+align-items:center;
+gap:10px;
+margin:8px 0;
+
+}
+
+button{
+
+margin-top:20px;
+
+width:100%;
+
+padding:12px;
+
+border:none;
+
+border-radius:12px;
+
+background:linear-gradient(45deg,#00f2fe,#4facfe);
+
+color:white;
+
+font-weight:600;
+
+cursor:pointer;
+
+}
+
+.logout-btn{
+
+background:#e74c3c;
+
+margin-top:15px;
+
+}
+
+.success{
+
+margin-top:10px;
+
+color:#00ff88;
+
+font-size:13px;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="profile-container">
+
+<div class="profile-card">
+
+<div class="profile-header">
+
+<div class="avatar" id="avatar">A</div>
+
+<div>
+
+<div class="name" id="userName">User</div>
+
+<div class="email" id="userEmail">email@example.com</div>
+
+</div>
+
+</div>
+
+<div class="goal-section">
+
+<h3>Select Your Goal</h3>
+
+<label class="goal-option">
+<input type="radio" name="goal" value="JEE"> JEE
+</label>
+
+<label class="goal-option">
+<input type="radio" name="goal" value="NEET"> NEET
+</label>
+
+<label class="goal-option">
+<input type="radio" name="goal" value="Boards"> Boards
+</label>
+
+<button onclick="saveGoal()">Save Goal</button>
+
+<div id="msg" class="success"></div>
+
+<button class="logout-btn" onclick="logout()">Logout</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let name=localStorage.getItem("userName")||"User";
+let email=localStorage.getItem("userEmail")||"user@gmail.com";
+
+document.getElementById("userName").innerText=name;
+document.getElementById("userEmail").innerText=email;
+
+document.getElementById("avatar").innerText=name.charAt(0).toUpperCase();
+
+let savedGoal=localStorage.getItem("goal");
+
+if(savedGoal){
+
+document.querySelector(`input[value="${savedGoal}"]`).checked=true;
+
+}
+
+function saveGoal(){
+
+let goal=document.querySelector('input[name="goal"]:checked');
+
+if(!goal){
+
+alert("Please select goal");
+
+return;
+
+}
+
+localStorage.setItem("goal",goal.value);
+
+document.getElementById("msg").innerText="Goal saved successfully ✔";
+
+}
+
+function logout(){
+
+localStorage.removeItem("loggedIn");
+
+window.location="login.html";
+
+}
+
+</script>
+
+</body>
+</html>
