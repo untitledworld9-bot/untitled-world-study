@@ -708,12 +708,20 @@ margin-top:2px;
 
 .xp-rank{
 position:absolute;
-top:60px;
-right:20px;
+
+top:70px;      /* header के नीचे */
+right:18px;
+
 font-size:13px;
-opacity:.8;
-background:none;
-border:none;
+
+background:rgba(255,255,255,0.08);
+
+padding:4px 10px;
+border-radius:10px;
+
+backdrop-filter:blur(8px);
+
+display:inline-block;
 }
 
 /* --- CSS END --- */
@@ -1412,6 +1420,38 @@ onAuthStateChanged(auth, async user => {
 
  if(xpEl) xpEl.innerText = xp;
  if(rankEl) rankEl.innerText = rank;
+
+});
+
+// ===== LIVE XP + RANK =====
+
+onAuthStateChanged(auth, user => {
+
+ if(!user) return;
+
+ onSnapshot(collection(db,"users"), snap => {
+
+  let users = [];
+
+  snap.forEach(docSnap=>{
+    users.push(docSnap.data());
+  });
+
+  users.sort((a,b)=>(b.weeklyXP||0)-(a.weeklyXP||0));
+
+  const me = users.find(u=>u.name===user.displayName);
+  if(!me) return;
+
+  const xp = me.weeklyXP || 0;
+  const rank = users.findIndex(u=>u.name===user.displayName)+1;
+
+  const xpEl = document.getElementById("xpValue");
+  const rankEl = document.getElementById("rankValue");
+
+  if(xpEl) xpEl.innerText = xp;
+  if(rankEl) rankEl.innerText = rank;
+
+ });
 
 });
 
