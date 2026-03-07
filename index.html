@@ -1671,7 +1671,9 @@ onAuthStateChanged(auth, user => {
 </script>
 
 <script>
-// --- 1. APP INSTALL POPUP (Existing Logic) ---
+// ==========================================
+// 1. APP INSTALL POPUP
+// ==========================================
 let deferredPrompt;
 function isAppInstalled() {
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -1700,30 +1702,32 @@ function showInstallPopup() {
   };
 }
 
-// --- 2. PROMO POPUP (Brute Force Logic) ---
-// Isko alag se rakha hai taki close button kaam kare
+// ==========================================
+// 2. PROMO POPUP (100% Guaranteed PWA Only)
+// ==========================================
 function closePromo() {
   const popup = document.getElementById("promoPopup");
   if (popup) { popup.style.display = "none"; }
 }
 
-// Bina kisi event ka wait kiye sidha timer chalu
-setTimeout(function() {
-  // PWA detection check
+window.addEventListener("DOMContentLoaded", () => {
+  // PWA check logic
   const isRealPWA = window.matchMedia('(display-mode: standalone)').matches || 
                     window.navigator.standalone === true || 
                     window.location.search.includes("mode=pwa");
   
   if (isRealPWA) {
-    const popup = document.getElementById("promoPopup");
-    if (popup) {
-      // Force display flex
-      popup.style.setProperty("display", "flex", "important");
-    }
+    // 2 second timer
+    setTimeout(() => {
+      const popup = document.getElementById("promoPopup");
+      if (popup) {
+        // Ye line forcefully popup ko display karegi aur sabke upar layegi
+        popup.style.cssText = "display: flex !important; z-index: 99999 !important;";
+      }
+    }, 2000);
   }
-}, 2000); // 2 second baad popup aayega
+});
 </script>
-
 
 </body>
 </html>
