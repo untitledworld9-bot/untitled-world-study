@@ -1671,9 +1671,7 @@ onAuthStateChanged(auth, user => {
 </script>
 
 <script>
-// ==========================================
-// 1. APP INSTALL POPUP
-// ==========================================
+// --- 1. APP INSTALL POPUP (Isme koi chhed-chhad nahi) ---
 let deferredPrompt;
 function isAppInstalled() {
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -1702,31 +1700,34 @@ function showInstallPopup() {
   };
 }
 
-// ==========================================
-// 2. PROMO POPUP (100% Guaranteed PWA Only)
-// ==========================================
+// --- 2. PROMO POPUP (ULTIMATE FIX - LOOP METHOD) ---
 function closePromo() {
   const popup = document.getElementById("promoPopup");
   if (popup) { popup.style.display = "none"; }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  // PWA check logic
+// Hum har 500 milliseconds (aadha second) me check karenge
+let pwaCheckInterval = setInterval(() => {
   const isRealPWA = window.matchMedia('(display-mode: standalone)').matches || 
                     window.navigator.standalone === true || 
                     window.location.search.includes("mode=pwa");
   
   if (isRealPWA) {
-    // 2 second timer
+    // Jaise hi PWA detect ho jaye, loop ko turant band kar do
+    clearInterval(pwaCheckInterval); 
+    
+    // PWA mil gaya, ab exactly 2 second ka timer lagao
     setTimeout(() => {
       const popup = document.getElementById("promoPopup");
       if (popup) {
-        // Ye line forcefully popup ko display karegi aur sabke upar layegi
-        popup.style.cssText = "display: flex !important; z-index: 99999 !important;";
+        popup.style.cssText = "display: flex !important; z-index: 999999 !important;";
       }
     }, 2000);
   }
-});
+}, 500);
+
+// Agar 10 second tak PWA detect nahi hua (matlab normal browser hai), toh loop ko band kar do taaki memory waste na ho
+setTimeout(() => { clearInterval(pwaCheckInterval); }, 10000);
 </script>
 
 </body>
