@@ -1752,15 +1752,23 @@ function closePromo(){
 document.getElementById("promoPopup").style.display="none";
 }
 
+window.addEventListener("load", ()=>{
+
 if(isPWA()){
 
 setTimeout(()=>{
 
-document.getElementById("promoPopup").style.display="flex";
+const popup = document.getElementById("promoPopup");
+
+if(popup){
+popup.style.display = "flex";
+}
 
 },2000);
 
 }
+
+});
 
 </script>
 
