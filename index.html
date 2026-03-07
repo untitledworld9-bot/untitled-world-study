@@ -1671,12 +1671,8 @@ onAuthStateChanged(auth, user => {
 </script>
 
 <script>
-// ==========================================
-// 1. APP INSTALL POPUP LOGIC (As it was)
-// ==========================================
+// --- 1. APP INSTALL POPUP (Existing Logic) ---
 let deferredPrompt;
-
-// check if app installed
 function isAppInstalled() {
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 }
@@ -1684,95 +1680,50 @@ function isAppInstalled() {
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-
-  // popup already shown?
   if (localStorage.getItem("installPopupShown") === "yes") return;
-
-  // agar app installed hai to popup nahi
   if (isAppInstalled()) return;
-
-  // 4 second baad popup
-  setTimeout(() => {
-    showInstallPopup();
-  }, 4000);
+  setTimeout(() => { showInstallPopup(); }, 4000);
 });
 
 function showInstallPopup() {
   const popup = document.createElement("div");
   popup.innerHTML = `
-  <div style="
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#0f2027;
-  color:white;
-  padding:15px 20px;
-  border-radius:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-  z-index:9999;
-  font-family:sans-serif;">
-
-  Install Untitled World App
-
-  <button id="installBtn" style="
-  margin-left:10px;
-  background:#00c853;
-  border:none;
-  color:white;
-  padding:6px 12px;
-  border-radius:6px;">
-  Install
-  </button>
-  </div>
-  `;
-
+  <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0f2027;color:white;padding:15px 20px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.3);z-index:9999;font-family:sans-serif;">
+    Install Untitled World App
+    <button id="installBtn" style="margin-left:10px;background:#00c853;border:none;color:white;padding:6px 12px;border-radius:6px;">Install</button>
+  </div>`;
   document.body.appendChild(popup);
-
-  // mark popup shown
   localStorage.setItem("installPopupShown", "yes");
-
   document.getElementById("installBtn").onclick = async () => {
     popup.remove();
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt = null;
-    }
+    if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
   };
 }
 
-
-// ==========================================
-// 2. PROMO POPUP LOGIC (New Bulletproof Code)
-// ==========================================
-
-// Bulletproof PWA Detection (Check both display-mode and URL tag)
-function checkIsRealPWA() {
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  const isPwaUrl = window.location.search.includes("mode=pwa");
-  return isStandalone || isPwaUrl;
-}
-
+// --- 2. PROMO POPUP (Brute Force Logic) ---
+// Isko alag se rakha hai taki close button kaam kare
 function closePromo() {
   const popup = document.getElementById("promoPopup");
-  if (popup) {
-    popup.style.display = "none";
-  }
+  if (popup) { popup.style.display = "none"; }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  // Check real PWA condition
-  if (checkIsRealPWA()) {
-    setTimeout(() => {
-      const popup = document.getElementById("promoPopup");
-      if (popup) {
-        // 'flex' center karne ke liye zaruri hai
-        popup.style.display = "flex"; 
-      }
-    }, 2000);
+// Bina kisi event ka wait kiye sidha timer chalu
+setTimeout(function() {
+  // PWA detection check
+  const isRealPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                    window.navigator.standalone === true || 
+                    window.location.search.includes("mode=pwa");
+  
+  if (isRealPWA) {
+    const popup = document.getElementById("promoPopup");
+    if (popup) {
+      // Force display flex
+      popup.style.setProperty("display", "flex", "important");
+    }
   }
-});
-
+}, 2000); // 2 second baad popup aayega
 </script>
+
+
 </body>
 </html>
