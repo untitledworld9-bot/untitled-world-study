@@ -1671,7 +1671,9 @@ onAuthStateChanged(auth, user => {
 </script>
 
 <script>
-
+// ==========================================
+// 1. APP INSTALL POPUP LOGIC (As it was)
+// ==========================================
 let deferredPrompt;
 
 // check if app installed
@@ -1680,7 +1682,6 @@ function isAppInstalled() {
 }
 
 window.addEventListener('beforeinstallprompt', (e) => {
-
   e.preventDefault();
   deferredPrompt = e;
 
@@ -1694,13 +1695,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
   setTimeout(() => {
     showInstallPopup();
   }, 4000);
-
 });
 
 function showInstallPopup() {
-
   const popup = document.createElement("div");
-
   popup.innerHTML = `
   <div style="
   position:fixed;
@@ -1726,7 +1724,6 @@ function showInstallPopup() {
   border-radius:6px;">
   Install
   </button>
-
   </div>
   `;
 
@@ -1736,41 +1733,46 @@ function showInstallPopup() {
   localStorage.setItem("installPopupShown", "yes");
 
   document.getElementById("installBtn").onclick = async () => {
-
     popup.remove();
-
     if (deferredPrompt) {
       deferredPrompt.prompt();
       deferredPrompt = null;
     }
-
   };
-
 }
 
-function closePromo(){
-document.getElementById("promoPopup").style.display="none";
+
+// ==========================================
+// 2. PROMO POPUP LOGIC (New Bulletproof Code)
+// ==========================================
+
+// Bulletproof PWA Detection (Check both display-mode and URL tag)
+function checkIsRealPWA() {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isPwaUrl = window.location.search.includes("mode=pwa");
+  return isStandalone || isPwaUrl;
 }
 
-window.addEventListener("load", ()=>{
-
-if(isPWA()){
-
-setTimeout(()=>{
-
-const popup = document.getElementById("promoPopup");
-
-if(popup){
-popup.style.display = "flex";
+function closePromo() {
+  const popup = document.getElementById("promoPopup");
+  if (popup) {
+    popup.style.display = "none";
+  }
 }
 
-},2000);
-
-}
-
+window.addEventListener("DOMContentLoaded", () => {
+  // Check real PWA condition
+  if (checkIsRealPWA()) {
+    setTimeout(() => {
+      const popup = document.getElementById("promoPopup");
+      if (popup) {
+        // 'flex' center karne ke liye zaruri hai
+        popup.style.display = "flex"; 
+      }
+    }, 2000);
+  }
 });
 
 </script>
-
 </body>
 </html>
