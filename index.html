@@ -1672,25 +1672,18 @@ onAuthStateChanged(auth, user => {
 
 <script>
 // ==========================================
-// 1. NUCLEAR OPTION: JABARDASTI CACHE DELETE KARO
-// ==========================================
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let r of registrations) { 
-      r.unregister(); // Ye purane ziddi cache ko hamesha ke liye uda dega
-    }
-  });
-}
-
-// ==========================================
-// 2. APP INSTALL POPUP (Tumhara purana code)
+// 1. APP INSTALL POPUP (Tera original)
 // ==========================================
 let deferredPrompt;
+function isAppInstalled() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   if (localStorage.getItem("installPopupShown") === "yes") return;
-  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) return;
+  if (isAppInstalled()) return;
   setTimeout(() => { showInstallPopup(); }, 4000);
 });
 
@@ -1710,31 +1703,30 @@ function showInstallPopup() {
 }
 
 // ==========================================
-// 3. PROMO POPUP (WITH DEBUG ALERT)
+// 2. PROMO POPUP (For PWA Only)
 // ==========================================
 function closePromo() {
   const popup = document.getElementById("promoPopup");
   if (popup) { popup.style.display = "none"; }
 }
 
-setTimeout(function() {
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-  const isPwaUrl = window.location.search.includes("mode=pwa");
-  const isRealPWA = isStandalone || window.navigator.standalone === true || isPwaUrl;
-
-  // 🚨🚨 DEBUG ALERT: Ye tere phone par ek message dega 2 second baad
-  alert("Checking PWA Status: " + isRealPWA);
-
+window.addEventListener("load", () => {
+  // Check if opening inside PWA
+  const isRealPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                    window.navigator.standalone === true || 
+                    window.location.search.includes("mode=pwa");
+  
   if (isRealPWA) {
-    const popup = document.getElementById("promoPopup");
-    if (popup) {
-      // Forcefully screen ke upar laane ka CSS
-      popup.style.cssText = "display: flex !important; visibility: visible !important; opacity: 1 !important; z-index: 999999 !important;";
-    } else {
-      alert("Bhai, HTML mein id='promoPopup' wala element hi nahi mil raha!");
-    }
+    // 2 Second Timer
+    setTimeout(() => {
+      const popup = document.getElementById("promoPopup");
+      if (popup) {
+        // Display flex is strictly required for your CSS centering
+        popup.style.display = "flex"; 
+      }
+    }, 2000);
   }
-}, 2000);
+});
 </script>
 
 </body>
