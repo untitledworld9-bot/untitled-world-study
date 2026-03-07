@@ -776,22 +776,31 @@ border-bottom:2px dotted rgba(255,255,255,0.6);
 width:85%;
 }
 
-.pwa-xp{
+.pwa-xp-mini{
 font-size:12px;
-opacity:0.9;
+opacity:.9;
 margin-top:4px;
 }
 
-#todayFocusCard{
-font-size:16px;
+.today-focus-mini{
+margin:12px auto;
+padding:10px 14px;
+max-width:220px;
+font-size:13px;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(0,242,254,0.3);
+border-radius:12px;
 text-align:center;
 }
 
 #todayFocusValue{
-font-size:20px;
-font-weight:600;
-margin-top:5px;
 color:#00f2fe;
+font-weight:600;
+margin-left:4px;
+}
+
+.app-box{
+margin:12px auto;
 }
 
 /* --- CSS END --- */
@@ -827,11 +836,11 @@ color:#00f2fe;
 <div id="pwaGoal" class="pwa-email"></div>
 </div>
 
-<div id="xpRankSide" class="pwa-xp">
-⭐ <span id="xpValue">0</span> XP
-🏆 Rank <span id="rankValue">--</span>
 </div>
 
+<div class="pwa-xp-mini">
+⭐ <span id="xpValue">0</span> XP
+🏆 <span id="rankValue">--</span>
 </div>
 
 <div class="pwa-links">
@@ -910,9 +919,9 @@ Install App 📲
 🤓 Smart Focus Timer ⏳
 </div>
 
-<div id="todayFocusCard" class="pwa-card">
+<div id="todayFocusCard" class="today-focus-mini">
 🔥 Today Focus
-<div id="todayFocusValue">0m</div>
+<span id="todayFocusValue">0m</span>
 </div>
 
 </section>
