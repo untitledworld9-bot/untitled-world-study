@@ -888,28 +888,6 @@ max-width:380px;
 }
 }
 
-/* Tablet layout fix (portrait + landscape) */
-
-@media (min-width:768px){
-
-.pwa-home,
-.pwa-dashboard{
-width:100%;
-max-width:95%;
-margin:auto;
-padding:0 15px;
-}
-
-.app-box{
-width:100%;
-}
-
-.pwa-card{
-width:100%;
-}
-
-}
-
 /* Large tablet landscape */
 
 @media (min-width:1024px){
@@ -952,23 +930,21 @@ margin:20px auto;
 
 }
 
-/* Tablet Portrait Layout Fix */
+/* Tablet Portrait Only Fix */
 
-@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+@media screen 
+and (min-width: 768px) 
+and (max-width: 1024px) 
+and (orientation: portrait) {
 
   body{
     display:flex;
     justify-content:center;
   }
 
-  .container{
-    max-width:480px;
+  .main-container{
     width:100%;
-  }
-
-  .bottom-nav{
     max-width:480px;
-    margin:auto;
   }
 
 }
