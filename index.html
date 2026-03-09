@@ -1748,5 +1748,21 @@ function closePromo() {
 })();
 </script>
 
+<script>
+
+function showOffline(){
+  if(!navigator.onLine){
+    window.location.href="/offline.html";
+  }
+}
+
+/* Internet जाते ही */
+window.addEventListener("offline", showOffline);
+
+/* Page load पर check */
+window.addEventListener("load", showOffline);
+
+</script>
+
 </body>
 </html>
