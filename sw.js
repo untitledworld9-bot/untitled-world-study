@@ -1,59 +1,48 @@
-const CACHE = "uw-cache-v7";
+const CACHE = "uw-cache-v6";
 
-const OFFLINE_URL = "/offline.html";
-
-self.addEventListener("install", event => {
-
-self.skipWaiting();
-
-event.waitUntil(
-
-caches.open(CACHE).then(cache => {
-return cache.addAll([
+const ASSETS = [
 "/",
 "/index.html",
 "/offline.html",
-"/manifest.json",
 "/icon-192.png",
 "/icon-512.png",
-"/background.webp"
+"/background.webp",
+"/manifest.json"
 ];
-})
 
-);
+self.addEventListener("install", e=>{
+  self.skipWaiting();
 
+  e.waitUntil(
+    caches.open(CACHE).then(cache=>{
+      return cache.addAll(ASSETS);
+    })
+  );
 });
 
-self.addEventListener("activate", event => {
-
-event.waitUntil(self.clients.claim());
-
+self.addEventListener("activate", e=>{
+  e.waitUntil(self.clients.claim());
 });
 
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", e=>{
 
-if(event.request.mode === "navigate"){
+  // Pages → network first (same as your old logic)
+  if(e.request.mode === "navigate"){
 
-event.respondWith(
+    e.respondWith(
+      fetch(e.request).catch(()=>{
+        return caches.match("/offline.html");
+      })
+    );
 
-fetch(event.request).catch(()=>{
+    return;
+  }
 
-return caches.match(OFFLINE_URL);
-
-})
-
-);
-
-return;
-
-}
-
-event.respondWith(
-
-caches.match(event.request).then(res=>{
-return res || fetch(event.request);
-})
-
-);
+  // Static files → cache first (same as your old logic)
+  e.respondWith(
+    caches.match(e.request).then(res=>{
+      return res || fetch(e.request);
+    })
+  );
 
 });
