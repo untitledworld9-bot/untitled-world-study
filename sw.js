@@ -13,9 +13,11 @@ return cache.addAll([
 "/",
 "/index.html",
 "/offline.html",
+"/manifest.json",
 "/icon-192.png",
-"/icon-512.png"
-]);
+"/icon-512.png",
+"/background.webp"
+];
 })
 
 );
