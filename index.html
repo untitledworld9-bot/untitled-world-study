@@ -1748,21 +1748,5 @@ function closePromo() {
 })();
 </script>
 
-<script>
-
-function checkConnection(){
-  if(!navigator.onLine){
-    window.location.href="/offline.html";
-  }
-}
-
-window.addEventListener("load",checkConnection);
-
-window.addEventListener("offline",()=>{
-  window.location.href="/offline.html";
-});
-
-</script>
-
 </body>
 </html>
