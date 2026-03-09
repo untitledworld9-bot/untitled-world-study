@@ -130,13 +130,22 @@ p {
 <script>
 
 function goHome(){
-    window.location.href = "/";
+  window.location.href="/";
 }
 
-// Internet aate hi home open
-window.addEventListener('online', function(){
-    window.location.href = "/";
+document.querySelector(".retry").onclick = goHome;
+
+/* Internet आते ही auto home */
+window.addEventListener("online", function(){
+  goHome();
 });
+
+/* हर 2 सेकंड में check */
+setInterval(()=>{
+  if(navigator.onLine){
+    goHome();
+  }
+},2000);
 
 </script>
 
