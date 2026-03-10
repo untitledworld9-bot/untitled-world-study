@@ -152,6 +152,7 @@ Login with Google
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
@@ -164,7 +165,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
+
+function getTodayDate(){
+ const d = new Date();
+ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
 
 window.login = async function(){
 
@@ -173,8 +180,23 @@ try{
 const result = await signInWithPopup(auth, provider);
 const user = result.user;
 
-localStorage.setItem("userName", user.displayName);
-localStorage.setItem("userEmail", user.email);
+const name = user.displayName;
+const email = user.email;
+
+localStorage.setItem("userName", name);
+localStorage.setItem("userEmail", email);
+
+await setDoc(doc(db,"users",name),{
+
+ name: name,
+ email: email,
+ focusTime: 0,
+ weeklyXP: 0,
+ status: "Online",
+ room: "global",
+ lastActiveDate: getTodayDate()
+
+},{merge:true});
 
 window.location.href="index.html";
 
