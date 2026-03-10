@@ -32,6 +32,11 @@ if(!user){
  window.location.href="login.html";
 }
 
+if(!sessionStorage.getItem("seenWelcome")){
+ sessionStorage.setItem("seenWelcome","yes");
+ window.location.href="welcome.html";
+}
+
 </script>
     
     <header>
