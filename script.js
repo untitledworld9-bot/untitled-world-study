@@ -124,22 +124,11 @@ if(progressLink){
   });
 }
 
-    // --- 1. LOGIN LOGIC ---
-// 👇 YAHAN ADD GOOGLE LOGIN
-const googleBtn = document.getElementById("googleLogin");
+const savedName = localStorage.getItem("userName");
 
-if(googleBtn){
- googleBtn.addEventListener("click", async ()=>{
-
-  try{
-   const result = await signInWithPopup(auth, provider);
-   const user = result.user;
-
-   currentUser = user.displayName;
-
-   localStorage.setItem("userName", user.displayName);
-
-   loginOverlay.style.display="none";
+if(savedName){
+ currentUser = savedName;
+}
 
    await setDoc(doc(db,"users",currentUser),{
   name: currentUser,
