@@ -1768,23 +1768,5 @@ window.addEventListener("load", showOffline);
 
 </script>
 
-<script>
-
-const hour=new Date().getHours()
-
-if(hour===9 || hour===20){
-
-if(!localStorage.getItem("checkReminder"+hour)){
-
-alert("📋 Check your study checklist")
-
-localStorage.setItem("checkReminder"+hour,"yes")
-
-}
-
-}
-
-</script>
-
 </body>
 </html>
