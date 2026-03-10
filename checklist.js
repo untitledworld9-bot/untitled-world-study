@@ -13,18 +13,16 @@ const today = new Date().toISOString().slice(0,10)
 
 let tasks=[]
 
-// PWA ONLY CHECK
+// PWA CHECK
 
 function isPWA(){
-
 return window.matchMedia('(display-mode: standalone)').matches
-|| window.navigator.standalone;
-
+|| window.navigator.standalone
 }
 
 if(!isPWA()){
-alert("Checklist works only in the installed app");
-window.location.href="index.html";
+alert("Checklist available only in app")
+window.location.href="index.html"
 }
 
 // LOAD TASKS
@@ -38,6 +36,10 @@ const snap = await getDoc(ref)
 if(snap.exists() && snap.data().date===today){
 
 tasks = snap.data().tasks
+
+}else{
+
+tasks=[]
 
 }
 
@@ -53,18 +55,18 @@ const box=document.getElementById("taskList")
 
 box.innerHTML=""
 
-// ADDED: Display an empty state message if no tasks exist
-if (tasks.length === 0) {
-    box.innerHTML = `<div class="empty-state">No tasks yet. Tap ＋ to add one!</div>`
-    return;
+if(tasks.length===0){
+
+box.innerHTML='<div class="empty">No tasks yet. Tap ＋ to add one!</div>'
+return
+
 }
 
 tasks.forEach((t,i)=>{
 
-// ADDED: Inline animation-delay so tasks slide in one after the other (staggered effect)
 box.innerHTML+=`
 
-<div class="task ${t.done?"done":""}" style="animation-delay: ${i * 0.05}s">
+<div class="task ${t.done?"done":""}" style="animation-delay:${i*0.05}s">
 
 <input type="checkbox"
 ${t.done?"checked":""}
@@ -72,8 +74,7 @@ onclick="toggleTask(${i})">
 
 <span>${t.text}</span>
 
-<button class="delete"
-onclick="deleteTask(${i})">🗑</button>
+<button class="delete" onclick="deleteTask(${i})">🗑</button>
 
 </div>
 
@@ -131,10 +132,8 @@ await setDoc(
 doc(db,"checklists",user),
 
 {
-
 date:today,
 tasks
-
 }
 
 )
