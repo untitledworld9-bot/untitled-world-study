@@ -21,8 +21,7 @@ return window.matchMedia('(display-mode: standalone)').matches
 }
 
 if(!isPWA()){
-alert("Checklist available only in app")
-window.location.href="index.html"
+console.log("Running in browser")
 }
 
 // LOAD TASKS
