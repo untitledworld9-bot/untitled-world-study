@@ -23,9 +23,8 @@ return window.matchMedia('(display-mode: standalone)').matches
 }
 
 if(!isPWA()){
-
-document.body.innerHTML="This feature is available only in the app.";
-
+alert("Checklist works only in the installed app");
+window.location.href="index.html";
 }
 
 // LOAD TASKS
