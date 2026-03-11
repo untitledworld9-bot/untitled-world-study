@@ -198,6 +198,14 @@ await setDoc(doc(db,"users",name),{
 
 },{merge:true});
 
+// welcome screen logic
+
+if(!localStorage.getItem("seenWelcome")){
+
+window.location.href="mainwelcome.html";
+
+}else{
+
 window.location.href="index.html";
 
 }catch(err){
