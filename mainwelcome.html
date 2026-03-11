@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Welcome</title>
+
+<style>
+
+body{
+
+margin:0;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+
+font-family:Outfit,sans-serif;
+color:white;
+text-align:center;
+overflow:hidden;
+
+}
+
+.container{
+
+max-width:420px;
+padding:20px;
+
+}
+
+.avatar{
+
+width:120px;
+height:120px;
+
+border-radius:50%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:60px;
+
+margin:auto;
+margin-bottom:20px;
+
+background:linear-gradient(135deg,#5f7cff,#7c4dff);
+
+box-shadow:0 0 30px rgba(0,0,0,0.5);
+
+}
+
+h1{
+
+font-size:34px;
+margin-bottom:10px;
+
+}
+
+p{
+
+opacity:.8;
+line-height:1.5;
+
+}
+
+.btn{
+
+margin-top:30px;
+
+padding:16px 30px;
+
+border-radius:40px;
+
+border:none;
+
+font-size:18px;
+
+background:linear-gradient(135deg,#5f7cff,#7c4dff);
+
+color:white;
+
+cursor:pointer;
+
+}
+
+canvas{
+
+position:fixed;
+top:0;
+left:0;
+
+pointer-events:none;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="container">
+
+<div id="avatar" class="avatar">U</div>
+
+<h1 id="welcomeText">Welcome</h1>
+
+<p>
+
+A distraction-free study platform built to help you stay focused, track progress and study smarter with tools like Focus Timer, playlists and upcoming mock tests.
+
+</p>
+
+<button class="btn" onclick="goHome()">
+
+Explore →
+
+</button>
+
+</div>
+
+<script>
+
+function isPWA(){
+
+return window.matchMedia('(display-mode: standalone)').matches
+|| window.navigator.standalone
+
+}
+
+if(!isPWA()){
+
+window.location="index.html"
+
+}
+
+const name = localStorage.getItem("userName") || "Learner"
+
+document.getElementById("welcomeText").innerText =
+"Welcome, "+name+"!"
+
+document.getElementById("avatar").innerText =
+name.charAt(0).toUpperCase()
+
+function goHome(){
+
+localStorage.setItem("seenWelcome","yes")
+
+window.location="index.html"
+
+}
+
+</script>
+
+<script>
+
+// CONFETTI ANIMATION
+
+const canvas=document.getElementById("confetti")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+const pieces=[]
+
+for(let i=0;i<120;i++){
+
+pieces.push({
+
+x:Math.random()*canvas.width,
+
+y:Math.random()*canvas.height,
+
+size:8,
+
+speed:2+Math.random()*3,
+
+color:`hsl(${Math.random()*360},80%,60%)`
+
+})
+
+}
+
+function update(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+pieces.forEach(p=>{
+
+p.y+=p.speed
+
+if(p.y>canvas.height){
+
+p.y=0
+
+p.x=Math.random()*canvas.width
+
+}
+
+ctx.fillStyle=p.color
+
+ctx.fillRect(p.x,p.y,p.size,p.size)
+
+})
+
+requestAnimationFrame(update)
+
+}
+
+update()
+
+</script>
+
+</body>
+</html>
