@@ -308,7 +308,7 @@ font-size:14px;
 .back-home-btn{
 position:fixed;
 bottom:20px;
-left:20px;
+right:20px;
 
 width:55px;
 height:55px;
@@ -376,26 +376,6 @@ box-shadow:0 0 30px rgba(0,242,254,1);
 <div class="video-row" id="musicRow"></div>
 
 <script>
-     let mini = document.getElementById("miniPlayer");
-let posX=0,posY=0;
-
-mini.addEventListener("touchstart",(e)=>{
-posX=e.touches[0].clientX;
-posY=e.touches[0].clientY;
-});
-
-mini.addEventListener("touchmove",(e)=>{
-
-let dx=e.touches[0].clientX-posX;
-let dy=e.touches[0].clientY-posY;
-
-mini.style.right=(parseInt(mini.style.right||20)-dx)+"px";
-mini.style.bottom=(parseInt(mini.style.bottom||20)-dy)+"px";
-
-posX=e.touches[0].clientX;
-posY=e.touches[0].clientY;
-
-});
 
      let currentVideo = null;
      
@@ -743,6 +723,27 @@ function goHome(){
 window.location.href="index.html";
 }
 
+let mini = document.getElementById("miniPlayer");
+let posX=0,posY=0;
+
+mini.addEventListener("touchstart",(e)=>{
+posX=e.touches[0].clientX;
+posY=e.touches[0].clientY;
+});
+
+mini.addEventListener("touchmove",(e)=>{
+
+let dx=e.touches[0].clientX-posX;
+let dy=e.touches[0].clientY-posY;
+
+mini.style.right=(parseInt(mini.style.right||20)-dx)+"px";
+mini.style.bottom=(parseInt(mini.style.bottom||20)-dy)+"px";
+
+posX=e.touches[0].clientX;
+posY=e.touches[0].clientY;
+
+});
+
 </script>
 
 <div id="miniPlayer" class="mini-player">
@@ -754,7 +755,7 @@ window.location.href="index.html";
 </div>
 
 <div class="back-home-btn" onclick="goHome()">
-🔳
+⬅️
 </div>
 
 </body>
