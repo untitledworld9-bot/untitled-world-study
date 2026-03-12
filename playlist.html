@@ -656,8 +656,8 @@ musicRow.innerHTML="";
 
 musicList.forEach(video=>{
 
-let embedURL = video.id.startsWith('playlist')
-? `https://www.youtube.com/embed/videoseries?list=${video.id.replace('playlist:','')}`
+let thumb = video.id.startsWith('playlist:')
+? `https://img.youtube.com/vi/${video.id.replace('playlist:','')}/hqdefault.jpg`
 : `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
 
 let card=document.createElement("div");
@@ -668,7 +668,7 @@ card.innerHTML=`
 
 <div class="thumbnail" onclick="playVideo('${video.id}',this)">
 
-<img src="https://img.youtube.com/vi/${video.id}/hqdefault.jpg">
+<img src="${thumb}">
 
 <div class="play-overlay">▶</div>
 
