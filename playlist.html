@@ -105,14 +105,12 @@ display:none;
         }
 
         .video-card{
-min-width:300px;
-max-width:300px;
-border-radius:18px;
+min-width:320px;
+max-width:320px;
 padding:14px;
+border-radius:18px;
 background:rgba(255,255,255,0.08);
 backdrop-filter:blur(10px);
-display:flex;
-flex-direction:column;
 flex-shrink:0;
 scroll-snap-align:start;
 }
@@ -228,10 +226,16 @@ scroll-snap-type:x mandatory;
 }
 
 .thumbnail{
-position:relative;
+width:100%;
+aspect-ratio:16/9;
 border-radius:12px;
 overflow:hidden;
-aspect-ratio:16/9;
+}
+
+.thumbnail iframe{
+width:100%;
+height:100%;
+border:none;
 }
 
 .thumbnail img{
@@ -275,14 +279,13 @@ margin-top:10px;
 position:fixed;
 bottom:20px;
 right:20px;
-width:220px;
-height:124px;
+width:260px;
+height:146px;
 background:black;
-border-radius:10px;
+border-radius:12px;
 overflow:hidden;
 display:none;
 z-index:999;
-box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
 
 .mini-player iframe{
@@ -330,13 +333,29 @@ font-size:14px;
         </div>
 </section>
 
-<h3>🎧 Study Music</h3>
-<div class="video-row" id="musicRow"></div>
-
 <h3>▶ Continue Watching</h3>
 <div class="video-row" id="continueRow"></div>
 
+<h3>🎧 Study Music</h3>
+<div class="video-row" id="musicRow"></div>
+
 <script>
+     let currentVideo = null;
+     
+     setInterval(()=>{
+
+if(currentVideo){
+
+let player = document.querySelector("#miniFrame");
+
+try{
+let time = player.contentWindow.postMessage('{"event":"listening"}',"*");
+}catch(e){}
+
+}
+
+},5000);
+     
     // Local Storage se data nikalna
     let videos = JSON.parse(localStorage.getItem("myVideos")) || [];
     let studyData = JSON.parse(localStorage.getItem("studyGraphData")) || [0,0,0,0,0,0,0];
@@ -529,18 +548,19 @@ row.appendChild(card);
 
     function playVideo(id,el){
 
+let saved = localStorage.getItem("time_"+id) || 0;
+
 let embed = id.startsWith("playlist:")
-? `https://www.youtube.com/embed/videoseries?list=${id.replace('playlist:','')}&autoplay=1`
-: `https://www.youtube.com/embed/${id}?autoplay=1`;
+? `https://www.youtube.com/embed/videoseries?list=${id.replace('playlist:','')}&autoplay=1&start=${saved}&enablejsapi=1`
+: `https://www.youtube.com/embed/${id}?autoplay=1&start=${saved}&enablejsapi=1`;
 
-el.innerHTML=`<iframe src="${embed}" allowfullscreen></iframe>`;
-
-// MINI PLAYER
 let mini = document.getElementById("miniPlayer");
 let frame = document.getElementById("miniFrame");
 
 frame.src = embed;
 mini.style.display="block";
+
+currentVideo = id;
 
 }
 
@@ -564,7 +584,7 @@ card.className="video-card";
 card.innerHTML=`
 
 <div class="thumbnail" onclick="playVideo('${video.id}',this)">
-<img src="${embedURL}">
+<iframe src="https://www.youtube.com/embed/${video.id}" allowfullscreen></iframe>
 <div class="play-overlay">▶</div>
 </div>
 
@@ -594,6 +614,62 @@ document.getElementById("miniPlayer").style.display="none";
 document.getElementById("miniFrame").src="";
 
 }
+
+window.addEventListener("message",(e)=>{
+
+if(typeof e.data === "string" && e.data.includes("ended")){
+
+playNext();
+
+}
+
+});
+
+function playNext(){
+
+let index = videos.findIndex(v=>v.id===currentVideo);
+
+if(index>=0 && index < videos.length-1){
+
+let next = videos[index+1];
+
+playVideo(next.id,null);
+
+}
+
+}
+
+let startX=0;
+
+document.addEventListener("touchstart",(e)=>{
+
+startX = e.touches[0].clientX;
+
+});
+
+document.addEventListener("touchend",(e)=>{
+
+let endX = e.changedTouches[0].clientX;
+
+if(startX-endX > 80){
+
+playNext();
+
+}
+
+if(endX-startX > 80){
+
+let index = videos.findIndex(v=>v.id===currentVideo);
+
+if(index>0){
+
+playVideo(videos[index-1].id,null);
+
+}
+
+}
+
+});
 
 </script>
 
