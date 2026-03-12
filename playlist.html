@@ -106,7 +106,8 @@ display:none;
 
         .video-card{
 min-width:280px;
-max-width:280px;
+max-width:340px;
+width:100%;
 padding:14px;
 border-radius:18px;
 background:rgba(255,255,255,0.08);
@@ -341,6 +342,20 @@ cursor:pointer;
 background:#ff4d4d;
 color:white;
 }
+
+@media (min-width:900px){
+
+.video-card{
+min-width:420px;
+max-width:420px;
+}
+
+.study-section{
+max-width:900px;
+margin:auto;
+}
+
+}
     </style>
 </head>
 
@@ -385,6 +400,17 @@ color:white;
 <div class="popup-btns">
 <button onclick="closePopup()">Cancel</button>
 <button id="confirmDelete">Remove</button>
+</div>
+
+</div>
+</div>
+
+<div id="errorPopup" class="remove-popup">
+<div class="popup-box">
+<p>Please enter a valid YouTube link</p>
+
+<div class="popup-btns">
+<button onclick="closeError()">OK</button>
 </div>
 
 </div>
@@ -441,7 +467,7 @@ videos=[];
         if (videoID) {
             // Check for duplicates
             if (videos.some(v => v.id === videoID)) {
-                alert("This video is already in your playlist!");
+                showError();
                 return;
             }
             videos.push({
@@ -740,6 +766,14 @@ playVideo(videos[index-1].id,null);
 
 function goHome(){
 window.location.href="index.html";
+}
+
+function showError(){
+document.getElementById("errorPopup").style.display="flex";
+}
+
+function closeError(){
+document.getElementById("errorPopup").style.display="none";
 }
 
 </script>
