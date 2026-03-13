@@ -4,7 +4,7 @@
 //   • Static      → Cache-first    → network fallback
 // ────────────────────────────────────────────────────────────────────────────
 
-const CACHE = "uw-cache-v7";          // bump version when assets change
+const CACHE = "uw-cache-v8";          // bump version when assets change
 
 const ASSETS = [
   "/",
