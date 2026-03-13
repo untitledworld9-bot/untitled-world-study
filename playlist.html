@@ -525,7 +525,7 @@ to{box-shadow:0 0 15px #00e5ff;}
 display:flex;
 align-items:flex-start;
 justify-content:space-between;
-margin-bottom:6px;
+margin-bottom:4px;
 }
 
 .playlist-title{
@@ -563,13 +563,14 @@ box-shadow:0 0 10px rgba(0,200,255,0.6);
 }
 
 .xp-progress{
-width:100%;
-height:5px;
-background:rgba(255,255,255,0.15);
-border-radius:10px;
-margin-top:2px;
-margin-bottom:20px; /* Ye link input aur XP bar ke beech minimal gap dega */
-overflow:hidden;
+    width:100%;
+    height:12px; /* Isey thoda mota kiya taki Box jaisa dikhe */
+    background:rgba(0,0,0,0.4); /* Dark background */
+    border: 1px solid rgba(0, 242, 254, 0.3); /* Box ki outline */
+    border-radius:6px;
+    margin-top:0px; /* Upar shift kiya */
+    margin-bottom:16px; /* Niche input box se halka gap maintain rakha */
+    overflow:hidden;
 }
 
 .xp-bar{
@@ -1344,20 +1345,33 @@ updateBadge();
 }
 
 function updateXPBar(){
+    let xp = parseInt(localStorage.getItem("xpPoints") || 0);
+    let percent = 0;
 
-let xp = parseInt(localStorage.getItem("xpPoints") || 0);
+    // Badge milestones ke hisaab se progress calculate karna
+    if(xp < 50) {
+        // Beginner (0 se 50)
+        percent = (xp / 50) * 100;
+    } else if (xp < 150) {
+        // Rising Learner (50 se 150) - Beech ka gap 100 hai
+        percent = ((xp - 50) / 100) * 100;
+    } else if (xp < 300) {
+        // Focused Learner (150 se 300) - Beech ka gap 150 hai
+        percent = ((xp - 150) / 150) * 100;
+    } else if (xp < 500) {
+        // Study Master (300 se 500) - Beech ka gap 200 hai
+        percent = ((xp - 300) / 200) * 100;
+    } else {
+        // Untitled Champion (Max Level) - Bar poora bhara rahega
+        percent = 100;
+    }
 
-let levelXP = xp % 100;
-
-let percent = (levelXP/100)*100;
-
-let bar = document.getElementById("xpBar");
-
-if(bar){
-bar.style.width = percent + "%";
+    let bar = document.getElementById("xpBar");
+    if(bar){
+        bar.style.width = percent + "%";
+    }
 }
 
-}
 
 function getLevel(){
 
