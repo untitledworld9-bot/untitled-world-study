@@ -1254,6 +1254,31 @@ max-width:900px;
   .daily-streak-card { display: block; }
 }
 
+/* --- MENU FIX --- */
+@media(max-width:768px){
+  nav.active {
+    display: flex !important; /* !important lagana zaroori hai */
+  }
+}
+
+/* --- TYPING ANIMATION CURSOR --- */
+.cursor {
+  display: inline-block;
+  color: #00f2fe;
+  font-weight: bold;
+  animation: blink 0.8s step-end infinite;
+}
+@keyframes blink { 
+  50% { opacity: 0; } 
+}
+
+/* --- WEBSITE GAP FIX (Weekly Analysis & Features ke beech) --- */
+.website-dashboard {
+  padding-bottom: 10px !important; /* Dashboard ke niche ka gap kam kiya */
+}
+.features {
+  padding-top: 35px !important; /* Features ke oopar ka gap kam kiya */
+}
 /* --- CSS END --- */
 </style>
 </head>
@@ -1318,29 +1343,33 @@ max-width:900px;
 <div id="pwaOverlay"></div>
 
 <section class="hero">
-<h2>Welcome To Untitled World</h2>
-<p class="hero-sub">Smart Study Platform</p>
-<button class="btn" onclick="goToStudy()" aria-label="Start Learning">
-Start Learning 👇
-</button>
-<button id="installBtn" class="btn" style="display:none;margin-top:15px;">
-Install App 📲
-</button>
+  <h2><span id="typewriter"></span><span class="cursor">|</span></h2>
+  <p class="hero-sub">Smart Study Platform</p>
   
-<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
+  <button class="btn" onclick="goToStudy()" aria-label="Start Learning">
+    Start Learning 👇
+  </button>
+  
+  <button id="installBtn" class="btn" style="display:none;margin-top:15px;">
+    Install App 📲
+  </button>
+  
+  <div style="margin-top: 25px; width: 100%;">
     
-    <a href="mocktest.html" class="coming-text" style="text-decoration:none; width: 280px; display: block;">
-        📝 Mock Test Platform<br>
-        <span>Coming soon 🔜</span>
-    </a>
+    <div class="app-box" style="border-color: #00f2fe; background: rgba(0, 242, 254, 0.08); margin: 12px auto;" onclick="location.href='mocktest.html'">
+      <div class="mock-title">
+        <i class="fa-solid fa-file-pen" style="margin-right: 8px;"></i> Mock Test Platform
+      </div>
+    </div>
 
-    <a href="timer.html" class="coming-text" style="text-decoration:none; width: 280px; display: block; border-color: #00ff88; background: rgba(0, 255, 136, 0.08);">
-        <span style="color: #00ff88; font-size: 14px; font-weight:bold;">Smart 🤓 Focus Timer ⌛</span><br>
-        <span style="color: #fff; font-size: 12px;">Start Now ➡️</span>
-    </a>
+    <div class="app-box focus" style="border-color: #00ff88; background: rgba(0, 255, 136, 0.08); margin: 12px auto;" onclick="location.href='timer.html'">
+      <div class="focus-title">
+        <i class="fa-solid fa-stopwatch" style="margin-right: 8px;"></i> Smart Focus Timer
+      </div>
+    </div>
 
-</div>
-  </section>
+  </div>
+</section>
 
 <section class="pwa-home" id="pwaHome">
 
@@ -1427,17 +1456,17 @@ onclick="location.href='leaderboard.html'">
 
 <section class="website-dashboard" id="websiteDashboard">
   
-  <div class="web-card" onclick="location.href='playlist.html'">
+  <div class="web-card" onclick="showFeaturePopup()">
     <h3><i class="fa-brands fa-youtube" style="color: #ff4757; margin-right: 10px; font-size: 24px;"></i> Study Playlist</h3>
     <p>Paste YouTube links & create your study playlist</p>
   </div>
 
-  <div class="web-card" onclick="location.href='focus.html'">
+  <div class="web-card" onclick="showFeaturePopup()">
     <h3><i class="fa-solid fa-stopwatch" style="color: #ff9f43; margin-right: 10px; font-size: 24px;"></i> Timer</h3>
     <p>Solve with countdown timer</p>
   </div>
 
-  <div class="web-card" onclick="location.href='progress.html'">
+  <div class="web-card" onclick="showFeaturePopup()">
     <h3><i class="fa-solid fa-chart-simple" style="color: #10ac84; margin-right: 10px; font-size: 24px;"></i> Weekly Analysis</h3>
     <p>Track your study progress & video complete history</p>
   </div>
@@ -1482,6 +1511,20 @@ onclick="location.href='leaderboard.html'">
 </p>
 
 </section>
+
+<div id="featurePopup" class="promo-popup" style="display:none; z-index: 99999;">
+  <div class="promo-box" style="padding: 30px 20px; text-align: center; background: linear-gradient(135deg, #1e2f36, #2c3e50);">
+    <span class="promo-close" onclick="closeFeaturePopup()">✕</span>
+    <i class="fa-solid fa-mobile-screen-button" style="font-size: 44px; color: #00f2fe; margin-bottom: 15px;"></i>
+    <h3 style="margin-bottom: 10px; color: #fff; font-size: 20px;">App Exclusive Feature</h3>
+    
+    <p id="featureTypeText" style="min-height: 45px; color: #a4b0be; font-size: 14px; margin-bottom: 20px;"></p>
+    
+    <button id="popupInstallBtn" class="btn" style="width: 100%; box-shadow: 0 4px 15px rgba(0,242,254,0.4);">
+      <i class="fa-solid fa-download"></i> Install App Now
+    </button>
+  </div>
+</div>
 
 <!-- PWA Promo Popup -->
 
@@ -1962,6 +2005,83 @@ window.addEventListener("load", function() {
     } else {
       fillBar.style.width = "0%";
     }
+  }
+});
+
+// --- TYPING ANIMATION LOGIC (Only for Website) ---
+window.addEventListener("load", function() {
+  if(!isPWA()) {
+    const text = "Welcome To Untitled World";
+    const typeElement = document.getElementById("typewriter");
+    
+    if(typeElement) {
+      typeElement.innerHTML = ""; // Pehle khali kiya
+      let i = 0;
+      
+      function typeWriter() {
+        if (i < text.length) {
+          typeElement.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(typeWriter, 60); // 60ms ki speed se type hoga (lagbhag 1.5 seconds)
+        }
+      }
+      
+      // Page load hone ke 300ms baad typing shuru hogi
+      setTimeout(typeWriter, 300);
+    }
+  }
+});
+
+// --- 1. MENU TOGGLE FIX ---
+function toggleMenu(){
+  if(isPWA()){
+    openPwaMenu();
+  } else {
+    document.getElementById("navMenu").classList.toggle("active");
+  }
+}
+
+// --- 2. POPUP & TYPING ANIMATION LOGIC ---
+function showFeaturePopup() {
+  const popup = document.getElementById("featurePopup");
+  const textEl = document.getElementById("featureTypeText");
+  
+  popup.style.display = "flex";
+  textEl.innerHTML = ""; // Pehle purana text saaf karega
+
+  // Professional message jo type hoga
+  const text = "To unlock this premium feature and study distraction-free, please install our app.";
+  let i = 0;
+
+  function typeWriter() {
+    if (i < text.length) {
+      textEl.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(typeWriter, 35); // Typing speed
+    }
+  }
+  
+  setTimeout(typeWriter, 200); // Popup khulne ke turant baad type hona shuru
+}
+
+function closeFeaturePopup() {
+  document.getElementById("featurePopup").style.display = "none";
+}
+
+// --- 3. POPUP INSTALL BUTTON LOGIC ---
+document.getElementById("popupInstallBtn").addEventListener("click", async () => {
+  if (deferredPrompt) {
+    // Agar install prompt ready hai toh app install karega
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      console.log("App Installed by User");
+    }
+    deferredPrompt = null;
+    closeFeaturePopup(); // Install click karne ke baad popup band ho jayega
+  } else {
+    // Agar browser support nahi karta ya already installed hai
+    alert("App is already installed! Please open it from your phone's home screen."); 
   }
 });
 
