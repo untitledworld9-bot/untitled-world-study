@@ -479,6 +479,46 @@ z-index:999999;
 70%{transform:translate(-50%,-50%) scale(1.4)}
 100%{transform:translate(-50%,-50%) scale(1);opacity:1}
 }
+
+.xp-pop{
+
+position:fixed;
+
+top:45%;
+
+left:50%;
+
+transform:translate(-50%,-50%);
+
+font-size:26px;
+
+font-weight:700;
+
+color:#00f2fe;
+
+animation:xpAnim 0.8s ease;
+
+z-index:99999;
+
+}
+
+@keyframes xpAnim{
+
+0%{
+transform:translate(-50%,-50%) scale(0.5);
+opacity:0;
+}
+
+50%{
+transform:translate(-50%,-70%) scale(1.2);
+}
+
+100%{
+transform:translate(-50%,-90%);
+opacity:0;
+}
+
+}
     </style>
 </head>
 
@@ -654,6 +694,7 @@ closePopup();
         updateGraph(videos[index].completed ? 1 : -1);
 
 if(videos[index].completed){
+addXP();
 updateDailyStreak();
 }
 
@@ -866,6 +907,34 @@ document.body.appendChild(fire);
 setTimeout(()=>{
 fire.remove();
 },600);
+
+}
+
+function addXP(){
+
+let xp = parseInt(localStorage.getItem("xpPoints") || 0);
+
+xp += 10;
+
+localStorage.setItem("xpPoints", xp);
+
+showXP(xp);
+
+}
+
+function showXP(xp){
+
+let box=document.createElement("div");
+
+box.className="xp-pop";
+
+box.innerText="+10 XP ⚡";
+
+document.body.appendChild(box);
+
+setTimeout(()=>{
+box.remove();
+},800);
 
 }
 
