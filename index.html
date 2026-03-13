@@ -27,7 +27,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 <script type="module">
 
 import { initializeApp } from 
@@ -1200,6 +1199,61 @@ max-width:900px;
   color: #ff9f43;
 }
 
+/* --- WEBSITE DASHBOARD CARDS (NON-PWA) --- */
+.website-dashboard {
+  padding: 40px 10%;
+  text-align: center;
+  max-width: 800px;
+  margin: auto;
+}
+.web-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  border-radius: 20px;
+  padding: 25px 20px;
+  margin: 20px auto;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+.web-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  border-color: #00f2fe;
+  box-shadow: 0 12px 30px rgba(0, 242, 254, 0.3);
+}
+.web-card h3 {
+  margin-bottom: 8px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.web-card p {
+  font-size: 14px;
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* --- NO BLINKING FIX (Instant Hide/Show) --- */
+/* Default Website Mode: Hide PWA elements instantly */
+#pwaHome, #pwaDashboard, #pwaSidebar, #pwaOverlay, #pwaBottomNav, #xpRankBox, .daily-streak-card {
+  display: none;
+}
+
+/* PWA Mode: Show PWA, Hide Website instantly */
+@media (display-mode: standalone) {
+  .hero, .website-dashboard, .features, .contact-section, footer {
+    display: none !important;
+  }
+  #pwaHome { display: block; }
+  #pwaDashboard { display: block; }
+  #pwaBottomNav { display: flex; }
+  #xpRankBox { display: flex; }
+  .daily-streak-card { display: block; }
+}
+
 /* --- CSS END --- */
 </style>
 </head>
@@ -1371,34 +1425,23 @@ onclick="location.href='leaderboard.html'">
 
 </section>
 
-<section class="study-section" id="study">
-<h2>Your Study Playlist</h2>
-<div class="input-container">
-    <input type="text" id="ytLink" placeholder="Paste YouTube URL here (e.g. https://youtu.be/xyz...)">
-    <!-- YouTube Open Button -->
-    <button class="yt-open" onclick="openYouTube()">▶</button>
-    <button class="add-btn" onclick="addVideo()">Add Video</button>
-</div>
+<section class="website-dashboard" id="websiteDashboard">
+  
+  <div class="web-card" onclick="location.href='playlist.html'">
+    <h3><i class="fa-brands fa-youtube" style="color: #ff4757; margin-right: 10px; font-size: 24px;"></i> Study Playlist</h3>
+    <p>Paste YouTube links & create your study playlist</p>
+  </div>
 
-<div class="video-grid" id="videoContainer"></div>
-</section>
+  <div class="web-card" onclick="location.href='focus.html'">
+    <h3><i class="fa-solid fa-stopwatch" style="color: #ff9f43; margin-right: 10px; font-size: 24px;"></i> Timer</h3>
+    <p>Solve with countdown timer</p>
+  </div>
 
-<section class="timer-section">
-    <h2>Focus Timer</h2>
-    <div class="timer" id="timer">00:00:00</div>
-    <button class="btn" onclick="startTimer(3600)">1 Hour</button>
-    <button class="btn" onclick="startTimer(7200)">2 Hour</button>
-    <button class="btn" onclick="startTimer(10800)">3 Hour</button>
+  <div class="web-card" onclick="location.href='progress.html'">
+    <h3><i class="fa-solid fa-chart-simple" style="color: #10ac84; margin-right: 10px; font-size: 24px;"></i> Weekly Analysis</h3>
+    <p>Track your study progress & video complete history</p>
+  </div>
 
-    <button class="btn" id="pauseBtn" style="background:orange;" onclick="pauseTimer()">Pause</button>
-    <button class="btn" style="background:#e74c3c;" onclick="stopTimer()">Stop</button>
-</section>
-
-<section class="graph-section">
-<h2>Weekly Progress</h2>
-<div class="chart-box">
-    <canvas id="studyChart"></canvas>
-</div>
 </section>
 
 <section class="features" id="features">
@@ -1427,11 +1470,10 @@ onclick="location.href='leaderboard.html'">
     <a href="privacy.html">Privacy Policy</a>
   </div>
 
-  <div class="follow-section">
-    <p>Follow us on</p>
-    <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-link">
-      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
-      Untitled World
+    <div class="follow-section">
+    <p style="margin-bottom: 12px;">Follow us on</p>
+    <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
+      <i class="fa-brands fa-youtube"></i> YouTube
     </a>
   </div>
 
@@ -1511,217 +1553,6 @@ document.getElementById("navMenu").classList.toggle("active");
 function goToStudy(){
 document.getElementById("study").scrollIntoView({behavior:"smooth"});
 }
-
-let videos = JSON.parse(localStorage.getItem("myVideos")) || [];
-
-function extractVideoID(url){
-    try {
-        let u = new URL(url);
-
-        // Playlist detection
-        if(u.searchParams.get("list")){
-            return "playlist:" + u.searchParams.get("list");
-        }
-
-        if(u.hostname.includes("youtu.be")){
-            return u.pathname.slice(1,12);
-        }
-
-        if(u.searchParams.get("v")){
-            return u.searchParams.get("v");
-        }
-
-        if(u.pathname.includes("/live/")){
-            return u.pathname.split("/live/")[1].substring(0,11);
-        }
-
-        if(u.pathname.includes("/embed/")){
-            return u.pathname.split("/embed/")[1].substring(0,11);
-        }
-
-        return false;
-    } catch {
-        return false;
-    }
-}
-
-function addVideo(){
-    let input = document.getElementById("ytLink");
-    let url = input.value.trim();
-    let videoID = extractVideoID(url);
-
-    if(videoID){
-        videos.push({ id: videoID, completed: false });
-        saveAndRender();
-        input.value = "";
-    } else {
-        alert("Please enter a valid YouTube URL");
-    }
-}
-
-function deleteVideo(index){
-    if(confirm("Delete this video?")){
-        videos.splice(index, 1);
-        saveAndRender();
-    }
-}
-
-function toggleComplete(index){
-    videos[index].completed = !videos[index].completed;
-    if(videos[index].completed){
-        updateGraph(1);
-    } else {
-        updateGraph(-1);
-    }
-    saveAndRender();
-}
-
-function saveAndRender(){
-    localStorage.setItem("myVideos", JSON.stringify(videos));
-    let container = document.getElementById("videoContainer");
-    container.innerHTML = "";
-
-    videos.forEach((video, index) => {
-        let isDone = video.completed ? "active" : "";
-        let btnText = video.completed ? "Completed ✔" : "Mark Complete";
-        
-        let html = `
-            <div class="video-card">
-                <iframe src="${
-video.id.startsWith('playlist:')
-? `https://www.youtube.com/embed/videoseries?list=${video.id.replace('playlist:','')}`
-: `https://www.youtube.com/embed/${video.id}`
-}" 
-loading="lazy"
-allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-allowfullscreen>
-</iframe>
-                <button class="complete-btn ${isDone}" onclick="toggleComplete(${index})">${btnText}</button>
-                <button onclick="deleteVideo(${index})" style="margin-top:10px; background:none; border:none; color:white; opacity:0.6; cursor:pointer; font-size:12px;">Remove</button>
-            </div>
-        `;
-        container.innerHTML += html;
-    });
-}
-
-window.onload = function(){
-    saveAndRender();
-}
-
-let timerInterval;
-let time = 0;
-let isPaused = false;
-
-function startTimer(duration){
-    clearInterval(timerInterval);
-
-    // Agar new duration diya hai to reset
-    if(duration){
-        time = duration;
-        isPaused = false;
-        document.getElementById("pauseBtn").innerText = "Pause";
-    }
-
-    displayTime(time);
-
-    timerInterval=setInterval(()=>{
-        time--;
-        displayTime(time);
-
-        if(time<0){
-            clearInterval(timerInterval);
-            alert("Session Complete!");
-        }
-    },1000);
-}
-
-function pauseTimer(){
-    let btn = document.getElementById("pauseBtn");
-
-    if(!isPaused){
-        clearInterval(timerInterval);
-        btn.innerText = "Resume";
-        isPaused = true;
-    }else{
-        startTimer();   // resume
-        btn.innerText = "Pause";
-        isPaused = false;
-    }
-}
-
-function stopTimer(){
-    clearInterval(timerInterval);
-    time = 0;
-    isPaused = false;
-    document.getElementById("pauseBtn").innerText = "Pause";
-    document.getElementById("timer").innerHTML = "00:00:00";
-}
-
-function displayTime(time){
-    let h=Math.floor(time/3600);
-    let m=Math.floor((time%3600)/60);
-    let s=time%60;
-    document.getElementById("timer").innerHTML=
-    (h<10?"0":"")+h+":"+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
-}
-
-let studyData = JSON.parse(localStorage.getItem("studyGraphData")) || [0,0,0,0,0,0,0];
-let studyChart;
-
-function updateGraph(val){
-    let day = new Date().getDay();
-    studyData[day] += val;
-    if(studyData[day] < 0) studyData[day] = 0;
-
-    localStorage.setItem("studyGraphData", JSON.stringify(studyData));
-
-    if(studyChart){
-        studyChart.data.datasets[0].data = studyData;
-        studyChart.update();
-    }
-}
-
-window.addEventListener("load", function(){
-    const ctx = document.getElementById('studyChart').getContext('2d');
-
-    studyChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
-            datasets: [{
-                label: 'Videos Completed',
-                data: studyData,
-                backgroundColor: '#00f2fe',
-                borderRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                x: { ticks: { color: 'white' }, grid: { display: false } }
-            },
-            plugins: {
-                legend: { labels: { color: 'white' } }
-            }
-        }
-    });
-});
-
-function logout(){
-
-localStorage.removeItem("userName");
-localStorage.removeItem("userEmail");
-
-window.location="login.html";
-
-}
-
-function openYouTube(){
-  window.open("https://m.youtube.com", "_blank");
-}
-</script>
 
 <script>
 let deferredPrompt;
