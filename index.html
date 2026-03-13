@@ -997,6 +997,82 @@ max-width:900px;
   margin-bottom: 4px;
 }
 
+/* --- APP BOX TEXT COLORS (PWA ONLY) --- */
+.mock-title {
+  color: #00f2fe;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.focus-title {
+  color: #00ff88;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- SIDEBAR EDTECH MENU (PWA ONLY) --- */
+.pwa-links a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: 0.2s;
+  font-size: 15px;
+  font-weight: 500;
+}
+.pwa-links a:hover {
+  background: rgba(255,255,255,0.05);
+}
+.pwa-links i {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+}
+.pwa-links button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #e74c3c;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* --- YOUTUBE PROMO CARD IN SIDEBAR --- */
+.yt-promo-card {
+  background: rgba(255, 71, 87, 0.1);
+  border: 1px solid #ff4757;
+  border-radius: 12px;
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ff4757 !important;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  transition: 0.2s;
+  margin-bottom: 5px; /* Gap kam karne ke liye */
+}
+.yt-promo-card i {
+  font-size: 20px;
+}
+.sidebar-footer {
+  margin-top: 20px; /* Gap adjusted */
+}
+
 /* --- CSS END --- */
 </style>
 </head>
@@ -1038,34 +1114,34 @@ max-width:900px;
 </div>
 
 <div class="pwa-links">
-
-<a href="mocktest.html">📝 Mock Test</a>
-
-<a href="timer.html">⏳ Smart Focus Timer</a>
-
-<a href="playlist.html">▶️ Study Playlist</a>
-
-<a href="leaderboard.html">🏆 Leaderboard</a>
-
-<button onclick="logout()">🚪 Logout</button>
-
+  <a href="mocktest.html">
+    <i class="fa-solid fa-file-pen" style="color: #00f2fe;"></i> Mock Test
+  </a>
+  <a href="timer.html">
+    <i class="fa-solid fa-stopwatch" style="color: #00ff88;"></i> Smart Focus Timer
+  </a>
+  <a href="playlist.html">
+    <i class="fa-brands fa-youtube" style="color: #ff4757;"></i> Study Playlist
+  </a>
+  <a href="leaderboard.html">
+    <i class="fa-solid fa-trophy" style="color: #f1c40f;"></i> Leaderboard
+  </a>
+  
+  <button onclick="logout()">
+    <i class="fa-solid fa-right-from-bracket"></i> Logout
+  </button>
 </div>
 
 <div class="sidebar-footer">
+  <p style="margin-bottom: 12px;">Follow us on</p>
+  
+  <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
+    <i class="fa-brands fa-youtube"></i> YouTube
+  </a>
 
-<p>Follow us on</p>
-
-<a href="https://www.youtube.com/@untitledworld01" target="_blank" class="sidebar-link dotted-link">
-<img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
-Untitled World
-</a>
-
-<a href="contact.html" class="sidebar-link dotted-link">
-Contact Us
-</a>
-
-</div>
-
+  <a href="contact.html" class="sidebar-link dotted-link" style="margin-top: 15px;">
+    Contact Us
+  </a>
 </div>
 
 <div id="pwaOverlay"></div>
@@ -1104,12 +1180,16 @@ Install App 📲
 <section class="pwa-home" id="pwaHome">
   <h2 class="start-text">Start Studying 🚀</h2>
 
-  <div class="app-box" onclick="location.href='mocktest.html'">
-  📝 Mock Test Platform
+  <div class="app-box" style="border-color: #00f2fe; background: rgba(0, 242, 254, 0.08);" onclick="location.href='mocktest.html'">
+    <div class="mock-title">
+      <i class="fa-solid fa-file-pen" style="margin-right: 8px;"></i> Mock Test Platform
+    </div>
   </div>
 
   <div class="app-box focus" onclick="location.href='timer.html'">
-  🤓 Smart Focus Timer ⏳
+    <div class="focus-title">
+      <i class="fa-solid fa-stopwatch" style="margin-right: 8px;"></i> Smart Focus Timer
+    </div>
   </div>
 
   <div id="todayFocusCard" class="today-focus-mini">
