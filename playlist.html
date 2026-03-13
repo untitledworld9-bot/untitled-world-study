@@ -441,14 +441,6 @@ font-size:15px;
 opacity:0.9;
 }
 
-.playlist-title{
-display:flex;
-justify-content:space-between;
-align-items:center;
-font-size:22px;
-font-weight:700;
-}
-
 #streakBox{
 background:rgba(255,120,0,0.15);
 padding:6px 12px;
@@ -524,25 +516,6 @@ opacity:0;
 
 }
 
-.stats-box{
-display:flex;
-gap:10px;
-}
-
-#xpBox{
-background:rgba(0,200,255,0.15);
-padding:6px 12px;
-border-radius:20px;
-font-size:16px;
-font-weight:600;
-color:#00e5ff;
-
-min-width:70px;        /* size fix */
-text-align:center;
-
-animation:xpGlow 1.5s infinite alternate;
-}
-
 @keyframes xpGlow{
 from{box-shadow:0 0 5px #00e5ff;}
 to{box-shadow:0 0 15px #00e5ff;}
@@ -552,7 +525,7 @@ to{box-shadow:0 0 15px #00e5ff;}
 display:flex;
 align-items:center;
 justify-content:space-between;
-margin-bottom:8px;
+margin-bottom:6px;
 }
 
 .playlist-title{
@@ -563,29 +536,59 @@ color:#00f2fe;
 
 .stats-box{
 display:flex;
-gap:6px;
-}
-
-#streakBox,
-#xpBox{
-padding:5px 10px;
-border-radius:14px;
-font-size:14px;
-font-weight:600;
-min-width:45px;
-text-align:center;
+gap:8px;
 }
 
 #streakBox{
 background:rgba(255,120,0,0.15);
+padding:6px 10px;
+border-radius:16px;
+font-size:14px;
+font-weight:600;
 color:#ff7a00;
 box-shadow:0 0 10px rgba(255,120,0,0.6);
 }
 
 #xpBox{
 background:rgba(0,200,255,0.15);
+padding:6px 10px;
+border-radius:16px;
+font-size:14px;
+font-weight:600;
 color:#00e5ff;
 box-shadow:0 0 10px rgba(0,200,255,0.6);
+}
+
+.xp-progress{
+width:100%;
+height:5px;
+background:rgba(255,255,255,0.15);
+border-radius:10px;
+margin-top:4px;
+overflow:hidden;
+}
+
+.xp-bar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00e5ff,#00f2fe);
+transition:width 0.5s ease;
+}
+
+.badge-box{
+margin-top:6px;
+font-size:14px;
+font-weight:600;
+color:#ffd700;
+background:rgba(255,215,0,0.12);
+padding:4px 10px;
+border-radius:12px;
+display:inline-block;
+}
+
+#levelBox{
+margin-left:8px;
+font-size:14px;
 }
 
 /* XP progress bar */
@@ -693,11 +696,10 @@ margin-bottom:10px;
 <div class="xp-bar" id="xpBar"></div>
 </div>
 
-<div class="badge-box" id="badgeBox">
-🏅 Beginner
-</div>
-
+<div style="margin-top:6px;">
+<span class="badge-box" id="badgeBox">🏅 Beginner</span>
 <span id="levelBox">🏆 Lv1</span>
+</div>
 
     <div class="input-container">
         <input type="text" id="ytLink" placeholder="Paste YouTube Video URL or Playlist URL"> 
