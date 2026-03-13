@@ -666,6 +666,30 @@ margin-bottom:10px;
 0%{transform:scale(0.5);opacity:0}
 100%{transform:scale(1);opacity:1}
 }
+
+.xp-header{
+position:relative;
+margin-top:4px;
+}
+
+.badge-level{
+position:absolute;
+right:0;
+top:-22px;
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.level-box{
+background:rgba(0,200,255,0.15);
+padding:4px 10px;
+border-radius:12px;
+font-size:14px;
+font-weight:600;
+color:#00e5ff;
+box-shadow:0 0 10px rgba(0,200,255,0.4);
+}
     </style>
 </head>
 
@@ -683,13 +707,17 @@ margin-bottom:10px;
 
 </div>
 
+<div class="xp-header">
+
 <div class="xp-progress">
 <div class="xp-bar" id="xpBar"></div>
 </div>
 
-<div style="margin-top:6px;">
+<div class="badge-level">
 <span class="badge-box" id="badgeBox">🏅 Beginner</span>
-<span id="levelBox">🏆 Lv1</span>
+<span class="level-box" id="levelBox">🏆 Lv1</span>
+</div>
+
 </div>
 
     <div class="input-container">
