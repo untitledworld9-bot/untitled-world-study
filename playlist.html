@@ -646,6 +646,49 @@ row.appendChild(card);
 
 });
 
+// MUSIC SECTION
+const musicRow = document.getElementById("musicRow");
+musicRow.innerHTML="";
+
+const musicList = videos.filter(v=>v.subject==="Music");
+
+musicList.forEach(video=>{
+
+let thumb = video.id.startsWith('playlist:')
+? `https://img.youtube.com/vi/${video.id.replace('playlist:','')}/hqdefault.jpg`
+: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+
+let card=document.createElement("div");
+
+card.className="video-card";
+
+card.innerHTML=`
+
+<div class="thumbnail" onclick="playVideo('${video.id}',this)">
+<img src="${thumb}">
+<div class="play-overlay">▶</div>
+</div>
+
+<div class="progress-bar">
+<div class="progress" style="width:${video.completed?100:0}%"></div>
+</div>
+
+<button class="complete-btn ${video.completed?'active':''}"
+onclick="toggleComplete(${videos.indexOf(video)})">
+${video.completed?"Completed ✔":"Mark Complete"}
+</button>
+
+<button class="remove-link"
+onclick="deleteVideo(${videos.indexOf(video)})">
+Remove Video
+</button>
+
+`;
+
+musicRow.appendChild(card);
+
+});
+
 }
 
     function updateGraph(val) {
@@ -667,11 +710,11 @@ row.appendChild(card);
 let saved = localStorage.getItem("time_"+id) || 0;
 
 let embed = id.startsWith("playlist:")
-? `https://www.youtube.com/embed/videoseries?list=${id.replace('playlist:','')}&autoplay=1&start=${saved}`
-: `https://www.youtube.com/embed/${id}?autoplay=1&start=${saved}`;
+? `https://www.youtube.com/embed/videoseries?list=${id.replace('playlist:','')}&autoplay=1&enablejsapi=1`
+: `https://www.youtube.com/embed/${id}?autoplay=1&enablejsapi=1`;
 
 el.innerHTML = `
-<iframe src="${embed}" allow="autoplay" allowfullscreen></iframe>
+<iframe id="ytPlayer" src="${embed}" allow="autoplay" allowfullscreen></iframe>
 `;
 
 document.querySelector(".back-home-btn").style.display="none";
@@ -687,53 +730,6 @@ if(e.target.closest("iframe")==null){
 document.querySelector(".back-home-btn").style.display="flex";
 
 }
-
-});
-
-// MUSIC SECTION
-const musicList = videos.filter(v=>v.subject==="Music");
-
-const musicRow = document.getElementById("musicRow");
-
-musicRow.innerHTML="";
-
-musicList.forEach(video=>{
-
-let thumb = video.id.startsWith('playlist:')
-? `https://img.youtube.com/vi/${video.id.replace('playlist:','')}/hqdefault.jpg`
-: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
-
-let card=document.createElement("div");
-
-card.className="video-card";
-
-card.innerHTML=`
-
-<div class="thumbnail" onclick="playVideo('${video.id}',this)">
-
-<img src="${thumb}">
-
-<div class="play-overlay">▶</div>
-
-</div>
-
-<div class="progress-bar">
-<div class="progress" style="width:${video.completed?100:0}%"></div>
-</div>
-
-<button class="complete-btn ${video.completed?'active':''}"
-onclick="toggleComplete(${videos.indexOf(video)})">
-${video.completed?"Completed ✔":"Mark Complete"}
-</button>
-
-<button class="remove-link"
-onclick="deleteVideo(${videos.indexOf(video)})">
-Remove Video
-</button>
-
-`;
-
-musicRow.appendChild(card);
 
 });
 
@@ -805,6 +801,27 @@ document.getElementById("errorPopup").style.display="flex";
 function closeError(){
 document.getElementById("errorPopup").style.display="none";
 }
+
+setInterval(()=>{
+
+let player = document.querySelector("#ytPlayer");
+
+if(!player) return;
+
+player.contentWindow.postMessage('{"event":"listening"}',"*");
+
+},1000);
+
+
+window.addEventListener("message",(e)=>{
+
+if(typeof e.data === "string" && e.data.includes("ended")){
+
+playNext();
+
+}
+
+});
 
 </script>
 
