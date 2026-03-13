@@ -1074,6 +1074,27 @@ max-width:900px;
   margin-top: 20px; /* Gap adjusted */
 }
 
+/* --- CONTACT US PROMO CARD (PWA ONLY) --- */
+.contact-promo-card {
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid #00f2fe;
+  border-radius: 10px;
+  padding: 8px 16px; /* YouTube wale se thoda patla */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #00f2fe !important;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  transition: 0.2s;
+  margin-top: 10px;
+}
+.contact-promo-card i {
+  font-size: 16px;
+}
+
 /* --- CSS END --- */
 </style>
 </head>
@@ -1122,12 +1143,16 @@ max-width:900px;
     <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
   </div>
 
-  <div class="sidebar-footer">
+    <div class="sidebar-footer">
     <p style="margin-bottom: 12px;">Follow us on</p>
+    
     <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
       <i class="fa-brands fa-youtube"></i> YouTube
+    </a><br>
+
+    <a href="contact.html" class="contact-promo-card">
+      <i class="fa-solid fa-headset"></i> Contact Us
     </a>
-    <a href="contact.html" class="sidebar-link dotted-link" style="margin-top: 15px;">Contact Us</a>
   </div>
 </div>
 
@@ -1208,11 +1233,10 @@ Install App 📲
 
   </div>
 
-  <div class="follow-section">
-    <p>Follow us on</p>
-    <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-link">
-      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
-      Untitled World
+   <div class="follow-section">
+    <p style="margin-bottom: 12px;">Follow us on</p>
+    <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
+      <i class="fa-brands fa-youtube"></i> YouTube
     </a>
   </div>
 
@@ -1314,7 +1338,7 @@ Install App 📲
   </a>
 
   <a href="mocktest.html">
-    📝
+    <i class="fa-solid fa-file-pen"></i>
     <span>Mock Test</span>
   </a>
 
