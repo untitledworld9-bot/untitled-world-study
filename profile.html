@@ -4,7 +4,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
 <meta charset="UTF-8">
@@ -13,369 +12,438 @@
 <title>Profile - Untitled World</title>
 
 <style>
-
-body{
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-font-family:Poppins,sans-serif;
-color:white;
-margin:0;
-padding:0;
+body {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  font-family: 'Poppins', sans-serif;
+  color: white;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 80px; /* Bottom nav ke liye space */
 }
 
-/* HEADER */
-
-.top-bar{
-
-display:flex;
-align-items:center;
-gap:12px;
-
-padding:18px;
-
+/* --- HEADER / TOP BAR --- */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 20px 10px 20px;
+  max-width: 420px;
+  margin: auto;
 }
 
-.avatar{
-
-width:48px;
-height:48px;
-
-border-radius:50%;
-
-background:#4facfe;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-font-weight:bold;
-font-size:20px;
-
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #4facfe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+  box-shadow: 0 4px 10px rgba(0,242,254,0.3);
 }
 
-.user-info{
-
-display:flex;
-flex-direction:column;
-
+.user-info {
+  display: flex;
+  flex-direction: column;
 }
 
-.goal-badge{
-
-margin-left:auto;
-
-background:#00f2fe;
-
-color:black;
-
-padding:6px 12px;
-
-border-radius:20px;
-
-font-size:12px;
-
-font-weight:600;
-
+#userName {
+  font-weight: 600;
+  font-size: 16px;
 }
 
-/* CARD */
-
-.profile-container{
-max-width:420px;
-margin:auto;
-padding:10px 20px 30px;
+.goal-badge {
+  margin-left: auto;
+  background: rgba(0, 242, 254, 0.15);
+  color: #00f2fe;
+  border: 1px solid #00f2fe;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.profile-card{
-
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(14px);
-
-border-radius:22px;
-
-padding:25px;
-
-box-shadow:0 10px 25px rgba(0,0,0,0.3);
-
+/* --- MAIN PROFILE CONTAINER --- */
+.profile-container {
+  max-width: 420px;
+  margin: auto;
+  padding: 10px 20px 30px;
 }
 
-.goal-section{
-
-margin-top:20px;
-
+.profile-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 25px 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
 
-.goal-option{
-
-display:flex;
-align-items:center;
-
-gap:10px;
-
-margin:12px 0;
-
-font-size:16px;
-
+.section-title {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 16px;
+  color: #00f2fe;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-button{
-
-width:100%;
-
-padding:14px;
-
-border:none;
-
-border-radius:14px;
-
-background:linear-gradient(45deg,#00f2fe,#4facfe);
-
-color:white;
-
-font-weight:600;
-
-cursor:pointer;
-
-margin-top:15px;
-
+/* --- EDTECH INPUTS & SELECT --- */
+.input-label {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-bottom: 6px;
+  display: block;
+  font-weight: 500;
 }
 
-.logout-btn{
-
-background:#e74c3c;
-
+.edtech-input, .edtech-select {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 18px;
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+  transition: 0.3s;
 }
 
-/* BOTTOM NAV */
-
-.bottom-nav{
-
-position:fixed;
-
-bottom:0;
-
-left:0;
-
-width:100%;
-
-height:65px;
-
-background:#0f2027;
-
-display:flex;
-
-justify-content:space-around;
-
-align-items:center;
-
-border-top:1px solid rgba(255,255,255,0.1);
-
+.edtech-input:focus, .edtech-select:focus {
+  border-color: #00f2fe;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
 }
 
-.bottom-nav a{
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-text-decoration:none;
-
-color:white;
-
-font-size:12px;
-
+.edtech-select option {
+  background: #1e2f36;
+  color: white;
 }
 
-.bottom-nav a.active{
-
-color:#00f2fe;
-
+.save-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(45deg, #00f2fe, #4facfe);
+  color: #000;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+  transition: 0.2s;
 }
 
-.follow-section{
-margin-top:40px;
-text-align:center;
+.save-btn:active {
+  transform: scale(0.96);
 }
 
-.follow-section p{
-margin-bottom:12px;
-font-weight:600;
-font-size:18px;
+#msg {
+  color: #00ff88;
+  margin-top: 12px;
+  font-size: 13px;
+  text-align: center;
+  display: none;
+  font-weight: 600;
 }
 
-.yt-link{
-color:white;
-text-decoration:none;
-border-bottom:1.5px dotted rgba(255,255,255,0.6);
-padding-bottom:3px;
-font-size:18px;
+/* --- PROMO CARDS (SUBSCRIPTION, LOGOUT, SOCIALS) --- */
+.sub-promo-card {
+  background: rgba(241, 196, 15, 0.1);
+  border: 1px solid #f1c40f;
+  color: #f1c40f !important;
+  padding: 14px 20px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  margin-top: 20px;
+  transition: 0.2s;
 }
 
-.yt-link img{
-width:18px;
-vertical-align:middle;
-margin-right:6px;
+.logout-btn {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: 0.2s;
 }
 
-.made-line{
-margin-top:15px;
-margin-bottom:90px;
-font-family:'Playfair Display', serif;
-font-size:18px;
-font-style:italic;
-font-weight:500;
-text-align:center;
-opacity:0.9;
+.sub-promo-card:active, .logout-btn:active {
+  transform: scale(0.96);
 }
 
-body{
-padding-bottom:70px;
+.follow-section {
+  margin-top: 35px;
+  text-align: center;
 }
 
+.follow-section p {
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+/* Same Exact YouTube & Contact Us cards as Sidebar */
+.yt-promo-card {
+  background: rgba(255, 71, 87, 0.1);
+  border: 1px solid #ff4757;
+  border-radius: 10px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ff4757 !important;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  transition: 0.2s;
+  margin-bottom: 10px;
+}
+
+.contact-promo-card {
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid #00f2fe;
+  border-radius: 10px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #00f2fe !important;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.yt-promo-card i, .contact-promo-card i {
+  font-size: 16px;
+}
+
+.made-line {
+  margin-top: 30px;
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 500;
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* --- BOTTOM NAV (EXACT HOME MATCH) --- */
+.pwa-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 65px;
+  background: #0f2027;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 2000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pwa-bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: white;
+  font-size: 12px;
+  opacity: 0.7;
+  transition: 0.3s;
+}
+
+.pwa-bottom-nav a.active {
+  color: #00f2fe;
+  opacity: 1;
+}
+
+.pwa-bottom-nav a i {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+/* Home wali specific YT red styling bypass for bottom nav */
+.pwa-bottom-nav a .fa-youtube {
+  color: #ff4757 !important; 
+}
 </style>
 </head>
 
 <body>
 
-<!-- TOP PROFILE BAR -->
-
 <div class="top-bar">
-
-<div class="avatar" id="avatar">A</div>
-
-<div class="user-info">
-
-<div id="userName">User</div>
-
-<div style="font-size:12px;opacity:.7;" id="userEmail">email@gmail.com</div>
-
-</div>
-
-<div id="goalBadge" class="goal-badge">No Goal</div>
-
+  <div class="avatar" id="avatar">A</div>
+  <div class="user-info">
+    <div id="userName">User</div>
+    <div style="font-size:12px; opacity:0.7;" id="userEmail">email@gmail.com</div>
+  </div>
+  <div id="goalBadge" class="goal-badge">No Goal</div>
 </div>
 
 
 <div class="profile-container">
 
-<div class="profile-card">
+  <div class="profile-card">
+    <h3 class="section-title"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
+    
+    <label class="input-label">Your Name</label>
+    <input type="text" id="nameInput" class="edtech-input" placeholder="Enter your name">
 
-<h3>Select Your Goal</h3>
+    <label class="input-label">Select Goal</label>
+    <select id="goalSelect" class="edtech-select">
+      <option value="JEE">JEE</option>
+      <option value="NEET">NEET</option>
+      <option value="CUET">CUET</option>
+      <option value="Boards">Boards</option>
+    </select>
 
-<label class="goal-option">
-<input type="radio" name="goal" value="JEE"> JEE
-</label>
+    <button class="save-btn" onclick="saveProfile()">
+      <i class="fa-solid fa-floppy-disk"></i> Save Details
+    </button>
+    <div id="msg"></div>
+  </div>
 
-<label class="goal-option">
-<input type="radio" name="goal" value="NEET"> NEET
-</label>
+  <a href="#" class="sub-promo-card">
+    <i class="fa-solid fa-crown"></i> My Subscription
+  </a>
 
-<label class="goal-option">
-<input type="radio" name="goal" value="Boards"> Boards
-</label>
+  <button class="logout-btn" onclick="logout()">
+    <i class="fa-solid fa-right-from-bracket"></i> Logout
+  </button>
 
-<button onclick="saveGoal()">Save Goal</button>
-<div id="msg" style="color:#00ff88;margin-top:10px;"></div>
+  <div class="follow-section">
+    <p>Follow us on</p>
+    <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
+      <i class="fa-brands fa-youtube"></i> YouTube
+    </a><br>
+    <a href="contact.html" class="contact-promo-card">
+      <i class="fa-solid fa-headset"></i> Contact Us
+    </a>
+  </div>
 
-<button class="logout-btn" onclick="logout()">Logout</button>
+  <p class="made-line">Crafted with <span>❤️</span> for Focused Learners</p>
 
 </div>
 
-</div>
 
-<div class="follow-section">
+<div id="pwaBottomNav" class="pwa-bottom-nav">
+  <a href="index.html">
+    <i class="fa-solid fa-house"></i>
+    <span>Home</span>
+  </a>
 
-<p>Follow us on</p>
+  <a href="mocktest.html">
+    <i class="fa-solid fa-file-pen"></i>
+    <span>Mock Test</span>
+  </a>
 
-<a href="https://youtube.com/@untitledworld01" target="_blank" class="yt-link">
+  <a href="timer.html">
+    <i class="fa-solid fa-stopwatch"></i>
+    <span>Focus</span>
+  </a>
 
-<img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
+  <a href="playlist.html">
+    <i class="fa-brands fa-youtube"></i>
+    <span>Playlist</span>
+  </a>
 
-Untitled World
-
-</a>
-
-</div>
-
-<p class="made-line">
-
-Crafted with <span>❤️</span> for Focused Learners
-
-</p>
-
-
-<!-- BOTTOM NAV -->
-
-<div class="bottom-nav">
-
-<a href="index.html">🔳<span>Home</span></a>
-
-<a href="mocktest.html">📝<span>Mock</span></a>
-
-<a href="timer.html">⏳<span>Focus</span></a>
-
-<a href="playlist.html">
-
-<i class="fa-brands fa-youtube" style="color:red;font-size:16px;margin-right:5px;"></i>
-
-<span>Playlist</span>
-
-</a>
-
-<a href="profile.html" class="active">👤<span>Profile</span></a>
-
+  <a href="profile.html" class="active">
+    <i class="fa-solid fa-user"></i>
+    <span>Profile</span>
+  </a>
 </div>
 
 
 <script>
+// --- LOAD DATA ON START ---
+let name = localStorage.getItem("userName") || "User";
+let email = localStorage.getItem("userEmail") || "user@gmail.com";
+let savedGoal = localStorage.getItem("goal") || "JEE"; // Default to JEE
 
-let name=localStorage.getItem("userName")||"User";
-let email=localStorage.getItem("userEmail")||"user@gmail.com";
+// Top Bar update
+document.getElementById("userName").innerText = name;
+document.getElementById("userEmail").innerText = email;
+document.getElementById("avatar").innerText = name.charAt(0).toUpperCase();
+document.getElementById("goalBadge").innerText = savedGoal;
 
-document.getElementById("userName").innerText=name;
-document.getElementById("userEmail").innerText=email;
-document.getElementById("avatar").innerText=name.charAt(0).toUpperCase();
+// Inputs me pre-fill karna
+document.getElementById("nameInput").value = name;
+document.getElementById("goalSelect").value = savedGoal;
 
-let savedGoal=localStorage.getItem("goal");
 
-if(savedGoal){
+// --- SAVE PROFILE LOGIC ---
+function saveProfile() {
+  let newName = document.getElementById("nameInput").value.trim();
+  let selectedGoal = document.getElementById("goalSelect").value;
 
-document.getElementById("goalBadge").innerText=savedGoal;
+  if(!newName) {
+    alert("Please enter a valid name.");
+    return;
+  }
 
-document.querySelector(`input[value="${savedGoal}"]`).checked=true;
+  // LocalStorage me Save karo
+  localStorage.setItem("userName", newName);
+  localStorage.setItem("goal", selectedGoal);
 
+  // Top Bar immediately update karo
+  document.getElementById("userName").innerText = newName;
+  document.getElementById("avatar").innerText = newName.charAt(0).toUpperCase();
+  document.getElementById("goalBadge").innerText = selectedGoal;
+
+  // Success Message Dikhao (Green Check ke sath)
+  let msgBox = document.getElementById("msg");
+  msgBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> Profile saved successfully!';
+  msgBox.style.display = "block";
+
+  // Thodi der me message hata do
+  setTimeout(() => {
+    msgBox.style.display = "none";
+  }, 2500);
 }
 
-function saveGoal(){
 
-let goal=document.querySelector('input[name="goal"]:checked');
-
-if(!goal){
-alert("Select goal");
-return;
-}
-
-localStorage.setItem("goal",goal.value);
-
-document.getElementById("goalBadge").innerText=goal.value;
-
-document.getElementById("msg").innerText="Goal saved successfully ✔";
-
-}
-
+// --- LOGOUT LOGIC ---
 function logout(){
-
-localStorage.removeItem("loggedIn");
-
-window.location="login.html";
-
+  localStorage.removeItem("loggedIn");
+  window.location = "login.html";
 }
 
+// PWA Check
 if(!window.matchMedia('(display-mode: standalone)').matches){
-window.location.href="index.html";
+  // If you want to force PWA only, keep this. Otherwise you can remove it.
+  // window.location.href="index.html"; 
 }
-
 </script>
 
 </body>
