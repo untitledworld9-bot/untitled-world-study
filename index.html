@@ -747,20 +747,19 @@ margin-top:2px;
 
 .xp-rank {
   position: relative;
-  margin: 15px auto 25px auto; /* Center karne ke liye */
-  width: 90%;
-  max-width: 360px; /* Baaki cards ke barabar size */
-  font-size: 15px;
+  margin: 5px auto 15px auto !important; /* Upar-niche ka gap ekdum kam */
+  width: 90% !important;
+  max-width: 360px !important; /* Sirf lamba rahega */
+  font-size: 13px !important; /* Wapas original size */
   background: rgba(255, 255, 255, 0.08);
-  padding: 14px 20px;
-  border-radius: 14px;
+  padding: 6px 15px !important; /* Box ki motai wapas patli kar di */
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
-  gap: 30px; /* XP aur Rank ke beech ka gap */
+  gap: 30px;
   z-index: 10;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   cursor: pointer;
 }
 
@@ -1201,13 +1200,14 @@ max-width:900px;
   color: #ff9f43;
 }
 
-/* --- SPACING FIX FOR TODAY FOCUS & EDTECH CARD --- */
+/* --- EXACT GAP FIX --- */
 #todayFocusCard {
-  margin-bottom: 12px !important; /* Isne Today Focus ke niche ka faltu gap hata diya */
+  margin: 12px auto !important; /* Ye upar aur niche exact Mock/Timer jaisa gap dega */
 }
 
 .edtech-section-card {
-  margin-top: 5px !important; /* Isne Edtech card ko thoda upar khiska diya */
+  margin-top: 0px !important; /* Faltu gap zero kar diya */
+  margin-bottom: 20px !important;
 }
 
 /* --- CSS END --- */
