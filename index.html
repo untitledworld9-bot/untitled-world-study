@@ -527,7 +527,7 @@ padding:20px;
 
 transition:.3s;
 
-z-index:1000;
+z-index: 9999;
 
 }
 
@@ -761,6 +761,7 @@ border-radius:10px;
 backdrop-filter:blur(8px);
 
 display:inline-block;
+z-index: 10;
 }
 
 .contact-line{
@@ -1114,34 +1115,20 @@ max-width:900px;
 </div>
 
 <div class="pwa-links">
-  <a href="mocktest.html">
-    <i class="fa-solid fa-file-pen" style="color: #00f2fe;"></i> Mock Test
-  </a>
-  <a href="timer.html">
-    <i class="fa-solid fa-stopwatch" style="color: #00ff88;"></i> Smart Focus Timer
-  </a>
-  <a href="playlist.html">
-    <i class="fa-brands fa-youtube" style="color: #ff4757;"></i> Study Playlist
-  </a>
-  <a href="leaderboard.html">
-    <i class="fa-solid fa-trophy" style="color: #f1c40f;"></i> Leaderboard
-  </a>
-  
-  <button onclick="logout()">
-    <i class="fa-solid fa-right-from-bracket"></i> Logout
-  </button>
-</div>
+    <a href="mocktest.html"><i class="fa-solid fa-file-pen" style="color: #00f2fe;"></i> Mock Test</a>
+    <a href="timer.html"><i class="fa-solid fa-stopwatch" style="color: #00ff88;"></i> Smart Focus Timer</a>
+    <a href="playlist.html"><i class="fa-brands fa-youtube" style="color: #ff4757;"></i> Study Playlist</a>
+    <a href="leaderboard.html"><i class="fa-solid fa-trophy" style="color: #f1c40f;"></i> Leaderboard</a>
+    <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  </div>
 
-<div class="sidebar-footer">
-  <p style="margin-bottom: 12px;">Follow us on</p>
-  
-  <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
-    <i class="fa-brands fa-youtube"></i> YouTube
-  </a>
-
-  <a href="contact.html" class="sidebar-link dotted-link" style="margin-top: 15px;">
-    Contact Us
-  </a>
+  <div class="sidebar-footer">
+    <p style="margin-bottom: 12px;">Follow us on</p>
+    <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
+      <i class="fa-brands fa-youtube"></i> YouTube
+    </a>
+    <a href="contact.html" class="sidebar-link dotted-link" style="margin-top: 15px;">Contact Us</a>
+  </div>
 </div>
 
 <div id="pwaOverlay"></div>
