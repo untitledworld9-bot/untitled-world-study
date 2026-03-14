@@ -15,7 +15,9 @@ import {
  orderBy,
  getDocs,
  getDoc,
- where
+ where,
+serverTimestamp,
+ Timestamp
 } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -84,5 +86,7 @@ export {
  orderBy,
  getDocs,
  getDoc,
- where
+ where,
+serverTimestamp,
+ Timestamp
 };
