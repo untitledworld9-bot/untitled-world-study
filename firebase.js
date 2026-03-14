@@ -63,6 +63,28 @@ const provider = new GoogleAuthProvider();
 // PUSH NOTIFICATION
 const messaging = getMessaging(app);
 
+Notification.requestPermission().then(permission => {
+
+ if(permission === "granted"){
+
+  getToken(messaging,{
+   vapidKey:"BDTkDBt3daAUhVvkAHvKuEJn1DI6MwZh5nYzMFu8ym7UQGKNaAbzCtH-RE6DiHCv3k22w_mfl7u8jY-KqN5aNpc"
+  })
+  .then(token => {
+
+   if(token){
+    console.log("FCM TOKEN:",token);
+   }
+
+  })
+  .catch(err=>{
+   console.log("Token error:",err);
+  });
+
+ }
+
+});
+
 
 // EXPORT
 export {
