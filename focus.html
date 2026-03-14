@@ -328,7 +328,8 @@ function loadSavedTimer() {
     const saved = JSON.parse(localStorage.getItem("uw_timerState"));
     if (saved) {
         isPaused = saved.isPaused;
-        
+        targetEndTime = saved.targetEndTime; // Global memory restore
+
         if (isPaused) {
             // Agar pause pe chhoda tha
             time = saved.time;
@@ -338,12 +339,10 @@ function loadSavedTimer() {
             }
         } else {
             // Agar chalte hue chhoda tha
-            if (saved.targetEndTime > Date.now()) {
-    time = Math.floor((saved.targetEndTime - Date.now()) / 1000);
-    targetEndTime = saved.targetEndTime;
-    startTimer(time, true);
-}// true = resuming so don't rewrite targetEndTime logic incorrectly
-            } else if (saved.targetEndTime > 0 && saved.targetEndTime <= Date.now()) {
+            if (targetEndTime > Date.now()) {
+                time = Math.floor((targetEndTime - Date.now()) / 1000);
+                startTimer(time, true); // Resume kar rahe hain
+            } else if (targetEndTime > 0 && targetEndTime <= Date.now()) {
                 // Background me timer khatam ho gaya
                 clearTimerState();
                 displayTime(0);
