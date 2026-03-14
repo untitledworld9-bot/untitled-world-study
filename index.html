@@ -510,25 +510,16 @@ background:rgba(0,255,136,.08);
 /* PWA SIDEBAR */
 
 .pwa-sidebar{
-
 position:fixed;
-
 top:0;
-
 left:-270px;
-
 width:260px;
-
 height:100%;
-
 background:#0f2027;
-
-padding:20px;
-
+padding:20px 20px 85px 20px; /* Niche padding badhai taki bottom nav ke peeche button na dabe */
+overflow-y:auto; /* Chhote phone me aaram se scroll ho jaye */
 transition:.3s;
-
 z-index: 9999;
-
 }
 
 .pwa-sidebar.active{
@@ -644,29 +635,17 @@ cursor:pointer;
 /* PWA BOTTOM NAV */
 
 .pwa-bottom-nav{
-
 position:fixed;
-
 bottom:0;
-
 left:0;
-
 width:100%;
-
 height:65px;
-
 background:#0f2027;
-
 display:none;
-
 justify-content:space-around;
-
 align-items:center;
-
-z-index:2000;
-
+z-index:10000; /* Sidebar (9999) ke aage lane ke liye */
 border-top:1px solid rgba(255,255,255,0.1);
-
 }
 
 .pwa-bottom-nav a{
@@ -2327,10 +2306,10 @@ async function submitAppFeedback() {
                 </div>
             `;
             
-            // Auto close after 30 seconds
+            // Auto close after 3 seconds
             setTimeout(() => {
                 document.getElementById('ratingOverlay').style.display = 'none';
-            }, 30000);
+            }, 3000);
         } else {
             alert("Oops! Something went wrong. Please try again.");
             btn.innerText = "Submit Feedback";
