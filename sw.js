@@ -4,7 +4,7 @@
 //   • Static      → Cache-first    → network fallback
 // ────────────────────────────────────────────────────────────────────────────
 
-const CACHE = "uw-cache-v9";          // bump version when assets change
+const CACHE = "uw-cache-v10";          // bump version when assets change
 
 const ASSETS = [
   "/",
@@ -44,15 +44,19 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
 
   // ── Navigation requests (HTML page loads) ──────────────────────────────────
-  if (event.request.mode === "navigate") {
-
-  event.respondWith(
-    fetch(event.request)
-      .catch(async () => {
-
+   if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request).catch(async () => {
         const cache = await caches.open(CACHE);
-        const offline = await cache.match("/offline.html");
+        
+        // NAYA LOGIC: Pehle check karo ki kya maanga hua page (jaise focus.html) cache me save hai?
+        const cachedPage = await cache.match(event.request, { ignoreSearch: true });
+        if (cachedPage) {
+          return cachedPage; // Agar save hai, toh bina net ke usi ko khol do!
+        }
 
+        // Agar save nahi hai, tab jaake 'offline.html' dikhao
+        const offline = await cache.match("/offline.html");
         if (offline) {
           return new Response(await offline.text(), {
             headers: { "Content-Type": "text/html" }
@@ -61,10 +65,9 @@ self.addEventListener("fetch", event => {
 
         return getOfflinePage();
       })
-  );
-
-  return;
-}
+    );
+    return;
+  }
 
   // ── Static assets (cache-first) ────────────────────────────────────────────
   event.respondWith(
