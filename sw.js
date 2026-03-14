@@ -4,7 +4,7 @@
 //   • Static      → Cache-first    → network fallback
 // ────────────────────────────────────────────────────────────────────────────
 
-const CACHE = "uw-cache-v10";          // bump version when assets change
+const CACHE = "uw-cache-v11";          // bump version when assets change
 
 const ASSETS = [
   "/",
@@ -49,8 +49,10 @@ self.addEventListener("fetch", event => {
       fetch(event.request).catch(async () => {
         const cache = await caches.open(CACHE);
         
-        // NAYA LOGIC: Pehle check karo ki kya maanga hua page (jaise focus.html) cache me save hai?
-        const cachedPage = await cache.match(event.request, { ignoreSearch: true });
+                // NAYA LOGIC: Path aur Request dono se match karo taaki koi galti na ho
+        const url = new URL(event.request.url);
+        const cachedPage = await cache.match(url.pathname) || await cache.match(event.request, { ignoreSearch: true });
+        
         if (cachedPage) {
           return cachedPage; // Agar save hai, toh bina net ke usi ko khol do!
         }
