@@ -1,5 +1,3 @@
-alert("admin.js loaded");
-
 /**
  * ============================================================
  *  Untitled World Admin Panel — admin.js
@@ -51,7 +49,8 @@ const ADMIN_CODE = "7905";
 
 /** Authorised admin email addresses (add more as needed) */
 const ADMIN_EMAILS = [
-  "ayushgupt640@gmail.com"
+  "Untitledworld9@gmail.com"
+  "ayushgupta79051@gmail.com"
   // Add additional admin emails here
 ];
 
