@@ -1462,6 +1462,45 @@ popup.style.display="none";
 
 }
 
+// --- SENSOR BASED AUTO-ROTATE (YOUTUBE APP STYLE) ---
+let isVideoFullscreen = false;
+
+// Track karo jab video fullscreen me jaye ya bahar aaye
+document.addEventListener("fullscreenchange", () => {
+    isVideoFullscreen = !!document.fullscreenElement;
+    
+    // Agar fullscreen se bahar aa gaya, toh orientation lock hata do
+    if (!isVideoFullscreen) {
+        if (screen.orientation && screen.orientation.unlock) {
+            screen.orientation.unlock().catch(err => console.log(err));
+        }
+    }
+});
+
+// Phone ke physical movement (Gyroscope) ko track karo
+window.addEventListener("deviceorientation", (event) => {
+    // Ye code sirf tab chalega jab video fullscreen me ho
+    if (!isVideoFullscreen) return;
+
+    let gamma = event.gamma; // Phone ka Left/Right tilt
+    let beta = event.beta;   // Phone ka Up/Down tilt
+
+    if (!gamma || !beta) return; // Agar device me sensor nahi hai toh ignore karo
+
+    // Agar phone ko teda (Landscape) pakda gaya hai (45 degrees se zyada tilt)
+    if (Math.abs(gamma) > 45) {
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock("landscape").catch(err => console.log("Lock failed:", err));
+        }
+    } 
+    // Agar phone ko seedha (Portrait) pakda gaya hai
+    else if (Math.abs(beta) > 45 && Math.abs(gamma) < 30) {
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock("portrait").catch(err => console.log("Lock failed:", err));
+        }
+    }
+});
+
 </script>
 
 <div class="back-home-btn" onclick="goHome()">
