@@ -1000,11 +1000,13 @@ list.forEach((video,index)=>{
     card.className="video-card";
 
     let thumbHTML = "";
-    if(video.id.startsWith("playlist:")) {
+        if(video.id.startsWith("playlist:")) {
         let listId = video.id.split(":")[1];
         thumbHTML = `
-            <div class="thumbnail">
-                <iframe src="https://www.youtube.com/embed/videoseries?list=${listId}" allowfullscreen></iframe>
+            <div class="thumbnail" onclick="playVideo('${video.id}',this)" style="position: relative;">
+                <iframe src="https://www.youtube.com/embed/videoseries?list=${listId}" style="width: 100%; height: 100%; pointer-events: none; border: none;" allowfullscreen></iframe>
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5;"></div>
+                <div class="play-overlay" style="z-index: 10;">▶</div>
             </div>
         `;
     } else {
@@ -1044,11 +1046,13 @@ musicList.forEach(video=>{
     card.className="video-card";
 
     let thumbHTML = "";
-    if(video.id.startsWith("playlist:")) {
+        if(video.id.startsWith("playlist:")) {
         let listId = video.id.split(":")[1];
         thumbHTML = `
-            <div class="thumbnail">
-                <iframe src="https://www.youtube.com/embed/videoseries?list=${listId}" allowfullscreen></iframe>
+            <div class="thumbnail" onclick="playVideo('${video.id}',this)" style="position: relative;">
+                <iframe src="https://www.youtube.com/embed/videoseries?list=${listId}" style="width: 100%; height: 100%; pointer-events: none; border: none;" allowfullscreen></iframe>
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5;"></div>
+                <div class="play-overlay" style="z-index: 10;">▶</div>
             </div>
         `;
     } else {
@@ -1185,9 +1189,16 @@ renderLevel();
 updateBadge();
 }
 
-        function playVideo(id,el){
+                function playVideo(id,el){
 
 let saved = localStorage.getItem("time_"+id) || 0;
+
+// Naya Logic: Agar video ka subject "Music" hai, toh hamesha 0 second se start karo
+let currentVidData = videos.find(v => v.id === id);
+if (currentVidData && currentVidData.subject === "Music") {
+    saved = 0;
+}
+
 let embed = "";
 
 if (id.startsWith("playlist:")) {
