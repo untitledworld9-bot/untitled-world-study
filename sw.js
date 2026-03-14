@@ -1,10 +1,6 @@
-// ─── Untitled World – Service Worker ───────────────────────────────────────
-// Strategy:
-//   • Navigation  → Network-first  → cache fallback → offline.html fallback
-//   • Static      → Cache-first    → network fallback
-// ────────────────────────────────────────────────────────────────────────────
+// ─── Untitled World – Indestructible Service Worker ────────────────────────
 
-const CACHE = "uw-cache-v12";          // ← bumped from v11 to force fresh install
+const CACHE = "uw-cache-v13"; // Version 13
 
 const ASSETS = [
   "/",
@@ -17,121 +13,81 @@ const ASSETS = [
   "/background.webp"
 ];
 
-// ── INSTALL ──────────────────────────────────────────────────────────────────
+// ── INSTALL (FAIL-SAFE LOGIC) ──
 self.addEventListener("install", event => {
-  self.skipWaiting();                 // activate immediately on first install
+  self.skipWaiting();
 
   event.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(ASSETS))
-  );
-});
-
-// ── ACTIVATE ─────────────────────────────────────────────────────────────────
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE)
-          .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
-  );
-});
-
-// ── FETCH ─────────────────────────────────────────────────────────────────────
-self.addEventListener("fetch", event => {
-
-  // ── Navigation requests (HTML page loads) ──────────────────────────────────
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => serveCachedPageOrOffline(event.request))
-    );
-    return;
-  }
-
-  // ── Static assets (cache-first) ────────────────────────────────────────────
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(response => {
-        if (response && response.status === 200 && response.type === "basic") {
-          const clone = response.clone();
-          caches.open(CACHE).then(cache => cache.put(event.request, clone));
-        }
-        return response;
-      });
+    caches.open(CACHE).then(cache => {
+      // PRO LOGIC: 'addAll' ki jagah ek-ek karke save karega.
+      // Agar ek file miss bhi hui, toh app crash nahi hoga, baaki save ho jayengi.
+      return Promise.all(
+        ASSETS.map(url => {
+          return cache.add(url).catch(err => console.error("Missing file, but continuing:", url));
+        })
+      );
     })
   );
 });
 
-// ── Core helper: serve a navigation request from cache ───────────────────────
-// Uses a 4-layer matching chain so path quirks can never cause a miss.
-async function serveCachedPageOrOffline(request) {
-  const cache = await caches.open(CACHE);
-  const url   = new URL(request.url);
+// ── ACTIVATE ──
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))
+    ).then(() => self.clients.claim())
+  );
+});
 
-  // ── Layer 1 ─ Exact request match (full URL, as the browser sent it)
-  //    This is the most reliable match; it hits when the URL is identical to
-  //    what cache.addAll() stored (same origin + pathname, no query string).
-  let response = await cache.match(request, { ignoreVary: true });
-  if (response) return response;
+// ── FETCH ──
+self.addEventListener("fetch", event => {
+  // Sirf GET requests handle karenge, baaki ko ignore (taki API errors na aayein)
+  if (event.request.method !== "GET") return;
 
-  // ── Layer 2 ─ Canonical URL (origin + pathname, query string stripped)
-  //    Guards against cases like /focus.html?v=2 not matching /focus.html.
-  const canonicalUrl = url.origin + url.pathname;
-  response = await cache.match(canonicalUrl, { ignoreVary: true });
-  if (response) return response;
+  // ── Navigation requests (Pages) ──
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request).catch(async () => {
+        try {
+          const cache = await caches.open(CACHE);
+          const url = event.request.url.toLowerCase();
 
-  // ── Layer 3 ─ Pathname resolved against the SW's own origin
-  //    Handles rare browsers that don't resolve bare strings the same way.
-  const resolvedUrl = new URL(url.pathname, self.location.origin).href;
-  response = await cache.match(resolvedUrl, { ignoreVary: true });
-  if (response) return response;
+          // 1. Agar URL me 'focus' hai, toh zabardasti focus.html kholo (Strict Match)
+          if (url.includes("focus")) {
+            const focusPage = await cache.match("/focus.html", { ignoreSearch: true });
+            if (focusPage) return focusPage;
+          }
 
-  // ── Layer 4 ─ Trailing-slash variants
-  //    Catches /focus.html/ ↔ /focus.html mismatches.
-  const withoutSlash = url.pathname.replace(/\/$/, "");
-  const withSlash    = withoutSlash + "/";
-  response = await cache.match(new URL(withoutSlash, self.location.origin).href, { ignoreVary: true })
-          || await cache.match(new URL(withSlash,    self.location.origin).href, { ignoreVary: true });
-  if (response) return response;
+          // 2. Normal Page Match
+          const cachedPage = await cache.match(event.request, { ignoreSearch: true });
+          if (cachedPage) return cachedPage;
 
-  // ── Nothing matched → serve offline.html ───────────────────────────────────
-  return getOfflinePage();
-}
+          // 3. Sab fail toh offline.html
+          const offlinePage = await cache.match("/offline.html", { ignoreSearch: true });
+          if (offlinePage) return offlinePage;
 
-// ── Helper: always return a valid Response for the offline page ───────────────
-async function getOfflinePage() {
-  const cache  = await caches.open(CACHE);
-  const cached = await cache.match("/offline.html", { ignoreVary: true })
-              || await cache.match(new URL("/offline.html", self.location.origin).href, { ignoreVary: true });
+          // 4. Aakhri rasta (Browser default error rokne ke liye)
+          return getOfflinePage();
+        } catch (e) {
+          return getOfflinePage();
+        }
+      })
+    );
+    return;
+  }
 
-  if (cached) return cached;
+  // ── Static assets (Images, CSS, JS) ──
+  event.respondWith(
+    caches.match(event.request, { ignoreSearch: true }).then(cached => {
+      return cached || fetch(event.request).catch(() => new Response("")); // Blank response taki ERR_FAILED na aaye
+    })
+  );
+});
 
-  // Last-resort inline fallback – guarantees NO ERR_FAILED ever appears
+// ── Helper ──
+function getOfflinePage() {
   return new Response(
-    `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Offline</title>
-<style>
-  body{margin:0;height:100vh;display:flex;flex-direction:column;align-items:center;
-       justify-content:center;font-family:system-ui,sans-serif;background:#f4f6f8;text-align:center;}
-  button{margin-top:24px;padding:12px 28px;border:none;border-radius:12px;
-         background:#ff7a18;color:#fff;font-size:16px;font-weight:600;cursor:pointer;}
-</style>
-</head>
-<body>
-  <h1>📡 You're Offline</h1>
-  <p>Please check your internet connection.</p>
-  <button onclick="location.href='/'">Retry</button>
-  <script>window.addEventListener("online",()=>location.href="/");<\/script>
-</body>
-</html>`,
+    `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Offline</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:system-ui,sans-serif;background:#f4f6f8;text-align:center;}button{margin-top:24px;padding:12px 28px;border:none;border-radius:12px;background:#ff7a18;color:#fff;font-size:16px;font-weight:600;cursor:pointer;}</style></head><body><h1>📡 You're Offline</h1><p>Please check your internet connection.</p><button onclick="location.href='/'">Retry</button><script>window.addEventListener("online",()=>location.href="/");<\/script></body></html>`,
     { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } }
   );
 }
