@@ -119,6 +119,34 @@ self.addEventListener("message", event => {
 
 });
 
+self.addEventListener("notificationclick", event => {
+
+  event.notification.close();
+
+  event.waitUntil(
+
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then(clientList => {
+
+      for (const client of clientList) {
+
+        // अगर पहले से focus.html खुला है तो उसी tab को focus कर देगा
+        if (client.url.includes("focus.html") && "focus" in client) {
+          return client.focus();
+        }
+
+      }
+
+      // नहीं खुला है तो नया tab खोल देगा
+      if (clients.openWindow) {
+        return clients.openWindow("/focus.html");
+      }
+
+    })
+
+  );
+
+});
+
 // ── SAFE OFFLINE PAGE ────────────────────────────────────────────────────────
 async function getOfflinePage() {
 
