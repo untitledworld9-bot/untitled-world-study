@@ -1,3 +1,28 @@
+importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js");
+
+firebase.initializeApp({
+ apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
+ authDomain: "untitled-world-2e645.firebaseapp.com",
+ projectId: "untitled-world-2e645",
+ messagingSenderId: "990115586087",
+ appId: "1:990115586087:web:963f68bd59dec5ef0c6e02"
+});
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage(function(payload) {
+
+ const title = payload.notification.title;
+ const options = {
+  body: payload.notification.body,
+  icon: "/icon-192.png"
+ };
+
+ self.registration.showNotification(title, options);
+
+});
+
 // ─── Untitled World – Advanced Service Worker ───────────────────────────────
 // Features:
 // • Navigation → Network-first (fast fallback)
@@ -6,7 +31,7 @@
 // • Zero white screen
 // ────────────────────────────────────────────────────────────────────────────
 
-const CACHE = "uw-cache-v13";
+const CACHE = "uw-cache-v14";
 
 const ASSETS = [
   "/",
@@ -144,31 +169,6 @@ self.addEventListener("notificationclick", event => {
     })
 
   );
-
-});
-
-importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js");
-
-firebase.initializeApp({
- apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
- authDomain: "untitled-world-2e645.firebaseapp.com",
- projectId: "untitled-world-2e645",
- messagingSenderId: "990115586087",
- appId: "1:990115586087:web:963f68bd59dec5ef0c6e02"
-});
-
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage(function(payload) {
-
- const title = payload.notification.title;
- const options = {
-  body: payload.notification.body,
-  icon: "/icon-192.png"
- };
-
- self.registration.showNotification(title, options);
 
 });
 
