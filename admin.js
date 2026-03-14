@@ -1160,4 +1160,4 @@ ${updateData.changelog || ""}</pre>
 // ============================================================
 //  END OF admin.js
 // ============================================================
-window.verifyAdmin = verifyAdmin;
+document.getElementById("loginBtn").addEventListener("click", verifyAdmin);
