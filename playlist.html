@@ -923,9 +923,7 @@ watching.sort((a,b)=> a.id===lastVideo ? -1 : 1);
 
 watching.forEach(video=>{
 
-let thumb = video.id.startsWith('playlist')
-? `https://i.ytimg.com/vi_webp/${video.id.replace('playlist:','')}/hqdefault.webp`
-: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+let thumb = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
 
 let card=document.createElement("div");
 
@@ -1022,9 +1020,7 @@ const musicList = videos.filter(v=>v.subject==="Music");
 
 musicList.forEach(video=>{
 
-let thumb = video.id.startsWith('playlist')
-? `https://i.ytimg.com/vi_webp/${video.id.replace('playlist:','')}/hqdefault.webp`
-: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+let thumb = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
 
 let card=document.createElement("div");
 
