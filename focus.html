@@ -288,6 +288,18 @@ overflow-x: hidden;
 </section>
 
 <script>
+// Notification permission request on app start
+document.addEventListener("DOMContentLoaded", () => {
+
+if ("Notification" in window) {
+
+if (Notification.permission === "default") {
+Notification.requestPermission();
+}
+
+}
+
+});
 
 let timerInterval;
 let time = 0;
@@ -327,8 +339,10 @@ function loadSavedTimer() {
         } else {
             // Agar chalte hue chhoda tha
             if (saved.targetEndTime > Date.now()) {
-                time = Math.floor((saved.targetEndTime - Date.now()) / 1000);
-                startTimer(time, true); // true = resuming so don't rewrite targetEndTime logic incorrectly
+    time = Math.floor((saved.targetEndTime - Date.now()) / 1000);
+    targetEndTime = saved.targetEndTime;
+    startTimer(time, true);
+}// true = resuming so don't rewrite targetEndTime logic incorrectly
             } else if (saved.targetEndTime > 0 && saved.targetEndTime <= Date.now()) {
                 // Background me timer khatam ho gaya
                 clearTimerState();
@@ -352,6 +366,21 @@ function showToast(msg, isSuccess = false) {
     setTimeout(() => {
         toast.classList.remove("show");
     }, 3000);
+}
+
+function sendNotification(title, message){
+
+if("Notification" in window && Notification.permission === "granted"){
+
+new Notification(title,{
+body: message,
+icon: "/icon-192.png",
+badge: "/icon-192.png",
+vibrate: [200,100,200]
+});
+
+}
+
 }
 
 function startCustomTime() {
@@ -379,11 +408,9 @@ function startTimer(duration, isResumeFromRefresh = false){
     }
 
     // Refresh handle karne ke liye future ka timestamp set karo
-    if (!isResumeFromRefresh && !isPaused) {
-        targetEndTime = Date.now() + (time * 1000);
-    } else if (isPaused) {
-        targetEndTime = Date.now() + (time * 1000); // resuming from pause button
-    }
+    if (!isResumeFromRefresh) {
+    targetEndTime = Date.now() + (time * 1000);
+}
     
     saveTimerState();
     displayTime(time);
@@ -400,6 +427,7 @@ function startTimer(duration, isResumeFromRefresh = false){
             timerBox.classList.remove("running");
             clearTimerState();
             showToast("Session Complete! Great job. 🚀", true);
+sendNotification("Untitled World Timer","Session Completed 🚀 Great Job!");
             return; 
         }
 
@@ -418,11 +446,17 @@ function pauseTimer(){
         btn.innerText = "Resume";
         isPaused = true;
         timerBox.classList.remove("running");
+
+        // remaining time save karo
+        time = Math.floor((targetEndTime - Date.now()) / 1000);
         saveTimerState();
+
     } else {
-        startTimer(); // startTimer handle karega resume
-        btn.innerText = "Pause";
+        // resume
+        targetEndTime = Date.now() + (time * 1000);
         isPaused = false;
+        startTimer(time, true);
+        btn.innerText = "Pause";
     }
 }
 
