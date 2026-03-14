@@ -1,4 +1,4 @@
-alert("ADMIN JS LOADED");
+alert("admin.js loaded");
 
 /**
  * ============================================================
@@ -1160,4 +1160,3 @@ ${updateData.changelog || ""}</pre>
 // ============================================================
 //  END OF admin.js
 // ============================================================
-document.getElementById("loginBtn").addEventListener("click", verifyAdmin);
