@@ -713,23 +713,24 @@ box-shadow:0 0 12px rgba(0,200,255,0.35);
 #videoNotes { flex-grow: 1; width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #2c5364; background: rgba(255,255,255,0.05); color: #fff; font-size: 16px; outline: none; resize: none; margin-bottom: 20px;}
 #videoNotes:focus { border-color: #00f2fe; }
 
-/* --- FIXED PLAYLIST HEADER --- */
+/* --- FIXED PLAYLIST HEADER (OVERLAP FIXED) --- */
 .fixed-playlist-header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(15, 32, 39, 0.95); /* Premium dark background */
-    backdrop-filter: blur(12px); /* Scroll karne pe glass effect */
+    background: rgba(15, 32, 39, 0.98); /* Thoda aur dark kiya taaki scroll pe text peeche se na jhaanke */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px); /* Safari support ke liye */
     z-index: 9999;
-    padding: 15px 20px 10px 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+    padding: 25px 20px 15px 20px; /* Upar se safe area padding */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    border-bottom: 1.5px solid rgba(0, 242, 254, 0.25);
 }
 
-/* Kyunki header top pe fix ho gaya hai, baaki content uske peeche na chhupe isliye margin/padding add karni hogi */
+/* Overlap fix karne ke liye padding badha di */
 .study-section {
-    padding-top: 120px !important; 
+    padding-top: 175px !important; 
 }
 
     </style>
