@@ -173,12 +173,19 @@ window.showSection = id => {
 
 /**
  * Step 1: Verify the 4-digit admin access code.
- * If correct, check Firebase auth.
+ * Step 2: One-shot Firebase auth check via Promise wrapper.
+ *
+ * KEY FIX: onAuthStateChanged is wrapped in a Promise so it acts as
+ * a single async read instead of a persistent listener. The unsub()
+ * call ensures it tears down immediately after the first resolved value,
+ * preventing memory leaks and duplicate initAdminPanel() calls.
  */
-window.verifyAdmin = () => {
-  const code = $("adminCodeInput").value.trim();
+window.verifyAdmin = async () => {
+  const code  = $("adminCodeInput").value.trim();
   const errEl = $("authError");
+  const btn   = document.querySelector(".auth-btn");
 
+  // ── Step 1: Code check (synchronous)
   if (code !== ADMIN_CODE) {
     errEl.textContent = "❌ Incorrect access code. Access denied.";
     $("adminCodeInput").value = "";
@@ -186,26 +193,56 @@ window.verifyAdmin = () => {
     return;
   }
 
-  errEl.textContent = "Verifying Firebase auth…";
+  // ── Loading state so the user knows something is happening
+  btn.disabled    = true;
+  btn.textContent = "⏳ Verifying…";
+  errEl.textContent = "";
 
-  // Step 2: Firebase auth check
-  onAuthStateChanged(auth, user => {
+  try {
+    // ── Step 2: One-shot Firebase auth check
+    // Wrapping onAuthStateChanged in a Promise + instant unsub() makes it
+    // behave like a single async read. It resolves the moment the Firebase
+    // SDK has initialised auth state — even if that takes a few hundred ms.
+    const user = await new Promise((resolve, reject) => {
+      const unsub = onAuthStateChanged(
+        auth,
+        resolvedUser => {
+          unsub();          // ← teardown immediately; prevents persistent listener
+          resolve(resolvedUser);
+        },
+        err => {
+          unsub();
+          reject(err);
+        }
+      );
+    });
+
+    // ── Step 3: User must be signed in
     if (!user) {
-      errEl.textContent = "⚠️ You must be signed in via Firebase. Redirecting…";
-      setTimeout(() => (location.href = "/"), 2000);
+      errEl.textContent = "⚠️ You must be signed in via Firebase to access this panel. Redirecting…";
+      setTimeout(() => (location.href = "/"), 2500);
       return;
     }
 
+    // ── Step 4: Email must be in the allowlist
     if (!ADMIN_EMAILS.includes(user.email)) {
       errEl.textContent = "⛔ Your account does not have admin privileges.";
-      setTimeout(() => signOut(auth).then(() => (location.href = "/")), 2000);
+      setTimeout(() => signOut(auth).then(() => (location.href = "/")), 2500);
       return;
     }
 
-    // ✅ Auth passed — remove gate and start panel
+    // ── Step 5: ✅ All checks passed — hide gate, launch panel
     $("authGate").style.display = "none";
     initAdminPanel(user);
-  });
+
+  } catch (err) {
+    console.error("Admin auth error:", err);
+    errEl.textContent = "🔥 Firebase error: " + err.message;
+  } finally {
+    // Always restore button state on any failure path
+    btn.disabled    = false;
+    btn.textContent = "Enter Admin Panel";
+  }
 };
 
 /** Logout and return to homepage */
