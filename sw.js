@@ -4,12 +4,13 @@
 //   • Static      → Cache-first    → network fallback
 // ────────────────────────────────────────────────────────────────────────────
 
-const CACHE = "uw-cache-v8";          // bump version when assets change
+const CACHE = "uw-cache-v9";          // bump version when assets change
 
 const ASSETS = [
   "/",
   "/index.html",
   "/offline.html",
+  "/focus.html",
   "/manifest.json",
   "/icon-192.png",
   "/icon-512.png",
