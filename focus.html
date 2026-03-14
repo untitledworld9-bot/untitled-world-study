@@ -17,25 +17,82 @@ background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 min-height:100vh;
 position: relative;
+display: flex;
+flex-direction: column;
+align-items: center;
+overflow-x: hidden;
+}
+
+/* --- CUSTOM TOAST POPUP (Replaces Browser Alert) --- */
+.custom-toast {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    color: #fff;
+    padding: 15px 30px;
+    border-radius: 12px;
+    border-left: 5px solid #00f2fe;
+    font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 9999;
+    transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-toast.show {
+    top: 30px;
+}
+
+/* --- STUDY WITH FRIENDS BUTTON (Centered at top like screenshot) --- */
+.study-friends-btn {
+    width: 90%;
+    max-width: 400px;
+    margin-top: 20px;
+    background: linear-gradient(45deg, #ff9a9e, #fecfef);
+    color: #333;
+    padding: 12px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(255, 154, 158, 0.6);
+    animation: glowPulse 2s infinite alternate;
+    transition: 0.3s;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+@keyframes glowPulse {
+    0% { box-shadow: 0 0 10px rgba(255, 154, 158, 0.4); }
+    100% { box-shadow: 0 0 25px rgba(255, 154, 158, 0.9); }
 }
 
 .timer-section{
 text-align:center;
-padding: 60px 5% 50px 5%; 
+padding: 20px 5%; /* Gaps reduced drastically */
 display: flex;
 flex-direction: column;
 align-items: center;
-justify-content: center;
-min-height: 100vh;
+width: 100%;
 }
 
 .header-title {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 600;
-    margin-bottom: 15px;
+    margin-top: 10px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     color: #fff;
 }
 
@@ -43,85 +100,64 @@ min-height: 100vh;
     color: #00f2fe;
 }
 
-/* --- PREMIUM EDTECH RECTANGULAR TIMER BOX --- */
+/* --- PREMIUM EDTECH CIRCLE TIMER --- */
 .timer-container {
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(0, 242, 254, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(0, 242, 254, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    border: 3px solid rgba(0, 242, 254, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(0, 242, 254, 0.05);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-radius: 24px;
-    padding: 30px 60px;
-    margin: 20px 0 35px 0;
-    display: inline-block;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 50%; /* Made it a perfect circle */
+    width: 280px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
 }
 
-.timer-container:hover {
-    box-shadow: 0 10px 40px 0 rgba(0, 242, 254, 0.2), inset 0 0 25px rgba(0, 242, 254, 0.2);
-    transform: translateY(-5px);
+/* Green Glow Action when timer is running */
+.timer-container.running {
+    border-color: #00ff88;
+    box-shadow: 0 0 35px rgba(0, 255, 136, 0.6), inset 0 0 25px rgba(0, 255, 136, 0.2);
 }
 
 .timer{
-font-size:clamp(60px, 14vw, 110px);
+font-size: 55px; /* Perfect fit for circle */
 font-weight:700;
 color:#00f2fe;
 line-height: 1;
-letter-spacing: 2px;
-font-variant-numeric: tabular-nums; /* Keeps digits stable/aligned when changing */
-text-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+letter-spacing: 1px;
+font-variant-numeric: tabular-nums; 
+text-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
 }
 
-/* --- BUTTONS --- */
-.btn{
-margin:10px;
-padding:14px 30px;
-border:none;
-border-radius:30px;
-background:linear-gradient(45deg,#00f2fe,#4facfe);
-cursor:pointer;
-font-weight:600;
-color:#fff;
-font-size: 16px;
-box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+.timer-container.running .timer {
+    color: #00ff88;
+    text-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
 }
-
-.btn:hover{
-transform:scale(1.05);
-transition:.3s;
-box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
-}
-
-.pause-btn{
-background: linear-gradient(45deg, #f39c12, #e67e22);
-box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
-}
-.pause-btn:hover { box-shadow: 0 6px 20px rgba(243, 156, 18, 0.5); }
-
-.stop-btn{
-background: linear-gradient(45deg, #e74c3c, #c0392b);
-box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-}
-.stop-btn:hover { box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5); }
 
 /* --- CUSTOM INPUT STYLING --- */
 .custom-time-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap; 
+    gap: 10px;
+    margin-bottom: 20px;
+    background: rgba(255,255,255,0.05);
+    padding: 10px 20px;
+    border-radius: 20px;
 }
 
 .time-input {
-    width: 80px;
-    padding: 12px;
-    border: 2px solid rgba(0, 242, 254, 0.4);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.08);
+    width: 70px;
+    padding: 10px;
+    border: 2px solid rgba(0, 242, 254, 0.3);
+    border-radius: 10px;
+    background: transparent;
     color: white;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     text-align: center;
     outline: none;
@@ -129,88 +165,72 @@ box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
 }
 
 .time-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.4);
     font-weight: 400;
 }
 
 .time-input:focus {
     border-color: #00f2fe;
-    box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .colon {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     color: #00f2fe;
 }
 
-/* --- STUDY WITH FRIENDS BUTTON --- */
-.study-friends-btn {
-    position: absolute;
-    top: 25px;
-    right: 5%; 
-    background: linear-gradient(45deg, #ff9a9e, #fecfef);
-    color: #333;
-    padding: 12px 24px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 15px;
-    box-shadow: 0 0 10px rgba(255, 154, 158, 0.8);
-    animation: glowPulse 1.5s infinite alternate;
-    transition: 0.3s;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* --- BUTTONS --- */
+.btn{
+margin: 5px;
+padding: 12px 25px;
+border:none;
+border-radius:30px;
+background:linear-gradient(45deg,#00f2fe,#4facfe);
+cursor:pointer;
+font-weight:600;
+color:#fff;
+font-size: 15px;
+box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
 }
 
-.study-friends-btn:hover {
-    transform: scale(1.05);
+.btn:hover{
+transform:scale(1.05);
+transition:.3s;
 }
 
-@keyframes glowPulse {
-    0% { box-shadow: 0 0 8px rgba(255, 154, 158, 0.5); }
-    100% { box-shadow: 0 0 20px rgba(255, 154, 158, 1), 0 0 30px rgba(254, 207, 239, 0.8); }
+.pause-btn{
+background: linear-gradient(45deg, #f39c12, #e67e22);
+box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
 }
 
-/* --- RESPONSIVE MEDIA QUERIES --- */
-@media (max-width: 768px) {
-    .study-friends-btn {
-        top: 20px;
-        right: 20px;
-        font-size: 13px;
-        padding: 10px 18px;
-    }
-    .timer-container {
-        padding: 30px 20px;
-        width: 90%;
-    }
-    .timer-section {
-        padding-top: 90px;
-    }
+.stop-btn{
+background: linear-gradient(45deg, #e74c3c, #c0392b);
+box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
 }
 
+.controls {
+    margin-bottom: 15px;
+}
+
+/* Responsive tweaks */
 @media (max-width: 480px) {
-    .study-friends-btn {
-        position: relative; /* Flow smoothly on tiny phones to avoid overlapping */
-        top: 0;
-        right: 0;
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
-    .timer-section {
-        padding-top: 20px; 
-    }
     .timer-container {
-        padding: 20px;
+        width: 250px;
+        height: 250px;
+    }
+    .timer {
+        font-size: 48px;
     }
 }
 
 </style>
 </head>
 <body>
+
+<div id="customToast" class="custom-toast">
+    <i class="fa-solid fa-bell"></i> <span id="toastMessage">Message</span>
+</div>
 
 <a href="timer.html" class="study-friends-btn">
    👩‍💻 Study with friends ✨
@@ -219,7 +239,7 @@ box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
 <section class="timer-section">
 <h2 class="header-title"><i class="fa-solid fa-stopwatch"></i> Timer</h2>
 
-<div class="timer-container">
+<div class="timer-container" id="timerBox" onclick="toggleTimer()">
     <div class="timer" id="timer">00:00:00</div>
 </div>
 
@@ -235,8 +255,6 @@ box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
     <button class="btn stop-btn" onclick="stopTimer()">Stop</button>
 </div>
 
-<br>
-
 <button class="btn" onclick="window.location.href='index.html'">
 ⬅ Back
 </button>
@@ -247,21 +265,37 @@ box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
 let timerInterval;
 let time = 0;
 let isPaused = false;
+const timerBox = document.getElementById("timerBox");
+
+// --- Custom Popup Logic ---
+function showToast(msg, isSuccess = false) {
+    const toast = document.getElementById("customToast");
+    const toastMsg = document.getElementById("toastMessage");
+    toastMsg.innerText = msg;
+    
+    // Change color based on type
+    toast.style.borderLeftColor = isSuccess ? "#00ff88" : "#ff4757";
+    
+    toast.classList.add("show");
+    
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
+}
 
 function startCustomTime() {
     let hrs = parseInt(document.getElementById("customHours").value) || 0;
     let mins = parseInt(document.getElementById("customMinutes").value) || 0;
 
-    // Calculate total seconds
     let totalSeconds = (hrs * 3600) + (mins * 60);
 
     if (totalSeconds > 0) {
         startTimer(totalSeconds);
-        // Clear inputs after starting
         document.getElementById("customHours").value = "";
         document.getElementById("customMinutes").value = "";
     } else {
-        alert("Bhai thoda time toh enter karo start karne se pehle! 😅");
+        // Custom popup instead of browser alert
+        showToast("Bhai thoda time toh enter karo! 😅");
     }
 }
 
@@ -275,12 +309,15 @@ function startTimer(duration){
     }
 
     displayTime(time);
+    
+    // Add Green Glow
+    timerBox.classList.add("running");
 
     timerInterval = setInterval(() => {
-        // Logic fix: Stop accurately at 0
         if(time <= 0){
             clearInterval(timerInterval);
-            alert("Session Complete! Great job. 🚀");
+            timerBox.classList.remove("running");
+            showToast("Session Complete! Great job. 🚀", true);
             return; 
         }
         
@@ -293,15 +330,15 @@ function startTimer(duration){
 function pauseTimer(){
     let btn = document.getElementById("pauseBtn");
     
-    // Prevent pausing if time is zero
     if(time === 0) return; 
 
     if(!isPaused){
         clearInterval(timerInterval);
         btn.innerText = "Resume";
         isPaused = true;
+        timerBox.classList.remove("running"); // Remove glow on pause
     } else {
-        startTimer(); // Resumes properly 
+        startTimer(); 
         btn.innerText = "Pause";
         isPaused = false;
     }
@@ -314,6 +351,14 @@ function stopTimer(){
 
     document.getElementById("pauseBtn").innerText = "Pause";
     document.getElementById("timer").innerHTML = "00:00:00";
+    timerBox.classList.remove("running"); // Remove glow on stop
+}
+
+// Optional feature: tap circle to pause/play
+function toggleTimer() {
+    if(time > 0) {
+        pauseTimer();
+    }
 }
 
 function displayTime(time){
