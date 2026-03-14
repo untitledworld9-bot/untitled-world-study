@@ -2214,12 +2214,15 @@ document.getElementById("popupInstallBtn").addEventListener("click", async () =>
 let selectedRating = 0;
 const ratingLabels = ["", "Needs Improvement 😔", "Fair 😐", "Good 🙂", "Very Good 😃", "Excellent! 🤩"];
 
-// 1. Star Click Animation & Text Update
-document.querySelectorAll('.rating-star').forEach(star => {
-    star.addEventListener('click', function() {
-        selectedRating = parseInt(this.getAttribute('data-val'));
-        document.getElementById('ratingStatusText').innerText = ratingLabels[selectedRating];
+// 1. Star Click Animation & Text Update (FIXED: Dynamic Click)
+document.addEventListener('click', function(e) {
+    if(e.target.classList.contains('rating-star')) {
+        selectedRating = parseInt(e.target.getAttribute('data-val'));
         
+        const statusText = document.getElementById('ratingStatusText');
+        statusText.innerText = ratingLabels[selectedRating];
+        statusText.style.color = "#fff"; // Agar red error tha toh wapas white ho jayega
+
         // Stars color update
         document.querySelectorAll('.rating-star').forEach(s => {
             if(parseInt(s.getAttribute('data-val')) <= selectedRating) {
@@ -2228,7 +2231,7 @@ document.querySelectorAll('.rating-star').forEach(star => {
                 s.classList.remove('active');
             }
         });
-    });
+    }
 });
 
 // Sidebar UI Update function
