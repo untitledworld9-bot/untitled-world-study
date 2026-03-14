@@ -343,11 +343,18 @@ function loadSavedTimer() {
                 time = Math.floor((targetEndTime - Date.now()) / 1000);
                 startTimer(time, true); // Resume kar rahe hain
             } else if (targetEndTime > 0 && targetEndTime <= Date.now()) {
-                // Background me timer khatam ho gaya
-                clearTimerState();
-                displayTime(0);
-                showToast("Session Completed while you were away! 🚀", true);
-            }
+
+ clearTimerState();
+ displayTime(0);
+
+ showToast("Session Completed while you were away! 🚀", true);
+
+ sendNotification(
+   "Untitled World Timer",
+   "Session Completed while you were away 🚀"
+ );
+
+}
         }
     }
 }
@@ -369,13 +376,18 @@ function showToast(msg, isSuccess = false) {
 
 function sendNotification(title, message){
 
-if("Notification" in window && Notification.permission === "granted"){
+if("serviceWorker" in navigator){
 
-new Notification(title,{
+navigator.serviceWorker.ready.then(reg => {
+
+reg.showNotification(title,{
 body: message,
 icon: "/icon-192.png",
 badge: "/icon-192.png",
-vibrate: [200,100,200]
+vibrate: [200,100,200],
+requireInteraction: true
+});
+
 });
 
 }
