@@ -1160,6 +1160,4 @@ ${updateData.changelog || ""}</pre>
 // ============================================================
 //  END OF admin.js
 // ============================================================
-window.verifyAdmin = () => {
-alert("BUTTON WORKING");
-};
+window.verifyAdmin = verifyAdmin;
