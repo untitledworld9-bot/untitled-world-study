@@ -932,18 +932,57 @@ function renderNotificationHistory(list) {
   }
 
   container.innerHTML = list.map(n => `
-    <div class="notif-item">
-      <span class="notif-target ${n.target === "all" ? "all" : ""}">
-        ${n.target === "all" ? "📣 All" : `👤 ${escHtml(n.user || n.target)}`}
-      </span>
-      <div style="flex:1;">
-        <div style="font-weight:600;font-size:13px;">${escHtml(n.icon || "🔔")} ${escHtml(n.title || "Notification")}</div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;">${escHtml(n.body || n.message || "")}</div>
-        <div class="announce-meta">${formatTimestamp(n.time)}</div>
-      </div>
-    </div>
-  `).join("");
+<div class="notif-item">
+
+<span class="notif-target ${n.target === "all" ? "all" : ""}">
+ ${n.target === "all" ? "📣 All" : `👤 ${escHtml(n.user || n.target)}`}
+</span>
+
+<div style="flex:1;">
+ <div style="font-weight:600;font-size:13px;">
+  ${escHtml(n.icon || "🔔")} ${escHtml(n.title)}
+ </div>
+
+ <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;">
+  ${escHtml(n.body)}
+ </div>
+
+ <div class="announce-meta">
+  ${formatTimestamp(n.time)}
+ </div>
+</div>
+
+<button class="announce-delete"
+ onclick="deleteNotification('${n.id}')">
+✕
+</button>
+
+</div>
+`).join("");
 }
+
+window.deleteNotification = async id => {
+
+ const yes = await confirmModal(
+  "Delete Notification",
+  "Remove this notification permanently?"
+ );
+
+ if(!yes) return;
+
+ try{
+
+  await deleteDoc(doc(db,"notifications",id));
+
+  toast("Notification deleted","info");
+
+ }catch(err){
+
+  toast("Delete failed: "+err.message,"error");
+
+ }
+
+};
 
 /**
  * Add a notification document to the Firestore queue.
