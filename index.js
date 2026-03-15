@@ -66,3 +66,41 @@ badge:"/icon-192.png"
 });
 
 });
+
+// ADMIN PROMOTION POPUP
+
+onSnapshot(collection(db,"promotions"), snap=>{
+
+snap.forEach(d=>{
+
+const p = d.data();
+
+if(!p.active) return;
+
+const box = document.createElement("div");
+
+box.style.position="fixed";
+box.style.bottom="20px";
+box.style.left="20px";
+box.style.background="#111";
+box.style.color="white";
+box.style.padding="14px 18px";
+box.style.borderRadius="12px";
+box.style.zIndex="9999";
+box.style.maxWidth="280px";
+box.style.boxShadow="0 0 12px rgba(0,0,0,0.4)";
+
+box.innerHTML=`
+<b>${p.title}</b><br>
+${p.message}
+`;
+
+document.body.appendChild(box);
+
+setTimeout(()=>{
+box.remove();
+},6000);
+
+});
+
+});
