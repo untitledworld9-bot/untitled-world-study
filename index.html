@@ -1790,12 +1790,9 @@ return window.matchMedia('(display-mode: standalone)').matches
 if(isPWA()){
 
 // login check
-let user = localStorage.getItem("userName");
-
-if(!user){
-
-window.location="login.html";
-
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
 }
 
 // header username replace (only PWA)
@@ -2365,6 +2362,14 @@ window.addEventListener('scroll', () => {
         }
     }
 });
+
+// --- LOGOUT FIX ---
+function logout(){
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userEmail");
+  window.location.href = "login.html";
+}
 
 </script>
 
