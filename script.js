@@ -124,21 +124,6 @@ if(progressLink){
   });
 }
 
-   await setDoc(doc(db,"users",currentUser),{
-  name: currentUser,
-  email: user.email,   // ✅ YE ADD KARNA HAI
-  focusTime: 0,
-  status:"Online",
-  room: roomId
-},{merge:true});        
-
-  }catch(err){
-    console.log(err);
-  }
-
- });
-}
-
 onAuthStateChanged(auth, async user=>{
  if(!user){
    loginOverlay.style.display="flex";
@@ -405,10 +390,41 @@ if(menuToggle && navMenu){
 
 if(inviteBtn){
  inviteBtn.addEventListener("click", () => {
-  const url = `${location.origin}/timer?room=${roomId}`;
-  navigator.clipboard.writeText(url);
-  alert("Link Copied!");
- });
+  const inviteWhatsapp = document.getElementById("inviteWhatsapp");
+const copyInvite = document.getElementById("copyInvite");
+
+const link = `${location.origin}/timer?room=${roomId}`;
+
+const inviteMessage =
+`📚 Focus Study Room
+
+Let's stay productive together 🚀
+
+Join here:
+${link}`;
+
+
+// WhatsApp open
+if(inviteWhatsapp){
+ inviteWhatsapp.onclick = ()=>{
+
+ const url = "https://wa.me/?text=" + encodeURIComponent(inviteMessage);
+
+ window.open(url,"_blank");
+
+ };
+}
+
+
+// Copy message
+if(copyInvite){
+ copyInvite.onclick = async ()=>{
+
+ await navigator.clipboard.writeText(inviteMessage);
+
+ alert("Invite message copied ✅");
+
+ };
 }
 
 let lastWaveTime = 0;
