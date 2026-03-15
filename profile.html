@@ -435,16 +435,10 @@ function saveProfile() {
 
 // --- LOGOUT LOGIC ---
 function logout(){
-
- auth.signOut().then(()=>{
-
-   localStorage.clear();
-   sessionStorage.clear();
-
-   window.location.href="login.html";
-
- });
-
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userEmail");
+  localStorage.removeItem("goal");
+  window.location.href = "login.html";
 }
 
 // PWA Check
