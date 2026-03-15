@@ -8,6 +8,12 @@ onSnapshot
 } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+if ("serviceWorker" in navigator) {
+ navigator.serviceWorker.register("/firebase-messaging-sw.js")
+ .then(reg => console.log("SW registered"))
+ .catch(err => console.log("SW error", err));
+}
+
 
 const firebaseConfig = {
  apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
