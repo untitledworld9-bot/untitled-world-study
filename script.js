@@ -751,36 +751,6 @@ onSnapshot(collection(db,"messages"), snap=>{
  });
 });
 
-/* ADMIN PUSH NOTIFICATION LISTENER */
-
-onSnapshot(collection(db,"notifications"), snap=>{
-
-snap.docChanges().forEach(change=>{
-
-if(change.type === "added"){
-
-const n = change.doc.data()
-
-if(n.user === currentUser || n.user === "all"){
-
-navigator.serviceWorker.ready.then(reg=>{
-
-reg.showNotification(n.title,{
-body:n.body,
-icon:"/icon-192.png",
-badge:"/icon-192.png"
-})
-
-})
-
-}
-
-}
-
-})
-
-});
-
 Notification.requestPermission().then(async permission => {
 
  if(permission === "granted"){
