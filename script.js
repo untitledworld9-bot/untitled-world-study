@@ -71,7 +71,7 @@ function updateDisplay(){
   `${mins<10?"0"+mins:mins}:${secs<10?"0"+secs:secs}`;
 }
   
-const loginOverlay = document.getElementById("loginOverlay");
+if(loginOverlay) loginOverlay.style.display="none";
 
 const savedName = localStorage.getItem("userName");
 
@@ -403,6 +403,8 @@ Let's stay productive together 🚀
 Join here:
 ${link}`;
 
+});
+}
 
 // WhatsApp open
 if(inviteWhatsapp){
