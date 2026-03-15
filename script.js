@@ -724,23 +724,6 @@ if(statusBtn){
  });
 }
 
-onSnapshot(collection(db,"announcements"), snap=>{
- snap.forEach(d=>{
-
-  const a=d.data();
-  if(!a.active) return;
-
-  const box=document.createElement("div");
-  box.className="admin-msg";
-  box.innerText="📢 "+a.text;
-
-  document.body.appendChild(box);
-
-  setTimeout(()=>box.remove(),5000);
-
- });
-});
-
 onSnapshot(collection(db,"messages"), snap=>{
  snap.forEach(async d=>{
   const m=d.data();
@@ -753,7 +736,7 @@ onSnapshot(collection(db,"messages"), snap=>{
 
 Notification.requestPermission().then(async permission => {
 
- if(permission === "granted"){
+ if(permission === "granted" && currentUser){
 
   const token = await getToken(messaging,{
    vapidKey:"BDTkDBt3daAUhVvkAHvKuEJn1DI6MwZh5nYzMFu8ym7UQGKNaAbzCtH-RE6DiHCv3k22w_mfl7u8jY-KqN5aNpc"
