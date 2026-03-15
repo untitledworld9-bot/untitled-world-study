@@ -1,4 +1,4 @@
-import { initializeApp } from 
+import { initializeApp, getApps } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
 import {
@@ -51,7 +51,9 @@ const firebaseConfig = {
 
 
 // INIT FIREBASE
-const app = initializeApp(firebaseConfig);
+const app = getApps().length
+ ? getApps()[0]
+ : initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
