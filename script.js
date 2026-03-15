@@ -73,14 +73,16 @@ function updateDisplay(){
  display.innerText =
   `${mins<10?"0"+mins:mins}:${secs<10?"0"+secs:secs}`;
 }
-  
+
+const loginOverlay = document.getElementById("loginOverlay");
+
 if(loginOverlay) loginOverlay.style.display="none";
 
 const savedName = localStorage.getItem("userName");
 
 if(savedName){
   currentUser = savedName;
-  loginOverlay.style.display="none";
+  if(loginOverlay) loginOverlay.style.display="none";
 }
   
 function getTodayDate(){
