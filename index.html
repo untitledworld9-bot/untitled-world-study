@@ -1790,10 +1790,10 @@ return window.matchMedia('(display-mode: standalone)').matches
 if(isPWA()){
 
 // login check
-function logout(){
-  localStorage.removeItem("userName");
-  localStorage.removeItem("userEmail");
-  window.location.href = "login.html";
+let user = localStorage.getItem("userName");
+
+if(!user){
+window.location="login.html";
 }
 
 // header username replace (only PWA)
