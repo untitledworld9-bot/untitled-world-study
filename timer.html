@@ -32,8 +32,9 @@ if(!user){
  window.location.href="login.html";
 }
 
-if(!sessionStorage.getItem("seenWelcome")){
- sessionStorage.setItem("seenWelcome","yes");
+const seenWelcome = localStorage.getItem("seenWelcome");
+
+if(!seenWelcome){
  window.location.href="welcome.html";
 }
 
@@ -172,17 +173,6 @@ box-shadow:0 0 10px rgba(0,255,136,0.6);
 </div>
 
 <div id="wavePopup" class="wave-popup" style="display:none;"></div>
-
-<script>
-
-const hasSeenWelcome = localStorage.getItem("seenWelcome");
-
-if(!hasSeenWelcome){
- localStorage.setItem("seenWelcome","yes");
- window.location.href="welcome.html";
-}
-
-</script>
 
 </body>
 </html>
