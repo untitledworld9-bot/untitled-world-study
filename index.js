@@ -21,12 +21,12 @@ const firebaseConfig = {
 };
 
 
-// Firebase init (duplicate safe)
+// Firebase init
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
-// Service worker register
+// Service worker
 if ("serviceWorker" in navigator) {
  navigator.serviceWorker.register("/firebase-messaging-sw.js")
  .then(reg => console.log("SW registered"))
@@ -38,12 +38,30 @@ if ("serviceWorker" in navigator) {
 const currentUser = localStorage.getItem("userName");
 
 
-// Notification listener
+// -------------------------------
+// DUPLICATE PROTECTION SYSTEM
+// -------------------------------
+
+let seenNotifications = new Set();
+let seenPromotions = new Set();
+let seenAnnouncements = new Set();
+
+
+// -------------------------------
+// PUSH NOTIFICATION SYSTEM
+// -------------------------------
+
 onSnapshot(collection(db,"notifications"), snap=>{
 
 snap.docChanges().forEach(change=>{
 
-if(change.type === "added"){
+if(change.type !== "added") return;
+
+const id = change.doc.id;
+
+if(seenNotifications.has(id)) return;
+
+seenNotifications.add(id);
 
 const n = change.doc.data();
 
@@ -61,19 +79,28 @@ badge:"/icon-192.png"
 
 }
 
-}
-
 });
 
 });
 
-// ADMIN PROMOTION POPUP
+
+// -------------------------------
+// PROMOTION POPUP
+// -------------------------------
 
 onSnapshot(collection(db,"promotions"), snap=>{
 
-snap.forEach(d=>{
+snap.docChanges().forEach(change=>{
 
-const p = d.data();
+if(change.type !== "added") return;
+
+const id = change.doc.id;
+
+if(seenPromotions.has(id)) return;
+
+seenPromotions.add(id);
+
+const p = change.doc.data();
 
 if(!p.active) return;
 
@@ -100,6 +127,43 @@ document.body.appendChild(box);
 setTimeout(()=>{
 box.remove();
 },6000);
+
+});
+
+});
+
+
+// -------------------------------
+// ANNOUNCEMENT SYSTEM
+// -------------------------------
+
+onSnapshot(collection(db,"announcements"), snap=>{
+
+snap.docChanges().forEach(change=>{
+
+if(change.type !== "added") return;
+
+const id = change.doc.id;
+
+if(seenAnnouncements.has(id)) return;
+
+seenAnnouncements.add(id);
+
+const a = change.doc.data();
+
+if(!a.active) return;
+
+const box=document.createElement("div");
+
+box.className="admin-msg";
+
+box.innerText="📢 "+a.text;
+
+document.body.appendChild(box);
+
+setTimeout(()=>{
+box.remove();
+},5000);
 
 });
 
