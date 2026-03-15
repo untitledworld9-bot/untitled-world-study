@@ -420,7 +420,7 @@ async function loadDailyStats() {
  */
 function listenUsers() {
   const unsub = onSnapshot(
-    query(collection(db, COLL.USERS), orderBy("lastActive", "desc")),
+    query(collection(db, COLL.USERS), orderBy("lastActiveDate", "desc")),
     snap => {
       STATE.allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       updateUserStats();
@@ -436,8 +436,14 @@ function listenUsers() {
 function updateUserStats() {
   const users     = STATE.allUsers;
   const total     = users.length;
-  const online    = users.filter(u => u.status === "Online" || u.status === "Focusing").length;
-  const focusing  = users.filter(u => u.status === "Focusing").length;
+  const online = users.filter(u =>
+  u.status === "Online" ||
+  (u.status && u.status.includes("Focusing"))
+).length;
+
+const focusing = users.filter(u =>
+  u.status && u.status.includes("Focusing")
+).length;
   const totalFocMin = users.reduce((sum, u) => sum + (u.focusTime || 0), 0);
   const focHours  = totalFocMin < 60
     ? `${totalFocMin}m`
@@ -539,7 +545,7 @@ window.notifyUser = (uid, name) => {
  */
 function listenMessages() {
   const unsub = onSnapshot(
-    query(collection(db, COLL.MESSAGES), orderBy("timestamp", "desc"), limit(200)),
+    query(collection(db, COLL.MESSAGES), orderBy("time", "desc"), limit(200)),
     snap => {
       // Reverse so oldest messages are at the top
       STATE.allMessages = snap.docs.map(d => ({ id: d.id, ...d.data() })).reverse();
