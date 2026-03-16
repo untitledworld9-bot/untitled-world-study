@@ -1,17 +1,19 @@
 /**
- * index.js — Untitled World (FINAL FIXED)
+ * index.js — Untitled World (FINAL)
  *
  * FIX-I   announcements composite index error
  * FIX-J   notifications query safe
  * FIX-K   bfcache restore
  * FIX-M   promotions body field fix
- * FIX-P   markSeen poisoning fix
+ * FIX-P   markSeen poisoning fix — markSeen called AFTER render
  * FIX-Q   service worker reload loop removed
  * FIX-R   App Updates listener added
- * FIX-S   pagehide now NULLS unsubs after calling — bfcache restore was skipping
- *          initAppUpdates() because unsubs.updates was still truthy (not null)
- * FIX-T   renderAnnouncement now shows edtech-style full-width banner with
- *          priority colour, optional image, and close button
+ * FIX-S   pagehide NULLS unsubs after calling
+ * FIX-T   Announcements: edtech-style banner, priority colour, image, close btn
+ * FIX-U   Notifications + Announcements: localStorage dedup so same item never
+ *          re-shows across app opens (only resets if user clears storage)
+ * FIX-V   Promotions banner type: full-width image banner with close btn + auto-hide
+ *          Popup type: centered overlay (existing behaviour)
  */
 
 import { db } from "./firebase.js";
@@ -29,29 +31,32 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
-
 /* ─────────────────────────────
-   SESSION STORAGE
+   STORAGE KEYS
 ───────────────────────────── */
 
 const SK = {
-  ANNOUNCEMENTS : "uw_seen_announcements",
-  NOTIFICATIONS : "uw_seen_notifications",
-  PROMOTIONS    : "uw_seen_promotions",
+  ANNOUNCEMENTS : "uw_seen_announcements",   // localStorage — persistent dedup
+  NOTIFICATIONS : "uw_seen_notifications",   // localStorage — persistent dedup
+  PROMOTIONS    : "uw_seen_promotions",       // sessionStorage — once per session
   UPDATE_SEEN   : "uw_seen_update",
   LISTENERS_BOOT: "uw_listeners_booted"
 };
 
+// FIX-U: announcements + notifications use localStorage so the same item
+//        is never shown again across app opens / restarts.
+//        Promotions keep sessionStorage (show once per session is fine).
 const seen = {
-  announcements : new Set(JSON.parse(sessionStorage.getItem(SK.ANNOUNCEMENTS) || "[]")),
-  notifications : new Set(JSON.parse(sessionStorage.getItem(SK.NOTIFICATIONS) || "[]")),
-  promotions    : new Set(JSON.parse(sessionStorage.getItem(SK.PROMOTIONS)    || "[]"))
+  announcements : new Set(JSON.parse(localStorage.getItem(SK.ANNOUNCEMENTS)        || "[]")),
+  notifications : new Set(JSON.parse(localStorage.getItem(SK.NOTIFICATIONS)        || "[]")),
+  promotions    : new Set(JSON.parse(sessionStorage.getItem(SK.PROMOTIONS)         || "[]"))
 };
 
 function markSeen(type, id) {
   seen[type].add(id);
   try {
-    sessionStorage.setItem(SK[type.toUpperCase()], JSON.stringify([...seen[type]]));
+    const storage = (type === "promotions") ? sessionStorage : localStorage;
+    storage.setItem(SK[type.toUpperCase()], JSON.stringify([...seen[type]]));
   } catch {}
 }
 
@@ -65,20 +70,17 @@ const unsubs = {
 };
 
 
-
 /* ─────────────────────────────
    HELPERS
 ───────────────────────────── */
 
 function qs(s, r = document) { try { return r.querySelector(s); } catch { return null; } }
-
-function safeAppend(p, c) { if (p && c) p.appendChild(c); }
-
-function autoRemove(el, ms) { setTimeout(() => { if (el?.parentNode) el.remove(); }, ms); }
+function safeAppend(p, c)    { if (p && c) p.appendChild(c); }
+function autoRemove(el, ms)  { setTimeout(() => { if (el?.parentNode) el.remove(); }, ms); }
 
 function showToast(html, duration = 5000) {
-  const toast = document.createElement("div");
-  toast.style.cssText = `
+  const t = document.createElement("div");
+  t.style.cssText = `
     position:fixed;bottom:24px;right:20px;
     background:#1e3a5f;color:#e2f0ff;
     padding:14px 20px;border-radius:14px;
@@ -88,9 +90,9 @@ function showToast(html, duration = 5000) {
     border:1px solid rgba(0,242,254,0.25);
     line-height:1.5;
   `;
-  toast.innerHTML = html;
-  safeAppend(document.body, toast);
-  autoRemove(toast, duration);
+  t.innerHTML = html;
+  safeAppend(document.body, t);
+  autoRemove(t, duration);
 }
 
 function isPWA() {
@@ -101,10 +103,8 @@ function isPWA() {
 }
 
 
-
 /* ─────────────────────────────
-   SERVICE WORKER
-   FIX-Q: removed controllerchange → reload loop
+   SERVICE WORKER — FIX-Q: no reload loop
 ───────────────────────────── */
 
 function initServiceWorker() {
@@ -114,14 +114,13 @@ function initServiceWorker() {
 }
 
 
-
 /* ─────────────────────────────
    ANNOUNCEMENTS
-   FIX-T: big edtech-style banner, image support, priority colour, close button
+   FIX-T: edtech-style banner, priority colour, optional image, close btn
+   FIX-U: localStorage dedup — never repeats across sessions
 ───────────────────────────── */
 
 function initAnnouncements() {
-
   if (unsubs.announcements) return;
 
   const q = query(
@@ -131,64 +130,52 @@ function initAnnouncements() {
   );
 
   unsubs.announcements = onSnapshot(q, snap => {
-
     snap.docChanges().forEach(change => {
-
       if (change.type !== "added") return;
 
       const id   = change.doc.id;
       const data = change.doc.data();
 
-      if (!data.active) return;
-      if (seen.announcements.has(id)) return;
-      if (data.target === "pwa" && !isPWA()) return;
+      if (!data.active)                          return;
+      if (seen.announcements.has(id))            return;  // FIX-U: localStorage guard
+      if (data.target === "pwa" && !isPWA())     return;
 
       renderAnnouncement(data);
-      markSeen("announcements", id); // FIX-P: after render
+      markSeen("announcements", id);                      // FIX-P: after render
     });
-
-  }, err => console.warn("[Announcements] error:", err));
+  }, err => console.warn("[Announcements]", err));
 }
 
 function renderAnnouncement(data) {
-
-  // Priority colour map
   const colours = {
-    high   : { bg: "rgba(255,59,59,0.15)", border: "#ff3b3b", dot: "#ff3b3b" },
+    high   : { bg: "rgba(255,59,59,0.15)",  border: "#ff3b3b", dot: "#ff3b3b" },
     medium : { bg: "rgba(255,184,48,0.12)", border: "#ffb830", dot: "#ffb830" },
-    low    : { bg: "rgba(0,229,160,0.10)", border: "#00e5a0", dot: "#00e5a0" }
+    low    : { bg: "rgba(0,229,160,0.10)",  border: "#00e5a0", dot: "#00e5a0" }
   };
   const c = colours[data.priority] || colours.medium;
 
   const el = document.createElement("div");
   el.style.cssText = `
-    position:relative;
-    width:100%;
+    position:relative;width:100%;
     background:${c.bg};
     border-left:4px solid ${c.border};
     border-radius:0 12px 12px 0;
     padding:14px 44px 14px 18px;
-    display:flex;
-    align-items:flex-start;
-    gap:12px;
-    animation:slideDown .35s ease;
-    font-family:inherit;
+    display:flex;align-items:flex-start;gap:12px;
+    animation:slideDown .35s ease;font-family:inherit;
   `;
 
   // Priority dot
   const dot = document.createElement("span");
   dot.style.cssText = `
-    flex-shrink:0;
-    width:10px;height:10px;
-    border-radius:50%;
-    background:${c.dot};
-    margin-top:5px;
-    box-shadow:0 0 8px ${c.dot};
+    flex-shrink:0;width:10px;height:10px;
+    border-radius:50%;background:${c.dot};
+    margin-top:5px;box-shadow:0 0 8px ${c.dot};
   `;
 
   // Text wrapper
-  const textWrap = document.createElement("div");
-  textWrap.style.cssText = "flex:1;min-width:0;";
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "flex:1;min-width:0;";
 
   // Optional image
   if (data.imageUrl) {
@@ -196,30 +183,28 @@ function renderAnnouncement(data) {
     img.src = data.imageUrl;
     img.alt = "";
     img.style.cssText = `
-      width:100%;max-height:180px;
-      object-fit:cover;border-radius:8px;
-      margin-bottom:10px;display:block;
+      width:100%;max-height:180px;object-fit:cover;
+      border-radius:8px;margin-bottom:10px;display:block;
     `;
     img.onerror = () => img.remove();
-    textWrap.appendChild(img);
+    wrap.appendChild(img);
   }
 
-  // Message text
   const msg = document.createElement("div");
   msg.style.cssText = "font-size:15px;font-weight:600;color:#e2f0ff;line-height:1.5;";
   msg.textContent = (data.text || "").replace(/^📢\s*/, "");
 
-  // Timestamp
   const meta = document.createElement("div");
   meta.style.cssText = "font-size:11px;color:rgba(255,255,255,0.45);margin-top:4px;";
   meta.textContent = "📢 Untitled World";
 
-  textWrap.appendChild(msg);
-  textWrap.appendChild(meta);
+  wrap.appendChild(msg);
+  wrap.appendChild(meta);
 
-  // Close button
+  // ❌ Close button
   const close = document.createElement("button");
   close.textContent = "✕";
+  close.setAttribute("aria-label", "Close");
   close.style.cssText = `
     position:absolute;top:10px;right:12px;
     background:none;border:none;
@@ -230,22 +215,20 @@ function renderAnnouncement(data) {
   close.onclick = () => el.remove();
 
   el.appendChild(dot);
-  el.appendChild(textWrap);
+  el.appendChild(wrap);
   el.appendChild(close);
 
-  const container = qs("#announcement-container") || document.body;
-  safeAppend(container, el);
+  safeAppend(qs("#announcement-container") || document.body, el);
   autoRemove(el, 8000);
 }
 
 
-
 /* ─────────────────────────────
    NOTIFICATIONS
+   FIX-U: localStorage dedup — same notification never repeats
 ───────────────────────────── */
 
 function initNotifications() {
-
   if (unsubs.notifications) return;
 
   const start = Timestamp.now();
@@ -258,30 +241,26 @@ function initNotifications() {
 
   const handle = snap => {
     snap.docChanges().forEach(change => {
-
       if (change.type !== "added") return;
 
       const id = change.doc.id;
       const d  = change.doc.data();
 
       if (d.createdAt && d.createdAt.toMillis() < start.toMillis()) return;
-      if (seen.notifications.has(id)) return;
+      if (seen.notifications.has(id)) return;    // FIX-U: localStorage guard
 
       fireNotification(d.title, d.body);
-      markSeen("notifications", id); // FIX-P: after render
-
+      markSeen("notifications", id);             // FIX-P: after render
       updateDoc(doc(db, "notifications", id), { read: true });
     });
   };
 
   const err = e => console.warn("[Notifications]", e);
-
   const unsubAll  = onSnapshot(makeQuery("all"), handle, err);
   let   unsubUser = () => {};
   if (CURRENT_USER) {
     unsubUser = onSnapshot(makeQuery(CURRENT_USER), handle, err);
   }
-
   unsubs.notifications = () => { unsubAll(); unsubUser(); };
 }
 
@@ -295,17 +274,25 @@ function fireNotification(title, body) {
   }
 }
 
+/*
+  ── BACKGROUND NOTIFICATIONS ──────────────────────────────────
+  Notifications received when the PWA is CLOSED or in background
+  are handled automatically by firebase-messaging-sw.js via FCM.
+  No code needed here for that — the service worker does it.
+  These in-app notifications (above) only fire when the PWA is OPEN.
+  ──────────────────────────────────────────────────────────────
+*/
 
 
 /* ─────────────────────────────
    PROMOTIONS
-   FIX-M: use data.body not data.message
-   FIX-N: reuse #promoPopup, setProperty !important
+   FIX-M: data.body (not data.message)
    FIX-P: markSeen after render
+   FIX-V: type === "banner" → full-width banner with image + ❌ + auto-hide
+          type === "popup"  → centered overlay (existing working behaviour)
 ───────────────────────────── */
 
 function initPromotions() {
-
   if (unsubs.promotions) return;
 
   const q = query(
@@ -315,26 +302,118 @@ function initPromotions() {
   );
 
   unsubs.promotions = onSnapshot(q, snap => {
-
     snap.docChanges().forEach(change => {
-
       if (change.type !== "added") return;
 
       const id   = change.doc.id;
       const data = change.doc.data();
 
-      if (seen.promotions.has(id)) return;
-      if (!data.title && !data.body) return;
+      if (seen.promotions.has(id))       return;
+      if (!data.title && !data.body)     return;
 
-      renderPromotion(data);
-      markSeen("promotions", id); // FIX-P: after render
+      if (data.type === "banner") {
+        renderPromotionBanner(data);
+      } else {
+        renderPromotionPopup(data);
+      }
+
+      markSeen("promotions", id);                // FIX-P: after render
     });
-
   }, err => console.warn("[Promotions]", err));
 }
 
-function renderPromotion(data) {
+// ── BANNER type — full-width top banner with image, close btn, auto-hide
+function renderPromotionBanner(data) {
 
+  const el = document.createElement("div");
+  el.style.cssText = `
+    position:fixed;top:0;left:0;right:0;
+    background:${data.bgColor || "#0d1117"};
+    border-bottom:2px solid rgba(0,242,254,0.35);
+    z-index:99998;
+    animation:slideDown .35s ease;
+    font-family:inherit;
+  `;
+
+  // Optional full-width image
+  if (data.imageUrl) {
+    const img = document.createElement("img");
+    img.src = data.imageUrl;
+    img.alt = data.title || "";
+    img.style.cssText = `
+      width:100%;max-height:220px;
+      object-fit:cover;display:block;
+    `;
+    img.onerror = () => img.remove();
+    el.appendChild(img);
+  }
+
+  // Text row
+  const row = document.createElement("div");
+  row.style.cssText = `
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 48px 14px 18px;gap:10px;
+  `;
+
+  const textWrap = document.createElement("div");
+
+  if (data.title) {
+    const t = document.createElement("div");
+    t.style.cssText = "font-size:15px;font-weight:700;color:#fff;line-height:1.4;";
+    t.textContent = data.title;
+    textWrap.appendChild(t);
+  }
+
+  if (data.body) {
+    const b = document.createElement("div");
+    b.style.cssText = "font-size:13px;color:rgba(255,255,255,0.65);margin-top:2px;";
+    b.textContent = data.body;
+    textWrap.appendChild(b);
+  }
+
+  row.appendChild(textWrap);
+
+  // CTA button
+  if (data.cta) {
+    const btn = document.createElement("button");
+    btn.textContent = data.cta;
+    btn.style.cssText = `
+      flex-shrink:0;
+      background:linear-gradient(45deg,#00f2fe,#4facfe);
+      border:none;border-radius:20px;
+      padding:8px 20px;color:#000;
+      font-weight:700;cursor:pointer;font-size:13px;
+      white-space:nowrap;
+    `;
+    btn.onclick = () => el.remove();
+    row.appendChild(btn);
+  }
+
+  el.appendChild(row);
+
+  // ❌ Close button
+  const close = document.createElement("button");
+  close.textContent = "✕";
+  close.setAttribute("aria-label", "Close");
+  close.style.cssText = `
+    position:absolute;top:10px;right:12px;
+    background:none;border:none;
+    color:rgba(255,255,255,0.5);
+    font-size:18px;cursor:pointer;
+    line-height:1;padding:4px 6px;
+  `;
+  close.onclick = () => el.remove();
+  el.appendChild(close);
+
+  safeAppend(document.body, el);
+
+  // Auto-hide — duration 0 means persistent (user must close manually)
+  const ms = (data.duration || 8) * 1000;
+  if (ms > 0) autoRemove(el, ms);
+}
+
+// ── POPUP type — centered overlay (reuses existing #promoPopup element)
+function renderPromotionPopup(data) {
   const popup = document.getElementById("promoPopup");
   if (!popup) return;
 
@@ -343,18 +422,15 @@ function renderPromotion(data) {
 
   box.innerHTML = "";
 
-  // Close button
   const closeBtn = document.createElement("span");
   closeBtn.className = "promo-close";
   closeBtn.textContent = "✕";
   closeBtn.onclick = () => popup.style.setProperty("display", "none", "important");
 
-  // Title
   const titleEl = document.createElement("h3");
   titleEl.style.cssText = "color:#fff;margin:16px 0 10px;font-size:18px;font-weight:700;padding:0 10px;";
   titleEl.textContent = data.title || "";
 
-  // Body
   const bodyEl = document.createElement("p");
   bodyEl.style.cssText = "color:#a4b0be;font-size:14px;line-height:1.6;margin:0 0 18px;padding:0 10px;";
   bodyEl.textContent = data.body || "";
@@ -386,47 +462,38 @@ function renderPromotion(data) {
     }
   });
 
-  setTimeout(() => {
-    popup.style.setProperty("display", "none", "important");
-  }, (data.duration || 8) * 1000);
+  const ms = (data.duration || 8) * 1000;
+  if (ms > 0) {
+    setTimeout(() => popup.style.setProperty("display", "none", "important"), ms);
+  }
 }
-
 
 
 /* ─────────────────────────────
    APP UPDATES
    FIX-R: listener was completely missing
-   FIX-S: version+time key stored in sessionStorage to prevent re-show
+   FIX-S: localStorage key prevents re-show on same version
 ───────────────────────────── */
 
 let _lastUpdateKey = null;
 
 function initAppUpdates() {
-
   if (unsubs.updates) return;
 
   unsubs.updates = onSnapshot(
     doc(db, "appUpdates", "latest"),
     snap => {
-
       if (!snap.exists()) return;
 
       const data = snap.data();
-
       if (!data.active) return;
 
-      // Unique key — version + time so re-pushing same version still shows
       const key = (data.version || "") + "_" + (data.time || "");
-
-      // In-memory guard (resets on page reload — intentional so new pushes always show)
       if (_lastUpdateKey === key) return;
-
-      // Session guard — survives bfcache but resets on full reload
       if (sessionStorage.getItem(SK.UPDATE_SEEN) === key) return;
 
       _lastUpdateKey = key;
       sessionStorage.setItem(SK.UPDATE_SEEN, key);
-
       showUpdatePopup(data);
     },
     err => console.warn("[AppUpdates]", err)
@@ -434,18 +501,14 @@ function initAppUpdates() {
 }
 
 function showUpdatePopup(data) {
-
   const isForced = data.type === "forced";
 
   const overlay = document.createElement("div");
   overlay.style.cssText = `
-    display:flex;
-    position:fixed;
-    inset:0;
+    display:flex;position:fixed;inset:0;
     background:rgba(0,0,0,.85);
     backdrop-filter:blur(12px);
-    align-items:center;
-    justify-content:center;
+    align-items:center;justify-content:center;
     z-index:999999;
   `;
 
@@ -453,8 +516,7 @@ function showUpdatePopup(data) {
     <div style="
       background:#0d1117;
       border:1px solid rgba(0,224,255,0.3);
-      border-radius:20px;
-      padding:32px 28px 28px;
+      border-radius:20px;padding:32px 28px 28px;
       max-width:360px;width:90%;
       text-align:center;color:#eef0ff;
       box-shadow:0 20px 60px rgba(0,0,0,.7);
@@ -462,13 +524,11 @@ function showUpdatePopup(data) {
       <div style="font-size:48px;margin-bottom:12px;">🚀</div>
       <h2 style="font-size:20px;font-weight:700;margin:0 0 6px;color:#fff;">Update Available</h2>
       <p style="font-size:13px;color:#7c5cfc;font-weight:600;margin:0 0 16px;">${data.version || ""}</p>
-      ${data.changelog ? `
-      <pre style="
+      ${data.changelog ? `<pre style="
         text-align:left;font-size:12px;color:#94a3b8;
         background:#060910;padding:14px;border-radius:10px;
         margin:0 0 20px;white-space:pre-wrap;line-height:1.6;
-        max-height:160px;overflow-y:auto;
-      ">${data.changelog}</pre>` : ""}
+        max-height:160px;overflow-y:auto;">` + data.changelog + `</pre>` : ""}
       <button id="uwUpdateBtn" style="
         display:block;width:100%;
         background:linear-gradient(135deg,#00e0ff,#7c5cfc);
@@ -476,8 +536,7 @@ function showUpdatePopup(data) {
         color:#000;font-weight:700;font-size:15px;cursor:pointer;
         margin-bottom:${isForced ? "0" : "10px"};
       ">Update App</button>
-      ${!isForced ? `
-      <button id="uwDismissBtn" style="
+      ${!isForced ? `<button id="uwDismissBtn" style="
         background:none;border:none;
         color:#4a5568;font-size:13px;
         cursor:pointer;padding:6px;
@@ -502,15 +561,12 @@ function showUpdatePopup(data) {
 }
 
 
-
 /* ─────────────────────────────
    BOOT
 ───────────────────────────── */
 
 function boot() {
-
   console.log("[UW] boot");
-
   initServiceWorker();
 
   if (sessionStorage.getItem(SK.LISTENERS_BOOT) === "1") return;
@@ -532,14 +588,10 @@ window.addEventListener("pageshow", e => {
 });
 
 // FIX-S: null every unsub ref AFTER calling it
-// Without this, bfcache restore sets LISTENERS_BOOT="" and re-calls boot(),
-// but initX() sees truthy unsubs.x and returns early — no listeners attached.
 window.addEventListener("pagehide", () => {
-
   if (typeof unsubs.announcements === "function") { unsubs.announcements(); unsubs.announcements = null; }
   if (typeof unsubs.notifications  === "function") { unsubs.notifications();  unsubs.notifications  = null; }
   if (typeof unsubs.promotions     === "function") { unsubs.promotions();     unsubs.promotions     = null; }
   if (typeof unsubs.updates        === "function") { unsubs.updates();        unsubs.updates        = null; }
-
   sessionStorage.removeItem(SK.LISTENERS_BOOT);
 });
