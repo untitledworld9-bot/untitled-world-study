@@ -1430,22 +1430,22 @@ body.pwa-mode #pwaDashboard {
 
 <div id="pwaSidebar" class="pwa-sidebar">
 
-<div class="pwa-profile">
+  <div class="pwa-profile" onclick="location.href='profile.html'" style="cursor: pointer;">
 
-<div class="pwa-avatar" id="pwaAvatar">A</div>
+    <div class="pwa-avatar" id="pwaAvatar">A</div>
 
-<div>
-<div id="pwaName">User</div>
-<div id="pwaEmail" class="pwa-email"></div>
-<div id="pwaGoal" class="pwa-email"></div>
+    <div>
+      <div id="pwaName">User</div>
+      <div id="pwaEmail" class="pwa-email"></div>
+      <div id="pwaGoal" class="pwa-email"></div>
 
-<div class="pwa-xp-mini">
-⭐ <span id="xpValueSide">0</span> XP
-🏆 <span id="rankValueSide">--</span>
-</div>
+      <div class="pwa-xp-mini">
+        ⭐ <span id="xpValueSide">0</span> XP
+        🏆 <span id="rankValueSide">--</span>
+      </div>
+    </div>
 
-</div>
-</div>
+  </div>
 
 <div class="pwa-links">
     <a href="mocktest.html"><i class="fa-solid fa-file-pen" style="color: #00f2fe;"></i> Mock Test</a>
@@ -1611,23 +1611,48 @@ onclick="location.href='leaderboard.html'">
     <p>Track your study progress & video complete history</p>
   </div>
 
+   <div class="web-card" onclick="showFeaturePopup()">
+    <h3><i class="fa-solid fa-list-check" style="color: #00e6c8; margin-right: 10px; font-size: 24px;"></i> Your Todo List</h3>
+    <p>Create your Todo list & get reminders 🔔</p>
+  </div>
+
 </section>
 
 <section class="features" id="features">
-<h2>Powerful Features</h2>
-<div class="feature-grid">
-<div class="feature-card"><h4>Modern UI</h4><p>Clean and aesthetic design.</p></div>
-<div class="feature-card"><h4>Video Learning</h4><p>Tap,Paste any YouTube link & study.</p></div>
-<div class="feature-card"><h4>Progress Graph 📈</h4><p>Track your daily & Weekly lecture complete.</p></div>
-<div class="feature-card">
-  <h4>📝 Mock Test Platform</h4>
-  <p>Coming soon 🔜 Stay Tuned</p>
-</div>
-<div class="feature-card">
-    <h4>Smart 🤓 Focus Timer</h4>
-    <p> Create Room Study 📚 with friends and Know your Weekly Rank & Earn ⭐XP</p>
-</div>
-</div>
+  <h2>Powerful Features</h2>
+  <div class="feature-grid">
+    
+    <div class="feature-card">
+      <h4><i class="fa-solid fa-mobile-screen-button" style="margin-right: 8px;"></i> Modern UI</h4>
+      <p>Clean and aesthetic design.</p>
+    </div>
+
+    <div class="feature-card">
+      <h4><i class="fa-brands fa-youtube" style="margin-right: 8px;"></i> My Study Playlist</h4>
+      <p>Tap yt button, Paste yt video URL subject wise & Earn ⭐ Xp & Badge 🔥on Watch</p>
+    </div>
+
+    <div class="feature-card">
+      <h4><i class="fa-solid fa-chart-simple" style="margin-right: 8px;"></i> Weekly Analysis</h4>
+      <p>Track your daily & Weekly lecture complete.</p>
+    </div>
+
+    <div class="feature-card">
+      <h4><i class="fa-solid fa-file-pen" style="margin-right: 8px;"></i> Mock Test Platform</h4>
+      <p>Coming soon 🔜 Stay Tuned</p>
+    </div>
+
+    <div class="feature-card">
+      <h4><i class="fa-solid fa-stopwatch" style="margin-right: 8px;"></i> Smart Focus Timer</h4>
+      <p>Focus with 🌎 Users or Create Room, Study with Friends 👋 & Earn ⭐ XP and Know your rank in Leaderboard</p>
+    </div>
+
+    <div class="feature-card">
+      <h4><i class="fa-solid fa-list-check" style="margin-right: 8px;"></i> Your Todo List</h4>
+      <p>Create your Todo list</p>
+    </div>
+
+  </div>
 </section>
 
 <section class="contact-section" id="contact">
@@ -1697,9 +1722,9 @@ onclick="location.href='leaderboard.html'">
     <span>Home</span>
   </a>
 
-  <a href="mocktest.html">
-    <i class="fa-solid fa-file-pen"></i>
-    <span>Mock Test</span>
+   <a href="todo.html">
+    <i class="fa-solid fa-list-check"></i>
+    <span>Todo List</span>
   </a>
 
   <a href="timer.html">
@@ -1837,31 +1862,39 @@ document.getElementById("pwaDashboard").style.display="block";
 <script>
 /* Service Worker register code */
 if ('serviceWorker' in navigator) {
-
   navigator.serviceWorker.register('/sw.js').then(reg => {
 
-    if (reg.waiting) {
-      reg.waiting.postMessage('skipWaiting');
-    }
+    // Check kar rahe hain ki app PWA mode me hai ya Website mode me
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-    reg.addEventListener("updatefound", () => {
-
-      const newWorker = reg.installing;
-
-      newWorker.addEventListener("statechange", () => {
-
-        if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-
-          newWorker.postMessage("skipWaiting");
-
-        }
-
+    if (isPWA) {
+      // ==================================================
+      // 1. PWA APP KE LIYE (Popup aayega aur reload hoga)
+      // ==================================================
+      if (reg.waiting) {
+        reg.waiting.postMessage('skipWaiting');
+      }
+      reg.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener("statechange", () => {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            newWorker.postMessage("skipWaiting");
+          }
+        });
       });
 
-    });
+    } else {
+      // ==================================================
+      // 2. WEBSITE KE LIYE (Silent Update, no popup)
+      // ==================================================
+      // Website naya update automatically background me download karegi.
+      // Popup nahi aayega, user jab next time site aayega toh naya version chalega.
+      reg.addEventListener("updatefound", () => {
+        console.log("Website update downloading silently in background...");
+      });
+    }
 
   });
-
 }
 </script>
 
@@ -2472,10 +2505,10 @@ function logout(){
         popup.classList.add('show');
         sessionStorage.setItem("todoReminderShown", "true"); // Save kar lo ki dikh gaya
 
-        // 2 second rukne ke baad wapas upar chala jayega
+        // 3 second rukne ke baad wapas upar chala jayega
         setTimeout(() => {
           popup.classList.remove('show');
-        }, 2000); 
+        }, 3000); 
       }
     }, 4000); 
   }
