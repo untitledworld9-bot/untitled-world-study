@@ -1101,12 +1101,18 @@
       if (typeof window.showUWNotification === 'function') {
         window.showUWNotification(title, body); return;
       }
+            // Add data url so the service worker knows where to go
+      const options = { 
+          body, 
+          icon: '/icon-192.png', 
+          tag: 'uw-todo-' + Date.now(),
+          data: { url: "/todo.html" } // NAYA LINE
+      };
+
       try {
-        new Notification(title, { body, icon: '/icons/icon-192.png', tag: 'uw-todo-' + Date.now() });
+        new Notification(title, options);
       } catch {
-        navigator.serviceWorker?.ready.then(r =>
-          r.showNotification(title, { body, icon: '/icons/icon-192.png', tag: 'uw-todo-' + Date.now() })
-        );
+        navigator.serviceWorker?.ready.then(r => r.showNotification(title, options));
       }
     }
 
@@ -1123,7 +1129,7 @@
         const ms = d.getTime() - now;
         if (ms > 0 && ms < 7*86400000) {
           notifTimers[task.id] = setTimeout(() => {
-            if (!task.done) fireNotif('Untitled World', `Your Task\n${task.name}\n\nTask Time Reached`);
+            if (!task.done) fireNotif('Reminder 🔔', `Your Task\n${task.name}\n\nTask Time Reached`);
           }, ms);
         }
       });
