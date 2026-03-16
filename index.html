@@ -961,6 +961,37 @@ max-width:900px;
   justify-content: center;
 }
 
+/* --- TODO APP BOX --- */
+.app-box.todo-box {
+  border-color: #00e6c8;
+  background: rgba(0, 230, 200, 0.08);
+  margin: 0 auto 20px auto; /* Bade card se equal gap */
+  width: 90%;
+  max-width: 360px; /* Bade card ke barabar width */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 15px;
+}
+
+.todo-title {
+  color: #00e6c8;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo-sub {
+  color: #fff;
+  font-size: 11px;
+  font-weight: normal;
+  margin-top: 5px;
+  opacity: 0.8;
+  text-align: center;
+}
+
 /* --- SIDEBAR EDTECH MENU (PWA ONLY) --- */
 .pwa-links a {
   display: flex;
@@ -1470,6 +1501,14 @@ onclick="location.href='leaderboard.html'">
       </div>
     </div>
 
+  </div><div class="app-box todo-box" onclick="location.href='todo.html'">
+    <div class="todo-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+        <path d="M9 11l3 3L22 4"/>
+        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+      </svg> Your Todo List
+    </div>
+    <div class="todo-sub">Create your todo list</div>
   </div>
 
    <div class="follow-section">
