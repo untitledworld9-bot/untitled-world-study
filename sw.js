@@ -31,13 +31,14 @@ messaging.onBackgroundMessage(function(payload) {
 // • Zero white screen
 // ────────────────────────────────────────────────────────────────────────────
 
-const CACHE = "uw-cache-v14";
+const CACHE = "uw-cache-v15";
 
 const ASSETS = [
   "/",
   "/index.html",
   "/offline.html",
   "/focus.html",
+  "/todo.html",
   "/manifest.json",
   "/icon-192.png",
   "/icon-512.png",
@@ -145,31 +146,25 @@ self.addEventListener("message", event => {
 });
 
 self.addEventListener("notificationclick", event => {
-
   event.notification.close();
 
+  // Check if URL is passed in the notification data
+  const targetUrl = event.notification.data ? event.notification.data.url : "/";
+
   event.waitUntil(
-
     clients.matchAll({ type: "window", includeUncontrolled: true }).then(clientList => {
-
+      // 1. Agar tab already open hai, toh usko focus karo
       for (const client of clientList) {
-
-        // अगर पहले से focus.html खुला है तो उसी tab को focus कर देगा
-        if (client.url.includes("focus.html") && "focus" in client) {
+        if (client.url.includes(targetUrl) && "focus" in client) {
           return client.focus();
         }
-
       }
-
-      // नहीं खुला है तो नया tab खोल देगा
+      // 2. Agar tab open nahi hai, toh naya tab/window open karo
       if (clients.openWindow) {
-        return clients.openWindow("/focus.html");
+        return clients.openWindow(targetUrl);
       }
-
     })
-
   );
-
 });
 
 // ── SAFE OFFLINE PAGE ────────────────────────────────────────────────────────
