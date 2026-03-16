@@ -388,40 +388,62 @@ function initPromotions() {
 }
 
 function renderPromotionPopup(data) {
+
+  // Full-screen overlay — existing .promo-popup CSS use karo
+  const overlay = document.createElement("div");
+  overlay.className = "promo-popup";
+  overlay.style.display = "flex"; // CSS display:none override
+
+  // Centered card — existing .promo-box CSS
   const box = document.createElement("div");
+  box.className = "promo-box";
+  box.style.cssText = "padding:24px 20px;text-align:center;";
 
-  // FIX-N: renamed from "promo-popup" to avoid inheriting CSS display:none
-  box.className = "uw-promo-toast";
-  box.setAttribute("role", "dialog");
-  box.setAttribute("aria-modal", "true");
-  box.setAttribute("aria-label", "Promotion");
+  // Close button — existing .promo-close CSS
+  const closeBtn = document.createElement("span");
+  closeBtn.className = "promo-close";
+  closeBtn.textContent = "✕";
+  closeBtn.onclick = () => overlay.remove();
 
-  // FIX-N: display:block added as first property so CSS class cannot hide it
-  box.style.cssText = `
-    display:block;
-    position:fixed;bottom:20px;left:20px;
-    background:#111827;color:#f1f5f9;
-    padding:16px 20px;border-radius:14px;
-    z-index:9998;max-width:300px;
-    box-shadow:0 6px 24px rgba(0,0,0,0.5);
-    border:1px solid rgba(0,242,254,0.2);
-    font-size:14px;line-height:1.5;
-  `;
-  const titleEl = document.createElement("b");
+  // Title
+  const titleEl = document.createElement("h3");
+  titleEl.style.cssText = "color:#fff;margin-bottom:10px;font-size:18px;";
   titleEl.textContent = data.title || "";
-  const msgEl = document.createElement("span");
 
-  // FIX-M: use data.body (matches Firestore schema), not data.message
-  msgEl.textContent = data.body || "";
+  // Body
+  const bodyEl = document.createElement("p");
+  bodyEl.style.cssText = "color:#a4b0be;font-size:14px;margin-bottom:16px;line-height:1.5;";
+  bodyEl.textContent = data.body || "";
 
+  // CTA button (optional — agar Firestore mein cta field hai)
+  if (data.cta) {
+    const btn = document.createElement("button");
+    btn.style.cssText = `
+      background:linear-gradient(45deg,#00f2fe,#4facfe);
+      border:none;border-radius:20px;padding:10px 24px;
+      color:#fff;font-weight:600;cursor:pointer;font-size:14px;
+    `;
+    btn.textContent = data.cta;
+    btn.onclick = () => overlay.remove();
+    box.appendChild(btn);
+  }
+
+  box.appendChild(closeBtn);
   box.appendChild(titleEl);
-  box.appendChild(document.createElement("br"));
-  box.appendChild(msgEl);
-  safeAppend(document.body, box);
-  autoRemove(box, 6000);
+  box.appendChild(bodyEl);
+  overlay.appendChild(box);
+
+  // Backdrop click se bhi band ho
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  safeAppend(document.body, overlay);
+
+  // Auto remove — duration field use karo (seconds mein), default 8s
+  const ms = ((data.duration || 8) * 1000);
+  autoRemove(overlay, ms);
 }
-
-
 // ─────────────────────────────────────────────────────────────────────────────
 // 8. BOOTSTRAP
 // ─────────────────────────────────────────────────────────────────────────────
