@@ -835,6 +835,68 @@ max-width:380px;
 }
 }
 
+/* --- TODO REMINDER POPUP (PREMIUM UI) --- */
+.todo-reminder-popup {
+  position: fixed;
+  top: -100px; /* Screen ke upar chhipa rahega */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 22, 40, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 230, 200, 0.4);
+  border-left: 5px solid #00e6c8;
+  border-radius: 16px;
+  padding: 14px 22px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 230, 200, 0.15);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  width: 90%;
+  max-width: 350px;
+}
+
+.todo-reminder-popup.show {
+  top: 40px; /* Animation ke sath niche aayega */
+}
+
+.todo-reminder-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.todo-reminder-content .bell-icon {
+  font-size: 26px;
+  color: #00e6c8;
+  animation: ringBell 1.5s ease infinite;
+}
+
+.todo-reminder-content .todo-text h4 {
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.todo-reminder-content .todo-text p {
+  margin: 2px 0 0 0;
+  color: #a4b0be;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+@keyframes ringBell {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(-15deg); }
+  75% { transform: rotate(10deg); }
+}
+
 /* Large tablet landscape */
 
 @media (min-width:1024px){
@@ -1353,7 +1415,7 @@ body.pwa-mode #pwaDashboard {
 
 <header>
 <h1 class="site-title">
-  <img src="/icon-512.png" class="logo-img">
+  <img src="/icon-192.png" class="logo-img">
   Untitled World
 </h1>
 <div class="menu-toggle" onclick="toggleMenu()">☰</div>
@@ -1616,6 +1678,16 @@ onclick="location.href='leaderboard.html'">
 
 </div>
 
+</div>
+
+<div id="todoReminderPopup" class="todo-reminder-popup">
+  <div class="todo-reminder-content">
+    <i class="fa-solid fa-bell bell-icon"></i>
+    <div class="todo-text">
+      <h4>Reminder 🔔</h4>
+      <p>You have <span id="incTaskCount" style="color: #00e6c8; font-weight: bold;">0</span> incomplete tasks today!</p>
+    </div>
+  </div>
 </div>
 
 <div id="pwaBottomNav" class="pwa-bottom-nav">
@@ -2358,6 +2430,56 @@ function logout(){
   window.location.href = "login.html";
 }
 
+</script>
+
+<script>
+// ==========================================
+// TODO REMINDER POPUP LOGIC
+// ==========================================
+(function() {
+  function isPWA() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  }
+
+  // Sirf app mode me chalega
+  if (!isPWA()) return; 
+
+  // Agar is session me ek baar dikh chuka hai toh wapas mat dikhao
+  if (sessionStorage.getItem("todoReminderShown") === "true") return;
+
+  // Aaj ki date nikalne ka formula (Todo app jaisa format: YYYY-MM-DD)
+  function pad(n) { return String(n).padStart(2, '0'); }
+  const d = new Date();
+  const todayKey = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+
+  // Todo app ka data read karo
+  let tasks = [];
+  try {
+    tasks = JSON.parse(localStorage.getItem('uw_tasks_v2') || '[]');
+  } catch(e) {}
+
+  // Check karo ki aaj ki date ke kitne task incomplete hain
+  const incompleteToday = tasks.filter(t => t.date === todayKey && !t.done);
+
+  // Agar incomplete task hain toh hi popup dikhao
+  if (incompleteToday.length > 0) {
+    document.getElementById('incTaskCount').innerText = incompleteToday.length;
+
+    // App open hone ke 4 second baad aayega
+    setTimeout(() => {
+      const popup = document.getElementById('todoReminderPopup');
+      if (popup) {
+        popup.classList.add('show');
+        sessionStorage.setItem("todoReminderShown", "true"); // Save kar lo ki dikh gaya
+
+        // 2 second rukne ke baad wapas upar chala jayega
+        setTimeout(() => {
+          popup.classList.remove('show');
+        }, 2000); 
+      }
+    }, 4000); 
+  }
+})();
 </script>
 
 <div id="ratingOverlay" class="rating-overlay">
