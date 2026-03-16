@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Offline – Untitled World</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root {
   --primary:       #ff7a18;
@@ -16,7 +17,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -26,8 +27,81 @@ body {
   color: var(--text);
   text-align: center;
   padding: 16px;
+  gap: 0;
 }
 
+/* ── OFFLINE SHORTCUT BUTTONS (PWA only) ─────────────────────────────────── */
+.offline-shortcuts {
+  display: none;           /* hidden on website */
+  gap: 14px;
+  margin-bottom: 28px;
+  width: 100%;
+  max-width: 320px;
+  justify-content: space-between;
+}
+
+@media (display-mode: standalone) {
+  .offline-shortcuts { display: flex; }
+}
+
+.shortcut-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 10px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Timer — green accent */
+.shortcut-btn.timer {
+  background: #0f2027;
+  border: 2px solid #00ff88;
+  color: #00ff88;
+  box-shadow: 0 0 14px rgba(0, 255, 136, 0.18);
+}
+
+.shortcut-btn.timer:hover,
+.shortcut-btn.timer:active {
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(0, 255, 136, 0.35);
+}
+
+/* Todo List — cyan accent */
+.shortcut-btn.todo {
+  background: #0f2027;
+  border: 2px solid #00f2fe;
+  color: #00f2fe;
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.18);
+}
+
+.shortcut-btn.todo:hover,
+.shortcut-btn.todo:active {
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(0, 242, 254, 0.35);
+}
+
+.shortcut-btn .btn-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.shortcut-btn.timer .btn-icon { background: rgba(0, 255, 136, 0.12); }
+.shortcut-btn.todo  .btn-icon { background: rgba(0, 242, 254, 0.12); }
+
+/* ── OFFLINE CARD ────────────────────────────────────────────────────────── */
 .card {
   background: #fff;
   padding: 40px 30px;
@@ -86,50 +160,37 @@ p {
 .retry:active { transform: translateY(0);          box-shadow: 0 2px 8px  rgba(255,122,24,.30); }
 
 @media (min-width: 480px) {
-  .card  { max-width: 400px; padding: 50px; }
-  h1     { font-size: 28px; }
+  .card                { max-width: 400px; padding: 50px; }
+  h1                   { font-size: 28px; }
+  .offline-shortcuts   { max-width: 400px; }
 }
-
-/* --- PREMIUM OFFLINE TIMER BUTTON (PWA ONLY FIX) --- */
-.offline-timer-btn {
-  display: none; /* Default hide rahega (Website ke liye) */
-  background: #0f2027;
-  border: 2px solid #00ff88;
-  color: #00ff88;
-  padding: 14px 30px;
-  border-radius: 30px;
-  font-size: 16px;
-  font-weight: 700;
-  text-decoration: none;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 30px;
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
-  transition: 0.3s;
-}
-
-/* JAISE HI PWA APP DETECT HOGA, BUTTON SHOW HO JAYEGA */
-@media (display-mode: standalone) {
-  .offline-timer-btn {
-    display: inline-flex; 
-  }
-}
-
-.offline-timer-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
-}
-
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
-<a href="/focus.html" class="offline-timer-btn">
-  <i class="fa-solid fa-stopwatch"></i>Timer
-</a>
+<!-- Offline shortcut buttons — only visible in PWA mode -->
+<div class="offline-shortcuts">
 
+  <!-- Timer (left) -->
+  <a href="/focus.html" class="shortcut-btn timer">
+    <div class="btn-icon">
+      <i class="fa-solid fa-stopwatch"></i>
+    </div>
+    Timer
+  </a>
+
+  <!-- Todo List (right) — same size, professional matching style -->
+  <a href="/todo.html" class="shortcut-btn todo">
+    <div class="btn-icon">
+      <i class="fa-solid fa-list-check"></i>
+    </div>
+    Todo List
+  </a>
+
+</div>
+
+<!-- Main offline card -->
 <div class="card">
   <div class="icon-wrap">📡</div>
   <h1>You're Offline</h1>
@@ -138,7 +199,7 @@ p {
 </div>
 
 <script>
-  // Retry button → go home (SW will serve live page if back online)
+  // Retry button → go home (SW serves live page when back online)
   document.getElementById("retryBtn").addEventListener("click", function () {
     window.location.href = "/";
   });
@@ -148,7 +209,7 @@ p {
     window.location.href = "/";
   });
 
-  // Polling fallback – navigator.onLine can lag on some Android WebViews
+  // Polling fallback — navigator.onLine can lag on some Android WebViews
   var poll = setInterval(function () {
     if (navigator.onLine) {
       clearInterval(poll);
@@ -156,5 +217,6 @@ p {
     }
   }, 2000);
 </script>
+
 </body>
 </html>
