@@ -375,23 +375,19 @@ function showToast(msg, isSuccess = false) {
 }
 
 function sendNotification(title, message){
-
-if("serviceWorker" in navigator){
-
-navigator.serviceWorker.ready.then(reg => {
-
-reg.showNotification(title,{
-body: message,
-icon: "/icon-192.png",
-badge: "/icon-192.png",
-vibrate: [200,100,200],
-requireInteraction: true
-});
-
-});
-
-}
-
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.ready.then(reg => {
+      reg.showNotification(title, {
+        body: message,
+        icon: "/icon-192.png",
+        badge: "/icon-192.png",
+        vibrate: [200,100,200],
+        requireInteraction: true,
+        // NAYA LINE: Is notification ko bata rahe hain ki focus.html kholna hai
+        data: { url: "/focus.html" } 
+      });
+    });
+  }
 }
 
 function startCustomTime() {
