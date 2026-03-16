@@ -120,19 +120,14 @@ function initServiceWorker(){
  navigator.serviceWorker.register("/sw.js")
  .then(reg=>{
 
-  const handleWaiting=w=>{
-   if(!w)return;
+  const handleWaiting = w => {
+  if (!w) return;
 
-   showToast(
-   `🔄 New update available<br>
-   <span style="font-size:12px">Reloading…</span>`,
-   3500
-   );
+  // silently activate new service worker
+  w.postMessage({ type: "SKIP_WAITING" });
+};
 
-   w.postMessage("skipWaiting");
-  };
-
-  if(reg.waiting)handleWaiting(reg.waiting);
+ if(reg.waiting)handleWaiting(reg.waiting);
 
   reg.addEventListener("updatefound",()=>{
    const nw=reg.installing;
