@@ -340,6 +340,8 @@ function renderPromotion(data){
    APP UPDATES
 ───────────────────────────── */
 
+let lastVersion=null;
+
 function initAppUpdates(){
 
  if(unsubs.updates)return;
@@ -353,6 +355,11 @@ function initAppUpdates(){
   const data=snap.data();
 
   if(!data.active)return;
+
+  // prevent repeat
+  if(lastVersion===data.version)return;
+
+  lastVersion=data.version;
 
   showUpdatePopup(data);
 
