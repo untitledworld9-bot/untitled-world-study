@@ -996,6 +996,7 @@
       document.getElementById('xpDisplay').textContent = v + ' XP';
       // Fire event so the home dashboard can react in real-time
       window.dispatchEvent(new CustomEvent('uw_xp_changed', { detail: { xp: v } }));
+syncTodoToFirebase();
     }
 
     function addXP(amount, label) {
@@ -1228,8 +1229,69 @@
       closeModal();
       renderAll();
       scheduleTaskNotifs();
+      syncTodoToFirebase();   // 🔥 MAIN SYNC
+      // 🔥 YE ADD KAR YAHI
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.sync.register('sync-todo');
+    });
+  }
     }
 
+async function syncTodoToFirebase() {
+
+  if (!window.db || !window.auth) return;
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  try {
+    await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js")
+    .then(({ doc, setDoc }) => {
+
+      const ref = doc(db, "users", user.displayName);
+
+      setDoc(ref, {
+        tasks: tasks,
+        xp: getXP()
+      }, { merge: true });
+
+    });
+
+    console.log("🔥 Synced to Firebase");
+
+  } catch (e) {
+    console.error("❌ Sync failed", e);
+  }
+
+}
+
+// 🔥 FIREBASE LOAD (ADD AT END)
+
+async function loadFromFirebase() {
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+
+  const ref = doc(db, "users", user.displayName);
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    const data = snap.data();
+
+    if (data.tasks) {
+      tasks = data.tasks;
+      saveTasks();
+      renderAll(); // ⚠️ ye add kar (important)
+    }
+
+    if (data.xp) {
+      setXP(data.xp);
+    }
+  }
+}
     /* ============================================================
        TASK TOGGLE & DELETE
     ============================================================ */
@@ -1241,6 +1303,7 @@
 
       handleXP(task, wasDone);
       saveTasks();
+      syncTodoToFirebase();
 
       // Play completion animation on the card
       const card = document.querySelector(`[data-task-id="${id}"]`);
@@ -1252,7 +1315,7 @@
 
       // Notify if task is still incomplete (unchecked while today)
       if (!task.done && task.date === todayKey() && Notification.permission === 'granted') {
-        fireNotif('Untitled World', `Your Task\n${task.name}\n\nIncomplete`);
+        fireNotif(`Your Task\n${task.name}\n\nIncomplete`);
       }
 
       renderAll();
@@ -1264,6 +1327,7 @@
       if (tasks[idx].xpAwarded) removeXP(2); // revoke XP if awarded
       tasks.splice(idx, 1);
       saveTasks(); renderAll(); scheduleTaskNotifs();
+syncTodoToFirebase();
     }
 
     /* ============================================================
@@ -1551,6 +1615,7 @@
       renderAll();
       scheduleTaskNotifs();
       scheduleReminders();
+      loadFromFirebase();
     })();
   </script>
 
