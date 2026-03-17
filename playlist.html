@@ -1201,13 +1201,43 @@ box.remove();
         window.open("https://www.youtube.com", "_blank");
     }
 
-    // Initial Load
     window.onload = ()=>{
+
+// 🔥 SHARE TARGET HANDLER (IMPORTANT)
+const params = new URLSearchParams(window.location.search);
+
+const title = params.get("title");
+const text = params.get("text");
+const url = params.get("url");
+
+// final link detect
+let sharedLink = url || text;
+
+// 🔥 YAHI MISSING THA (ADD KAR)
+if(sharedLink){
+  sharedLink = sharedLink.split("&")[0];
+}
+
+// YouTube link check
+if(sharedLink && (sharedLink.includes("youtube.com") || sharedLink.includes("youtu.be"))){
+
+  let input = document.getElementById("ytLink");
+  if(input){
+    input.value = sharedLink;
+  }
+
+  setTimeout(()=>{
+    addVideo();
+  },500);
+}
+
+// normal load
 saveAndRender();
 renderStreak();
 renderXP();
 renderLevel();
 updateBadge();
+
 }
 
                 function playVideo(id,el){
