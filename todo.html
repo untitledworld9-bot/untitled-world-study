@@ -1230,12 +1230,6 @@ syncTodoToFirebase();
       renderAll();
       scheduleTaskNotifs();
       syncTodoToFirebase();   // 🔥 MAIN SYNC
-      // 🔥 YE ADD KAR YAHI
-  if ('serviceWorker' in navigator && 'SyncManager' in window) {
-    navigator.serviceWorker.ready.then(reg => {
-      reg.sync.register('sync-todo');
-    });
-  }
     }
 
 async function syncTodoToFirebase() {
