@@ -79,10 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ── State ──────────────────────────────────────────────────────────────────
   let currentUser  = "";
   let timerInterval;
-  let seconds      = 0;
-  let isRunning    = false;
-  let mode         = "stopwatch";
+  let seconds        = 0;
+  let isRunning      = false;
+  let mode           = "stopwatch";
   let initialSeconds = 0;
+  let savedMinutes   = 0;  // FIX: track minutes already incremented during interval
   let chattingWith = "";
   let lastWaveTime = 0;
   let lastMsgTime  = Date.now();
@@ -284,7 +285,8 @@ document.addEventListener("DOMContentLoaded", () => {
       await updateDoc(doc(db, "users", currentUser), { status: "Focusing 👋" });
 
       if (!isRunning) {
-        isRunning = true;
+        isRunning    = true;
+        savedMinutes = 0; // reset on each new start
         startBtn.style.display = "none";
         if (stopBtn)  stopBtn.style.display  = "block";
         if (ring)     ring.classList.add("active");
@@ -297,6 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
             seconds++;
             updateDisplay();
             if (seconds % 60 === 0 && isRunning) {
+              savedMinutes++; // FIX: track already-saved minutes
               await updateDoc(doc(db, "users", currentUser), {
                 status: "Focusing 👋", focusTime: increment(1)
               });
@@ -318,14 +321,17 @@ document.addEventListener("DOMContentLoaded", () => {
       clearInterval(timerInterval);
       isRunning = false;
 
-      const mins = Math.floor(seconds / 60);
-      if (mins > 0) {
+      // FIX: only save minutes NOT already saved by the interval
+      const totalMins   = Math.floor(seconds / 60);
+      const unsavedMins = totalMins - savedMinutes;
+      if (unsavedMins > 0) {
         await updateDoc(doc(db, "users", currentUser), {
-          status: "Online", focusTime: increment(mins)
+          status: "Online", focusTime: increment(unsavedMins)
         });
       } else {
         await updateDoc(doc(db, "users", currentUser), { status: "Online" });
       }
+      savedMinutes = 0;
 
       if (startBtn) startBtn.style.display = "block";
       stopBtn.style.display = "none";
@@ -538,6 +544,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
+      
       // -- Wave detection --
       snapshot.forEach(docSnap => {
         const u = docSnap.data();
