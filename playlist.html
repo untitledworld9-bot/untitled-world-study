@@ -897,6 +897,7 @@ completed:false,
 subject:subject
 });
             saveAndRender();
+            syncTodoToFirebase(); // 🔥 ADD
 // 🔥 YAHI ADD KAR (IMPORTANT)
         if ('serviceWorker' in navigator && 'SyncManager' in window) {
             navigator.serviceWorker.ready.then(reg => {
@@ -925,11 +926,11 @@ document.getElementById("confirmDelete").onclick=function(){
 
 if(deleteIndex!=null){
 
-if(videos[deleteIndex].completed) updateGraph(-1);
-
 videos.splice(deleteIndex,1);
 
 saveAndRender();
+
+syncTodoToFirebase();
 
 closePopup();
 
@@ -947,6 +948,7 @@ updateGraph(1);
 
 addXP();
 updateDailyStreak();
+syncTodoToFirebase(); // 🔥 ADD
 
 saveAndRender();
 
@@ -1121,20 +1123,21 @@ function updateDailyStreak(){
 
 let today = new Date().toDateString();
 
-let last = localStorage.getItem("lastStreakDay");
+let last = localStorage.getItem("uw_last_streak");
+let count = parseInt(localStorage.getItem("uw_streak") || 0);
 
-let count = parseInt(localStorage.getItem("dailyStreak")||0);
-
-if(last===today) return;
+if(last === today) return;
 
 count++;
 
-if(count>7) count=1;
+if(count > 7) count = 1;
 
-localStorage.setItem("dailyStreak",count);
-localStorage.setItem("lastStreakDay",today);
+localStorage.setItem("uw_streak", count);
+localStorage.setItem("uw_last_streak", today);
 
 renderStreak();
+
+syncTodoToFirebase();
 
 showFire();
 
@@ -1142,7 +1145,7 @@ showFire();
 
 function renderStreak(){
 
-let count = localStorage.getItem("dailyStreak") || 0;
+let count = localStorage.getItem("uw_streak") || 0;
 
 let box=document.getElementById("streakBox");
 
@@ -1168,11 +1171,8 @@ fire.remove();
 
 function addXP(){
 
-let xp=parseInt(localStorage.getItem("xpPoints")||0);
-
-xp+=10;
-
-localStorage.setItem("xpPoints",xp);
+let xp = getXP() + 10;
+setXP(xp);
 
 let today = new Date().toDateString();
   let savedDate = localStorage.getItem("dailyXPDate");
@@ -1243,7 +1243,7 @@ renderStreak();
 renderXP();
 renderLevel();
 updateBadge();
-
+loadFromFirebase();
 }
 
                 function playVideo(id,el){
@@ -1439,6 +1439,7 @@ addXP();          // ⚡ popup
 updateDailyStreak();   // 🔥 popup
 
 saveAndRender();
+syncTodoToFirebase();
 
 playNext();       // ▶ next video autoplay
 
@@ -1456,7 +1457,7 @@ playNext();       // ▶ next video autoplay
 
 function renderXP(){
 
-let xp = parseInt(localStorage.getItem("xpPoints") || 0);
+let xp = getXP();
 
 let box = document.getElementById("xpBox");
 
@@ -1470,7 +1471,7 @@ updateBadge();
 }
 
 function updateXPBar(){
-    let xp = parseInt(localStorage.getItem("xpPoints") || 0);
+    let xp = getXP();
     let percent = 0;
 
     // Badge milestones ke hisaab se progress calculate karna
@@ -1500,7 +1501,7 @@ function updateXPBar(){
 
 function getLevel(){
 
-let xp = parseInt(localStorage.getItem("xpPoints") || 0);
+let xp = getXP();
 
 return Math.floor(xp/100)+1;
 
@@ -1520,7 +1521,7 @@ box.innerText="🏆 Lv"+level;
 
 function updateBadge(){
 
-let xp=parseInt(localStorage.getItem("xpPoints")||0);
+let xp = getXP();
 
 let badge="🏅 Beginner";
 
@@ -1537,7 +1538,7 @@ else if(xp>=50){
 badge="⭐ Rising Learner";
 }
 
-let oldBadge=localStorage.getItem("userBadge");
+let oldBadge = localStorage.getItem("userBadge");
 
 if(oldBadge!==badge){
 localStorage.setItem("userBadge",badge);
