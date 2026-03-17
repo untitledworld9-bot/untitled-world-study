@@ -76,3 +76,34 @@ self.addEventListener("notificationclick", function(event) {
       })
   );
 });
+
+// ── BACKGROUND SYNC ─────────────────────────────────────────────
+
+self.addEventListener('sync', function(event) {
+
+  if (event.tag === 'sync-playlist') {
+    event.waitUntil(handleSync());
+  }
+
+});
+
+async function handleSync() {
+
+  console.log("🔄 Background Sync Triggered");
+
+  try {
+
+    // 🔥 Yaha tu future me API ya Firebase call karega
+
+    // Example:
+    // await fetch('/sync-playlist-data');
+
+    console.log("✅ Sync Done");
+
+  } catch (err) {
+
+    console.log("❌ Sync Failed", err);
+
+  }
+
+}
