@@ -1,14 +1,21 @@
 {
   "name": "Untitled World - Smart Study Platform",
   "short_name": "Untitled World",
-  "description": "Distraction free study platform for JEE, NEET & Boards with Focus Timer, YouTube study playlist and Mock Tests.",
-  
-  "start_url": "/?mode=pwa",
+  "id": "untitled-world-app",
+
+  "description": "Distraction free study platform for JEE, NEET, CUET & BOARDS with Focus Timer, YouTube study playlist and Mock Tests.",
+
+  "start_url": "/index.html?mode=pwa",
   "scope": "/",
+
   "display": "standalone",
+  "orientation": "portrait",
 
   "background_color": "#0f2027",
   "theme_color": "#0f2027",
+
+  "lang": "en",
+  "dir": "auto",
 
   "icons": [
     {
@@ -25,13 +32,34 @@
     }
   ],
 
-  "categories": ["education", "productivity", "study"],
+  "categories": ["education", "productivity","study"],
 
-  "screenshots": [
+  "shortcuts": [
     {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "name": "Focus Timer",
+      "url": "/timer.html"
+    },
+    {
+      "name": "Todo List",
+      "url": "/todo.html"
+    },
+    {
+      "name": "Playlist",
+      "url": "/playlist.html"
+    },
+    {
+      "name": "Mock Tests",
+      "url": "/mock.html"
     }
-  ]
+  ],
+
+  "share_target": {
+    "action": "/playlist.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 }
