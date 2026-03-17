@@ -1725,20 +1725,6 @@ onclick="location.href='leaderboard.html'">
   </div>
 </div>
 
-<!-- PWA Promo Popup -->
-
-<div id="promoPopup" class="promo-popup">
-
-<div class="promo-box">
-
-<span class="promo-close" onclick="closePromo()">✕</span>
-
-<img src="promo.webp" class="promo-img">
-
-</div>
-
-</div>
-
 <div id="todoReminderPopup" class="todo-reminder-popup">
   <div class="todo-reminder-content">
     <i class="fa-solid fa-bell bell-icon"></i>
@@ -2148,38 +2134,6 @@ if(!isPWA()){
 </script>
 
 <script>
-// ==========================================
-// PROMO POPUP — PWA MODE ONLY, 2s DELAY (SHOW ONLY ONCE PER SESSION)
-// ==========================================
-
-function closePromo() {
-  var popup = document.getElementById("promoPopup");
-  if (popup) popup.style.setProperty("display", "none", "important");
-}
-
-(function () {
-  var inPWA = window.matchMedia("(display-mode: standalone)").matches
-              || window.navigator.standalone === true;
-
-  if (!inPWA) return; 
-
-  // Naya Logic: Check karo ki kya is baar app open hone ke baad popup dikh chuka hai?
-  if (sessionStorage.getItem("promoShown") === "true") {
-      return; // Agar dikh chuka hai, toh yahin se wapas mud jao, popup mat dikhao
-  }
-
-  setTimeout(function () {
-    var popup = document.getElementById("promoPopup");
-    if (popup) {
-        popup.style.setProperty("display", "flex", "important");
-        // Popup dikhane ke baad memory me save kar do ki "dikha diya"
-        sessionStorage.setItem("promoShown", "true");
-    }
-  }, 2000);
-})();
-</script>
-
-<script>
 
 function showOffline(){
   if(!navigator.onLine){
@@ -2574,14 +2528,6 @@ function logout(){
 </div>
 
 <script type="module" src="/index.js"></script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(regs => {
-    regs.forEach(r => r.unregister());
-  });
-}
-</script>
 
 </body>
 </html>
