@@ -9,10 +9,13 @@
  * FIX-Q   service worker reload loop removed
  * FIX-R   App Updates listener added
  * FIX-S   pagehide NULLS unsubs after calling
- * FIX-T   Announcements: edtech-style banner, priority colour, close btn
- * FIX-U   localStorage dedup — same item never re-shows across sessions
- * FIX-V   Promotions: banner → full-width; popup → centered overlay
- * FIX-W   CTA button navigates to ctaUrl if provided
+ * FIX-T   Announcements: edtech-style banner, priority colour, image, close btn
+ * FIX-U   Notifications + Announcements: localStorage dedup so same item never
+ *          re-shows across app opens (only resets if user clears storage)
+ * FIX-V   Promotions banner type: full-width image banner with close btn + auto-hide
+ *          Popup type: centered overlay (existing behaviour)
+ * FIX-W   Promotions CTA: if data.url exists → open URL in new tab, then close
+ * FIX-X   App Updates: if data.url exists → open URL instead of cache-clear reload
  */
 
 import { db } from "./firebase.js";
@@ -43,9 +46,9 @@ const SK = {
 };
 
 const seen = {
-  announcements : new Set(JSON.parse(localStorage.getItem(SK.ANNOUNCEMENTS)   || "[]")),
-  notifications : new Set(JSON.parse(localStorage.getItem(SK.NOTIFICATIONS)   || "[]")),
-  promotions    : new Set(JSON.parse(sessionStorage.getItem(SK.PROMOTIONS)    || "[]"))
+  announcements : new Set(JSON.parse(localStorage.getItem(SK.ANNOUNCEMENTS)    || "[]")),
+  notifications : new Set(JSON.parse(localStorage.getItem(SK.NOTIFICATIONS)    || "[]")),
+  promotions    : new Set(JSON.parse(sessionStorage.getItem(SK.PROMOTIONS)     || "[]"))
 };
 
 function markSeen(type, id) {
@@ -100,7 +103,7 @@ function isPWA() {
 
 
 /* ─────────────────────────────
-   SERVICE WORKER — FIX-Q: no reload loop
+   SERVICE WORKER
 ───────────────────────────── */
 
 function initServiceWorker() {
@@ -112,6 +115,7 @@ function initServiceWorker() {
 
 /* ─────────────────────────────
    ANNOUNCEMENTS
+   No URL field — only text, imageUrl, priority, active, createdAt
 ───────────────────────────── */
 
 function initAnnouncements() {
@@ -126,11 +130,14 @@ function initAnnouncements() {
   unsubs.announcements = onSnapshot(q, snap => {
     snap.docChanges().forEach(change => {
       if (change.type !== "added") return;
+
       const id   = change.doc.id;
       const data = change.doc.data();
-      if (!data.active)                      return;
-      if (seen.announcements.has(id))        return;
-      if (data.target === "pwa" && !isPWA()) return;
+
+      if (!data.active)                       return;
+      if (seen.announcements.has(id))         return;
+      if (data.target === "pwa" && !isPWA())  return;
+
       renderAnnouncement(data);
       markSeen("announcements", id);
     });
@@ -148,7 +155,8 @@ function renderAnnouncement(data) {
   const el = document.createElement("div");
   el.style.cssText = `
     position:relative;width:100%;
-    background:${c.bg};border-left:4px solid ${c.border};
+    background:${c.bg};
+    border-left:4px solid ${c.border};
     border-radius:0 12px 12px 0;
     padding:14px 44px 14px 18px;
     display:flex;align-items:flex-start;gap:12px;
@@ -164,6 +172,18 @@ function renderAnnouncement(data) {
 
   const wrap = document.createElement("div");
   wrap.style.cssText = "flex:1;min-width:0;";
+
+  if (data.imageUrl) {
+    const img = document.createElement("img");
+    img.src = data.imageUrl;
+    img.alt = "";
+    img.style.cssText = `
+      width:100%;max-height:180px;object-fit:cover;
+      border-radius:8px;margin-bottom:10px;display:block;
+    `;
+    img.onerror = () => img.remove();
+    wrap.appendChild(img);
+  }
 
   const msg = document.createElement("div");
   msg.style.cssText = "font-size:15px;font-weight:600;color:#e2f0ff;line-height:1.5;";
@@ -215,11 +235,14 @@ function initNotifications() {
   const handle = snap => {
     snap.docChanges().forEach(change => {
       if (change.type !== "added") return;
+
       const id = change.doc.id;
       const d  = change.doc.data();
+
       if (d.createdAt && d.createdAt.toMillis() < start.toMillis()) return;
       if (seen.notifications.has(id)) return;
-      fireNotification(d.title, d.body);
+
+      fireNotification(d.title, d.body, d.url || null);
       markSeen("notifications", id);
       updateDoc(doc(db, "notifications", id), { read: true });
     });
@@ -234,18 +257,16 @@ function initNotifications() {
   unsubs.notifications = () => { unsubAll(); unsubUser(); };
 }
 
-function fireNotification(title, body) {
+function fireNotification(title, body, url) {
   if (Notification.permission !== "granted") return;
   const opts = {
     body,
-    icon    : "/icon-192.png",
-    badge   : "/icon-192.png",
-    vibrate : [200, 100, 200]
+    icon  : "/icon-192.png",
+    badge : "/icon-192.png",
+    data  : { url: url || "/" }
   };
   if (navigator.serviceWorker?.controller) {
-    navigator.serviceWorker.ready
-      .then(r => r.showNotification(title, opts))
-      .catch(() => { try { new Notification(title, opts); } catch {} });
+    navigator.serviceWorker.ready.then(r => r.showNotification(title, opts));
   } else {
     try { new Notification(title, opts); } catch {}
   }
@@ -254,7 +275,7 @@ function fireNotification(title, body) {
 
 /* ─────────────────────────────
    PROMOTIONS
-   FIX-V + FIX-W: type routing + ctaUrl navigation
+   FIX-W: CTA button — if data.url exists → open in new tab, then close
 ───────────────────────────── */
 
 function initPromotions() {
@@ -269,8 +290,10 @@ function initPromotions() {
   unsubs.promotions = onSnapshot(q, snap => {
     snap.docChanges().forEach(change => {
       if (change.type !== "added") return;
+
       const id   = change.doc.id;
       const data = change.doc.data();
+
       if (seen.promotions.has(id))   return;
       if (!data.title && !data.body) return;
 
@@ -279,139 +302,92 @@ function initPromotions() {
       } else {
         renderPromotionPopup(data);
       }
+
       markSeen("promotions", id);
     });
   }, err => console.warn("[Promotions]", err));
 }
 
-/* ── BANNER — full-width edtech-style top banner ──────────────────────────── */
+// ── BANNER — full-width top banner
 function renderPromotionBanner(data) {
   const el = document.createElement("div");
   el.style.cssText = `
     position:fixed;top:0;left:0;right:0;
-    z-index:99998;font-family:inherit;
-    animation:slideDown .35s ease;
-    overflow:hidden;
+    background:${data.bgColor || "#0d1117"};
+    border-bottom:2px solid rgba(0,242,254,0.35);
+    z-index:99998;animation:slideDown .35s ease;font-family:inherit;
   `;
 
-  // Gradient header bar (edtech look)
-  const bar = document.createElement("div");
-  bar.style.cssText = `
-    background: linear-gradient(135deg,
-      ${data.bgColor || "#0d1117"} 0%,
-      rgba(0,224,255,0.08) 100%);
-    border-bottom:2px solid rgba(0,224,255,0.4);
-    box-shadow:0 4px 20px rgba(0,0,0,0.5);
-  `;
-
-  // Optional image — full width, banner-style
   if (data.imageUrl) {
     const img = document.createElement("img");
     img.src = data.imageUrl;
     img.alt = data.title || "";
-    img.style.cssText = `
-      width:100%;display:block;
-      max-height:200px;object-fit:cover;
-    `;
+    img.style.cssText = "width:100%;max-height:220px;object-fit:cover;display:block;";
     img.onerror = () => img.remove();
-    bar.appendChild(img);
+    el.appendChild(img);
   }
 
-  // Content row
   const row = document.createElement("div");
   row.style.cssText = `
-    display:flex;align-items:center;
-    padding:14px 52px 14px 18px;gap:12px;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 48px 14px 18px;gap:10px;
   `;
-
-  // Icon/emoji
-  const icon = document.createElement("div");
-  icon.style.cssText = `
-    flex-shrink:0;width:40px;height:40px;
-    background:rgba(0,224,255,0.12);
-    border:1px solid rgba(0,224,255,0.3);
-    border-radius:12px;display:flex;
-    align-items:center;justify-content:center;
-    font-size:20px;
-  `;
-  icon.textContent = "🎯";
 
   const textWrap = document.createElement("div");
-  textWrap.style.cssText = "flex:1;min-width:0;";
-
   if (data.title) {
     const t = document.createElement("div");
-    t.style.cssText = `
-      font-size:15px;font-weight:700;color:#fff;
-      line-height:1.3;white-space:nowrap;
-      overflow:hidden;text-overflow:ellipsis;
-    `;
+    t.style.cssText = "font-size:15px;font-weight:700;color:#fff;line-height:1.4;";
     t.textContent = data.title;
     textWrap.appendChild(t);
   }
   if (data.body) {
     const b = document.createElement("div");
-    b.style.cssText = `
-      font-size:12px;color:rgba(255,255,255,0.6);
-      margin-top:2px;white-space:nowrap;
-      overflow:hidden;text-overflow:ellipsis;
-    `;
+    b.style.cssText = "font-size:13px;color:rgba(255,255,255,0.65);margin-top:2px;";
     b.textContent = data.body;
     textWrap.appendChild(b);
   }
-
-  row.appendChild(icon);
   row.appendChild(textWrap);
 
-  // CTA button — FIX-W: navigates to ctaUrl
   if (data.cta) {
     const btn = document.createElement("button");
     btn.textContent = data.cta;
     btn.style.cssText = `
       flex-shrink:0;
-      background:linear-gradient(135deg,#00e0ff,#7c5cfc);
-      border:none;border-radius:20px;
-      padding:9px 22px;color:#000;
-      font-weight:700;cursor:pointer;
-      font-size:13px;white-space:nowrap;
-      box-shadow:0 4px 12px rgba(0,224,255,0.3);
+      background:linear-gradient(45deg,#00f2fe,#4facfe);
+      border:none;border-radius:20px;padding:8px 20px;
+      color:#000;font-weight:700;cursor:pointer;font-size:13px;white-space:nowrap;
     `;
+    // FIX-W: open URL if present
     btn.onclick = () => {
+      if (data.url) window.open(data.url, "_blank");
       el.remove();
-      if (data.ctaUrl) window.location.href = data.ctaUrl;
     };
     row.appendChild(btn);
   }
 
-  bar.appendChild(row);
-  el.appendChild(bar);
+  el.appendChild(row);
 
-  // ❌ Close button
   const close = document.createElement("button");
   close.textContent = "✕";
   close.setAttribute("aria-label", "Close");
   close.style.cssText = `
-    position:absolute;top:12px;right:14px;
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.2);
-    color:rgba(255,255,255,0.8);
-    width:28px;height:28px;border-radius:50%;
-    font-size:14px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
+    position:absolute;top:10px;right:12px;
+    background:none;border:none;color:rgba(255,255,255,0.5);
+    font-size:18px;cursor:pointer;line-height:1;padding:4px 6px;
   `;
   close.onclick = () => el.remove();
   el.appendChild(close);
 
   safeAppend(document.body, el);
-
   const ms = (data.duration || 8) * 1000;
   if (ms > 0) autoRemove(el, ms);
 }
 
-/* ── POPUP — centered overlay ─────────────────────────────────────────────── */
+// ── POPUP — centered overlay (reuses #promoPopup)
 function renderPromotionPopup(data) {
   const popup = document.getElementById("promoPopup");
   if (!popup) return;
+
   const box = popup.querySelector(".promo-box");
   if (!box) return;
 
@@ -439,14 +415,14 @@ function renderPromotionPopup(data) {
     btn.style.cssText = `
       display:block;margin:0 auto 20px;
       background:linear-gradient(45deg,#00f2fe,#4facfe);
-      border:none;border-radius:20px;
-      padding:10px 28px;color:#fff;
-      font-weight:600;cursor:pointer;font-size:14px;
+      border:none;border-radius:20px;padding:10px 28px;
+      color:#fff;font-weight:600;cursor:pointer;font-size:14px;
     `;
     btn.textContent = data.cta;
+    // FIX-W: open URL if present
     btn.onclick = () => {
+      if (data.url) window.open(data.url, "_blank");
       popup.style.setProperty("display", "none", "important");
-      if (data.ctaUrl) window.location.href = data.ctaUrl;  // FIX-W
     };
     box.appendChild(btn);
   }
@@ -467,6 +443,7 @@ function renderPromotionPopup(data) {
 
 /* ─────────────────────────────
    APP UPDATES
+   FIX-X: if data.url → open URL instead of cache-clear reload
 ───────────────────────────── */
 
 let _lastUpdateKey = null;
@@ -478,11 +455,14 @@ function initAppUpdates() {
     doc(db, "appUpdates", "latest"),
     snap => {
       if (!snap.exists()) return;
+
       const data = snap.data();
       if (!data.active) return;
+
       const key = (data.version || "") + "_" + (data.time || "");
       if (_lastUpdateKey === key) return;
       if (sessionStorage.getItem(SK.UPDATE_SEEN) === key) return;
+
       _lastUpdateKey = key;
       sessionStorage.setItem(SK.UPDATE_SEEN, key);
       showUpdatePopup(data);
@@ -493,35 +473,62 @@ function initAppUpdates() {
 
 function showUpdatePopup(data) {
   const isForced = data.type === "forced";
+
   const overlay = document.createElement("div");
   overlay.style.cssText = `
     display:flex;position:fixed;inset:0;
-    background:rgba(0,0,0,.85);
-    backdrop-filter:blur(12px);
-    align-items:center;justify-content:center;
-    z-index:999999;
+    background:rgba(0,0,0,.85);backdrop-filter:blur(12px);
+    align-items:center;justify-content:center;z-index:999999;
   `;
+
   overlay.innerHTML = `
-    <div style="background:#0d1117;border:1px solid rgba(0,224,255,0.3);
-      border-radius:20px;padding:32px 28px 28px;max-width:360px;width:90%;
-      text-align:center;color:#eef0ff;box-shadow:0 20px 60px rgba(0,0,0,.7);">
+    <div style="
+      background:#0d1117;border:1px solid rgba(0,224,255,0.3);
+      border-radius:20px;padding:32px 28px 28px;
+      max-width:360px;width:90%;text-align:center;color:#eef0ff;
+      box-shadow:0 20px 60px rgba(0,0,0,.7);
+    ">
       <div style="font-size:48px;margin-bottom:12px;">🚀</div>
       <h2 style="font-size:20px;font-weight:700;margin:0 0 6px;color:#fff;">Update Available</h2>
       <p style="font-size:13px;color:#7c5cfc;font-weight:600;margin:0 0 16px;">${data.version || ""}</p>
-      ${data.changelog ? `<pre style="text-align:left;font-size:12px;color:#94a3b8;background:#060910;padding:14px;border-radius:10px;margin:0 0 20px;white-space:pre-wrap;line-height:1.6;max-height:160px;overflow-y:auto;">${data.changelog}</pre>` : ""}
-      <button id="uwUpdateBtn" style="display:block;width:100%;background:linear-gradient(135deg,#00e0ff,#7c5cfc);border:none;border-radius:12px;padding:14px;color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-bottom:${isForced ? "0" : "10px"};">Update App</button>
-      ${!isForced ? `<button id="uwDismissBtn" style="background:none;border:none;color:#4a5568;font-size:13px;cursor:pointer;padding:6px;">Maybe later</button>` : ""}
-    </div>`;
+      ${data.changelog ? `<pre style="
+        text-align:left;font-size:12px;color:#94a3b8;
+        background:#060910;padding:14px;border-radius:10px;
+        margin:0 0 20px;white-space:pre-wrap;line-height:1.6;
+        max-height:160px;overflow-y:auto;">${data.changelog}</pre>` : ""}
+      <button id="uwUpdateBtn" style="
+        display:block;width:100%;
+        background:linear-gradient(135deg,#00e0ff,#7c5cfc);
+        border:none;border-radius:12px;padding:14px;
+        color:#000;font-weight:700;font-size:15px;cursor:pointer;
+        margin-bottom:${isForced ? "0" : "10px"};
+      ">Update App</button>
+      ${!isForced ? `<button id="uwDismissBtn" style="
+        background:none;border:none;color:#4a5568;font-size:13px;
+        cursor:pointer;padding:6px;">Maybe later</button>` : ""}
+    </div>
+  `;
+
   safeAppend(document.body, overlay);
+
+  // FIX-X: if data.url → open URL; otherwise cache-clear + reload
   document.getElementById("uwUpdateBtn").onclick = async () => {
     const btn = document.getElementById("uwUpdateBtn");
     if (btn) { btn.textContent = "Updating…"; btn.disabled = true; }
+
+    if (data.url) {
+      window.open(data.url, "_blank");
+      overlay.remove();
+      return;
+    }
+
     if ("caches" in window) {
       const keys = await caches.keys();
       await Promise.all(keys.map(k => caches.delete(k)));
     }
     setTimeout(() => location.reload(true), 800);
   };
+
   const dismissBtn = document.getElementById("uwDismissBtn");
   if (dismissBtn) dismissBtn.onclick = () => overlay.remove();
 }
@@ -534,8 +541,10 @@ function showUpdatePopup(data) {
 function boot() {
   console.log("[UW] boot");
   initServiceWorker();
+
   if (sessionStorage.getItem(SK.LISTENERS_BOOT) === "1") return;
   sessionStorage.setItem(SK.LISTENERS_BOOT, "1");
+
   initAnnouncements();
   initNotifications();
   initPromotions();
