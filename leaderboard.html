@@ -1,46 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weekly Leaderboard</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            background-color: #121212; /* Dark theme ke liye */
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 20px;
-            margin: 0;
-        }
-        h2 {
-            text-align: center;
-            color: #00f2fe;
-            margin-bottom: 30px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Leaderboard | Untitled World</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Tokens ─────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cyan:#00f2fe;
+  --green:#00ff88;
+  --gold:#ffd700;
+  --violet:#7c5cfc;
+  --bg1:#07080d;
+  --bg2:#0d1117;
+  --glass:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.08);
+}
+
+/* ── Body & Background ─────────────────────────────────────────────────── */
+html,body{height:100%;font-family:'Outfit',sans-serif;color:#fff;}
+body{
+  background:var(--bg1);
+  overflow-x:hidden;
+}
+
+/* Animated gradient orbs */
+body::before,body::after{
+  content:"";position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;
+}
+body::before{
+  width:500px;height:500px;top:-100px;left:-100px;
+  background:radial-gradient(circle,rgba(0,242,254,0.12),transparent 70%);
+  animation:orb1 8s ease-in-out infinite alternate;
+}
+body::after{
+  width:400px;height:400px;bottom:-80px;right:-80px;
+  background:radial-gradient(circle,rgba(124,92,252,0.14),transparent 70%);
+  animation:orb2 10s ease-in-out infinite alternate;
+}
+@keyframes orb1{to{transform:translate(60px,80px);}}
+@keyframes orb2{to{transform:translate(-50px,-60px);}}
+
+/* ── Sticky Header ─────────────────────────────────────────────────────── */
+.lb-header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(7,8,13,0.85);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:16px 20px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.lb-back{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--glass);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:18px;color:var(--cyan);
+  transition:.2s;text-decoration:none;
+}
+.lb-back:hover{background:rgba(0,242,254,0.12);}
+.lb-title{
+  font-size:18px;font-weight:800;letter-spacing:.02em;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.lb-reset{
+  font-size:11px;color:rgba(255,255,255,0.45);
+  background:var(--glass);border:1px solid var(--border);
+  padding:5px 10px;border-radius:20px;
+}
+
+/* ── Scroll Container ──────────────────────────────────────────────────── */
+.lb-scroll{
+  position:relative;z-index:1;
+  max-width:480px;margin:0 auto;
+  padding:16px 16px 120px;
+}
+
+/* ── XP Info Strip ─────────────────────────────────────────────────────── */
+.xp-strip{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  background:rgba(0,242,254,0.06);border:1px solid rgba(0,242,254,0.15);
+  border-radius:20px;padding:7px 16px;margin-bottom:18px;
+  font-size:12px;color:var(--cyan);font-weight:600;
+}
+
+/* ── Level Strip ───────────────────────────────────────────────────────── */
+.lvl-strip{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:18px;
+  scrollbar-width:none;
+}
+.lvl-strip::-webkit-scrollbar{display:none;}
+.lvl-pill{
+  flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:12px;padding:8px 12px;
+  font-size:11px;
+}
+.lvl-icon{font-size:16px;}
+.lvl-name{font-weight:600;white-space:nowrap;font-size:10px;}
+
+/* ── Loading ───────────────────────────────────────────────────────────── */
+#loading{
+  text-align:center;padding:60px 20px;
+  color:rgba(255,255,255,0.4);font-size:14px;
+}
+.spin{
+  width:36px;height:36px;
+  border:3px solid rgba(0,242,254,0.15);
+  border-top-color:var(--cyan);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── Podium ────────────────────────────────────────────────────────────── */
+.podium-wrap{
+  display:flex;align-items:flex-end;justify-content:center;
+  gap:12px;margin-bottom:24px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:24px;padding:32px 16px 16px;
+}
+.podium-col{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  animation:podiumPop .7s cubic-bezier(.34,1.56,.64,1) forwards;
+  opacity:0;
+}
+.podium-col:nth-child(1){animation-delay:.1s;}
+.podium-col:nth-child(2){animation-delay:0s;}
+.podium-col:nth-child(3){animation-delay:.2s;}
+@keyframes podiumPop{
+  from{opacity:0;transform:translateY(24px) scale(.9);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+
+.podium-avatar{
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:20px;color:#000;
+  border-radius:50%;position:relative;
+  flex-shrink:0;
+}
+.rank-1 .podium-avatar,.podium-avatar.rank-1{width:68px;height:68px;background:linear-gradient(135deg,#00ff88,#00f2fe);font-size:24px;box-shadow:0 0 24px rgba(0,255,136,0.5);}
+.rank-2 .podium-avatar,.podium-avatar.rank-2{width:56px;height:56px;background:linear-gradient(135deg,#ffd700,#ffb830);box-shadow:0 0 14px rgba(255,215,0,0.4);}
+.rank-3 .podium-avatar,.podium-avatar.rank-3{width:50px;height:50px;background:linear-gradient(135deg,#c0c0c0,#e8e8e8);box-shadow:0 0 10px rgba(192,192,192,0.35);}
+
+.podium-crown{
+  position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+  font-size:20px;
+  animation:crownGlow 2s ease-in-out infinite;
+}
+@keyframes crownGlow{
+  0%,100%{text-shadow:0 0 6px gold;}
+  50%{text-shadow:0 0 18px gold,0 0 32px gold;}
+}
+
+.podium-name{font-size:12px;font-weight:700;max-width:80px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.podium-xp{font-size:11px;color:var(--cyan);}
+.podium-lvl{font-size:10px;color:rgba(255,255,255,0.5);}
+.podium-bar{
+  width:100%;padding:8px 0;border-radius:10px;
+  text-align:center;font-size:18px;margin-top:4px;
+}
+.rank-1 .podium-bar{background:rgba(0,255,136,0.15);}
+.rank-2 .podium-bar{background:rgba(255,215,0,0.12);}
+.rank-3 .podium-bar{background:rgba(192,192,192,0.1);}
+
+/* ── Rank List (4–20) ──────────────────────────────────────────────────── */
+.rank-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:14px;padding:12px 14px;margin-bottom:8px;
+  transition:.2s;
+  animation:rowIn .4s ease forwards;opacity:0;
+}
+@keyframes rowIn{from{opacity:0;transform:translateX(-12px);}to{opacity:1;transform:translateX(0);}}
+.rank-row:hover{background:rgba(0,242,254,0.06);border-color:rgba(0,242,254,0.25);}
+
+.rank-num{
+  font-size:14px;font-weight:800;min-width:28px;text-align:center;
+  color:rgba(255,255,255,0.4);
+}
+.rank-avatar{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;background:rgba(255,255,255,0.07);
+  flex-shrink:0;
+}
+.rank-info{flex:1;min-width:0;}
+.rank-name{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rank-detail{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;}
+.rank-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.rank-xp{font-size:13px;font-weight:700;color:var(--cyan);}
+.level-badge{
+  font-size:10px;font-weight:600;
+  padding:2px 8px;border-radius:20px;white-space:nowrap;
+}
+
+/* ── My Rank Bar ───────────────────────────────────────────────────────── */
+#myRankBar{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:rgba(7,8,13,0.92);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(0,242,254,0.2);
+  padding:14px 20px;
+  display:none;
+  max-width:480px;margin:0 auto;
+  align-items:center;justify-content:space-between;
+  left:50%;transform:translateX(-50%);
+  border-radius:20px 20px 0 0;
+}
+#myRankBar.visible{display:flex;}
+.my-rank-label{font-size:12px;color:rgba(255,255,255,0.5);}
+.my-rank-val{font-size:20px;font-weight:800;color:var(--cyan);}
+.my-xp{font-size:13px;font-weight:700;color:var(--gold);}
+
+/* ── Level Up Overlay ──────────────────────────────────────────────────── */
+.levelup-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.8);backdrop-filter:blur(14px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  animation:fadeIn .3s ease;
+}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.levelup-card{
+  background:linear-gradient(135deg,rgba(13,17,23,.98),rgba(13,17,23,.95));
+  border:1px solid rgba(0,242,254,0.3);
+  border-radius:24px;padding:36px 28px;text-align:center;max-width:320px;width:100%;
+  animation:cardPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes cardPop{from{transform:scale(.8);opacity:0;}to{transform:scale(1);opacity:1;}}
+.levelup-icon{font-size:60px;margin-bottom:12px;}
+.levelup-title{font-size:22px;font-weight:800;margin-bottom:8px;}
+.levelup-sub{font-size:14px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:20px;}
+.levelup-btn{
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  border:none;border-radius:20px;padding:12px 32px;
+  color:#000;font-weight:700;font-size:15px;cursor:pointer;
+  transition:.2s;
+}
+.levelup-btn:hover{transform:scale(1.04);}
+
+/* ── Animation delay for rows ──────────────────────────────────────────── */
+.rank-row:nth-child(1){animation-delay:.05s;}
+.rank-row:nth-child(2){animation-delay:.1s;}
+.rank-row:nth-child(3){animation-delay:.15s;}
+.rank-row:nth-child(4){animation-delay:.2s;}
+.rank-row:nth-child(5){animation-delay:.25s;}
+.rank-row:nth-child(6){animation-delay:.3s;}
+.rank-row:nth-child(7){animation-delay:.35s;}
+.rank-row:nth-child(8){animation-delay:.4s;}
+.rank-row:nth-child(9){animation-delay:.45s;}
+.rank-row:nth-child(10){animation-delay:.5s;}
+</style>
 </head>
 <body>
 
-    <body>
-
-    <h2>🏆 Weekly Leaderboard (Top 15)</h2>
-
-<div style="
-position:fixed;
-top:20px;
-right:20px;
-background:rgba(0,0,0,0.5);
-padding:6px 12px;
-border-radius:10px;
-font-size:12px;
-z-index:999;
-">
-2 min = 1 XP ⭐
+<!-- Sticky header -->
+<div class="lb-header">
+  <a href="javascript:history.back()" class="lb-back">←</a>
+  <div class="lb-title">🏆 Weekly Leaderboard</div>
+  <div class="lb-reset" id="resetTimer">—</div>
 </div>
 
-    <div id="board">Loading leaderboard...</div>
+<!-- Scroll area -->
+<div class="lb-scroll">
+  <!-- XP info -->
+  <div class="xp-strip">⭐ 2 minutes of focus = 1 XP</div>
 
-    <script type="module" src="leaderboard.js"></script>
+  <!-- Level strip -->
+  <div class="lvl-strip" id="levelStrip"></div>
+
+  <!-- Loading spinner -->
+  <div id="loading">
+    <div class="spin"></div>
+    Loading leaderboard…
+  </div>
+
+  <!-- Podium (top 3) -->
+  <div id="podiumArea"></div>
+
+  <!-- Rank list 4–20 -->
+  <div id="rankList"></div>
+</div>
+
+<!-- My rank sticky bar -->
+<div id="myRankBar">
+  <div>
+    <div class="my-rank-label">Your Rank</div>
+    <div class="my-rank-val" id="myRankVal">—</div>
+  </div>
+  <div class="my-xp" id="myXpVal">⭐ 0 XP</div>
+</div>
+
+<script type="module" src="leaderboard.js"></script>
 </body>
 </html>
