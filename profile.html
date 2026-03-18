@@ -96,6 +96,54 @@ body{
 .edtech-input::placeholder{color:var(--text-secondary);}
 .edtech-select option{background:#162030;color:var(--text-primary);}
 
+/* ===== NAME DISPLAY ROW ===== */
+.name-display-row{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:12px 14px;
+  margin-bottom:16px;
+}
+.name-avatar-sm{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:16px;color:#0B1220;
+}
+.name-display-info{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
+.name-display-label{font-size:11px;color:var(--text-secondary);}
+.name-display-value{font-size:14px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.divider-line{
+  height:1px;background:rgba(255,255,255,0.06);
+  margin:4px 0 16px 0;
+}
+
+/* ===== FIXED DATE CHIP ===== */
+.fixed-date-chip{
+  width:100%;padding:12px 16px;
+  border-radius:12px;
+  border:1px solid rgba(34,211,238,0.3);
+  background:rgba(34,211,238,0.05);
+  color:var(--primary);
+  font-size:14px;font-weight:600;
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+
+/* ===== COUNTDOWN CHIP ===== */
+.countdown-chip{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:rgba(251,191,36,0.08);
+  border:1px solid rgba(251,191,36,0.25);
+  border-radius:10px;
+  padding:9px 14px;
+  color:#FBBF24;
+  font-size:13px;font-weight:600;
+  margin-bottom:16px;
+}
+
 .save-btn{
   width:100%;padding:14px;border:none;border-radius:50px;
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
@@ -161,6 +209,78 @@ body{
   font-style:italic;text-align:center;color:var(--text-secondary);padding:8px 0;
 }
 
+/* ===== NTA CARD ===== */
+.nta-card{
+  background:rgba(0,48,135,0.12);
+  border:1px solid rgba(0,48,135,0.35);
+  border-radius:14px;
+  padding:12px 14px;
+  margin-bottom:14px;
+}
+.nta-logo-box{
+  display:flex;align-items:center;gap:12px;
+}
+.nta-logo-wrap{
+  flex-shrink:0;
+  width:48px;height:48px;
+  display:flex;align-items:center;justify-content:center;
+}
+.nta-real-logo{
+  width:48px;height:48px;
+  object-fit:contain;
+  border-radius:8px;
+  background:white;
+  padding:3px;
+}
+.nta-info{display:flex;flex-direction:column;gap:5px;flex:1;}
+.nta-exam-name{font-size:15px;font-weight:700;color:#E2E8F0;}
+.nta-exam-badges{display:flex;gap:6px;align-items:center;}
+.nta-badge-nta{
+  font-size:10px;font-weight:700;
+  background:rgba(0,48,135,0.5);
+  border:1px solid rgba(100,149,237,0.4);
+  color:#93C5FD;padding:2px 8px;border-radius:50px;
+}
+.nta-badge-year{
+  font-size:10px;font-weight:700;
+  background:rgba(251,191,36,0.12);
+  border:1px solid rgba(251,191,36,0.3);
+  color:#FBBF24;padding:2px 8px;border-radius:50px;
+}
+.exam-side-logo{
+  width:40px;height:40px;
+  object-fit:contain;
+  flex-shrink:0;
+  border-radius:8px;
+}
+
+/* ===== NOTIFICATION ROW ===== */
+.notif-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(251,191,36,0.06);
+  border:1px solid rgba(251,191,36,0.2);
+  border-radius:12px;
+  padding:11px 14px;
+  margin-bottom:14px;
+  gap:10px;
+}
+.notif-row-text{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--text-secondary);font-weight:500;
+}
+.notif-toggle{
+  background:linear-gradient(135deg,#FBBF24,#F59E0B);
+  color:#0B1220;border:none;
+  border-radius:50px;padding:5px 14px;
+  font-size:12px;font-weight:700;cursor:pointer;
+  white-space:nowrap;transition:var(--transition);flex-shrink:0;
+}
+.notif-toggle.enabled{
+  background:rgba(52,211,153,0.15);
+  border:1px solid rgba(52,211,153,0.3);
+  color:var(--secondary);
+}
+
 /* ===== BOTTOM NAV ===== */
 .pwa-bottom-nav{
   position:fixed;bottom:0;left:0;width:100%;height:64px;
@@ -194,23 +314,97 @@ body{
 <div class="profile-container">
 
   <div class="profile-card">
-    <h3 class="section-title"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
-    <label class="input-label">Your Name</label>
-    <input type="text" id="nameInput" class="edtech-input" placeholder="Enter your name">
-    <label class="input-label">Select Goal</label>
-    <select id="goalSelect" class="edtech-select">
-      <option value="JEE">JEE</option>
-      <option value="NEET">NEET</option>
-      <option value="CUET">CUET</option>
+    <h3 class="section-title"><i class="fa-solid fa-sliders"></i> My Preferences</h3>
+
+    <!-- Name display only — from Google, not editable -->
+    <div class="name-display-row">
+      <div class="name-avatar-sm" id="avatarSm">A</div>
+      <div class="name-display-info">
+        <div class="name-display-label">Signed in as</div>
+        <div class="name-display-value" id="nameDisplay">User</div>
+      </div>
+      <i class="fa-brands fa-google" style="color:#4285F4;font-size:18px;flex-shrink:0;"></i>
+    </div>
+
+    <div class="divider-line"></div>
+
+    <!-- Goal Select -->
+    <label class="input-label">🎯 Select Your Goal</label>
+    <select id="goalSelect" class="edtech-select" onchange="onGoalChange()">
+      <option value="JEE">JEE Main 2026</option>
+      <option value="NEET">NEET 2026</option>
+      <option value="CUET">CUET 2026</option>
       <option value="Boards">Boards</option>
     </select>
-    <button class="save-btn" onclick="saveProfile()">
-      <i class="fa-solid fa-floppy-disk"></i> Save Changes
+
+    <!-- NTA logo card — shown for JEE / NEET / CUET -->
+    <div class="nta-card" id="ntaCard" style="display:none;">
+      <div class="nta-logo-box">
+        <!-- Real NTA logo from official site -->
+        <div class="nta-logo-wrap">
+          <img 
+            id="ntaLogoImg"
+            src="https://nta.ac.in/img/ntalogo.png"
+            alt="NTA"
+            class="nta-real-logo"
+            onerror="this.style.display='none'; document.getElementById('ntaFallback').style.display='flex';"
+          >
+          <!-- Fallback if logo doesn't load -->
+          <div id="ntaFallback" style="display:none;width:48px;height:48px;border-radius:50%;background:#003087;align-items:center;justify-content:center;flex-direction:column;gap:1px;">
+            <span style="color:white;font-size:11px;font-weight:800;letter-spacing:1px;">NTA</span>
+          </div>
+        </div>
+        <div class="nta-info">
+          <div class="nta-exam-name" id="ntaExamName">JEE Main 2026</div>
+          <div class="nta-exam-badges">
+            <span class="nta-badge-nta">NTA Exam</span>
+            <span class="nta-badge-year">2026</span>
+          </div>
+        </div>
+        <!-- Per-exam logo on right -->
+        <img id="examLogoImg" class="exam-side-logo" src="" alt="" style="display:none;"
+          onerror="this.style.display='none';">
+      </div>
+    </div>
+
+    <!-- Exam Date label -->
+    <label class="input-label" id="dateLabel" style="display:none;">📅 Exam Date</label>
+
+    <!-- JEE date picker (April 2026 range) -->
+    <input type="date" id="jeeDatePicker" class="edtech-input"
+      min="2026-04-02" max="2026-04-20"
+      style="display:none;">
+
+    <!-- Boards date picker (any date) -->
+    <input type="date" id="boardsDatePicker" class="edtech-input"
+      min="2026-01-01" max="2027-12-31"
+      style="display:none;">
+
+    <!-- Fixed date chip for NEET / CUET -->
+    <div class="fixed-date-chip" id="fixedDateChip" style="display:none;"></div>
+
+    <!-- Countdown chip -->
+    <div class="countdown-chip" id="countdownChip" style="display:none;">
+      <i class="fa-solid fa-fire" style="color:#fb923c;"></i>
+      <span id="countdownText">--</span>
+    </div>
+
+    <!-- Notification enable row -->
+    <div class="notif-row" id="notifRow" style="display:none;">
+      <div class="notif-row-text">
+        <i class="fa-solid fa-bell" style="color:#FBBF24;"></i>
+        <span>Daily exam reminder</span>
+      </div>
+      <button class="notif-toggle" id="notifToggle" onclick="toggleNotif()">Enable</button>
+    </div>
+
+    <button class="save-btn" onclick="saveProfile()" style="margin-top:4px;">
+      <i class="fa-solid fa-floppy-disk"></i> Save
     </button>
     <div id="msg"></div>
   </div>
 
-  <a href="#" class="sub-promo-card">
+  <a href="subscription.html" class="sub-promo-card">
     <i class="fa-solid fa-crown"></i> My Subscription
   </a>
 
@@ -257,52 +451,226 @@ body{
   </a>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-let name = localStorage.getItem("userName") || "User";
-let email = localStorage.getItem("userEmail") || "user@gmail.com";
-let savedGoal = localStorage.getItem("goal") || "JEE";
 
-document.getElementById("userName").innerText = name;
-document.getElementById("userEmail").innerText = email;
-document.getElementById("avatar").innerText = name.charAt(0).toUpperCase();
-document.getElementById("goalBadge").innerText = savedGoal;
-document.getElementById("nameInput").value = name;
-document.getElementById("goalSelect").value = savedGoal;
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-function saveProfile(){
-  let newName = document.getElementById("nameInput").value.trim();
-  let selectedGoal = document.getElementById("goalSelect").value;
+const firebaseConfig = {
+  apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
+  authDomain: "untitled-world-2e645.firebaseapp.com",
+  projectId: "untitled-world-2e645",
+  storageBucket: "untitled-world-2e645.firebasestorage.app",
+  messagingSenderId: "990115586087",
+  appId: "1:990115586087:web:963f68bd59dec5ef0c6e02"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
 
-  if(!newName){
-    const inp = document.getElementById("nameInput");
-    inp.style.borderColor = "rgba(244,63,94,0.6)";
-    setTimeout(() => { inp.style.borderColor = ""; }, 1500);
-    return;
+// ===== EXAM DATA (2026) =====
+const EXAM_INFO = {
+  JEE:    { 
+    date: "2026-04-02", label: "2 Apr 2026",  name: "JEE Main 2026",   nta: true,
+    logo: "https://jeemain.nta.ac.in/webinfo2024/File/GetFile?FilePathKey=LogoBgWhite"
+  },
+  NEET:   { 
+    date: "2026-05-04", label: "4 May 2026",  name: "NEET UG 2026",    nta: true,
+    logo: "https://neet.nta.nic.in/webinfo2024/File/GetFile?FilePathKey=LogoBgWhite"
+  },
+  CUET:   { 
+    date: "2026-05-14", label: "14 May 2026", name: "CUET UG 2026",    nta: true,
+    logo: "https://cuet.samarth.ac.in/images/cuet-logo.png"
+  },
+  Boards: { date: null, label: null, name: "Board Exams", nta: false, logo: null }
+};
+
+// ===== LOAD =====
+const name          = localStorage.getItem("customUserName") || localStorage.getItem("userName") || "User";
+const email         = localStorage.getItem("userEmail") || "";
+const savedGoal     = localStorage.getItem("goal")     || "JEE";
+const savedExamDate = localStorage.getItem("examDate") || "";
+
+document.getElementById("userName").innerText    = name;
+document.getElementById("userEmail").innerText   = email;
+document.getElementById("avatar").innerText      = name.charAt(0).toUpperCase();
+document.getElementById("goalBadge").innerText   = savedGoal;
+document.getElementById("nameDisplay").innerText = name;
+document.getElementById("avatarSm").innerText    = name.charAt(0).toUpperCase();
+document.getElementById("goalSelect").value      = savedGoal;
+
+// Update notif button state on load
+updateNotifBtn();
+onGoalChange(savedExamDate);
+
+// ===== GOAL CHANGE =====
+function onGoalChange(prefillDate) {
+  const goal        = document.getElementById("goalSelect").value;
+  const jeePicker   = document.getElementById("jeeDatePicker");
+  const boardsPicker= document.getElementById("boardsDatePicker");
+  const fixedChip   = document.getElementById("fixedDateChip");
+  const countdownEl = document.getElementById("countdownChip");
+  const ntaCard     = document.getElementById("ntaCard");
+  const dateLabel   = document.getElementById("dateLabel");
+  const notifRow    = document.getElementById("notifRow");
+
+  // Reset all
+  jeePicker.style.display    = "none";
+  boardsPicker.style.display = "none";
+  fixedChip.style.display    = "none";
+  ntaCard.style.display      = "none";
+  dateLabel.style.display    = "none";
+  countdownEl.style.display  = "none";
+  notifRow.style.display     = "none";
+
+  const info = EXAM_INFO[goal];
+
+  // Show NTA card for JEE/NEET/CUET
+  if(info.nta) {
+    ntaCard.style.display = "block";
+    document.getElementById("ntaExamName").innerText = info.name;
+    // Set per-exam logo on right side
+    const examLogoEl = document.getElementById("examLogoImg");
+    if(info.logo) {
+      examLogoEl.src = info.logo;
+      examLogoEl.alt = info.name;
+      examLogoEl.style.display = "block";
+    } else {
+      examLogoEl.style.display = "none";
+    }
   }
 
-  // ✅ Save to localStorage — triggers 'storage' event on other pages
-  localStorage.setItem("userName", newName);
-  localStorage.setItem("goal", selectedGoal);
+  dateLabel.style.display = "block";
 
-  // Update top bar immediately on this page too
-  document.getElementById("userName").innerText = newName;
-  document.getElementById("avatar").innerText = newName.charAt(0).toUpperCase();
+  if(goal === "JEE") {
+    jeePicker.style.display = "block";
+    const prefill = (prefillDate && prefillDate.startsWith("2026-04")) ? prefillDate : info.date;
+    jeePicker.value = prefill;
+    showCountdown(jeePicker.value);
+    jeePicker.oninput = () => showCountdown(jeePicker.value);
+
+  } else if(goal === "Boards") {
+    boardsPicker.style.display = "block";
+    if(prefillDate) boardsPicker.value = prefillDate;
+    if(boardsPicker.value) showCountdown(boardsPicker.value);
+    boardsPicker.oninput = () => showCountdown(boardsPicker.value);
+
+  } else {
+    // NEET / CUET — fixed date
+    fixedChip.style.display = "flex";
+    fixedChip.innerHTML = `<i class="fa-solid fa-calendar-check"></i> ${info.label}`;
+    showCountdown(info.date);
+  }
+
+  // Show notif row whenever there's a countdown
+  notifRow.style.display = "flex";
+}
+
+function showCountdown(dateStr) {
+  if(!dateStr) return;
+  const countdownEl = document.getElementById("countdownChip");
+  const examTs  = new Date(dateStr); examTs.setHours(0,0,0,0);
+  const todayTs = new Date();        todayTs.setHours(0,0,0,0);
+  const diff    = Math.ceil((examTs - todayTs) / 86400000);
+
+  countdownEl.style.display = "flex";
+  const txt = document.getElementById("countdownText");
+  if(diff > 0)      txt.innerText = `${diff} days left — You got this! 💪`;
+  else if(diff===0) txt.innerText = "Exam is TODAY! All the best 🙏";
+  else              txt.innerText = "Exam date has passed.";
+}
+
+// ===== NOTIFICATION =====
+function updateNotifBtn() {
+  const btn = document.getElementById("notifToggle");
+  if(!btn) return;
+  const granted = Notification.permission === "granted";
+  const enabled = localStorage.getItem("examNotifEnabled") === "true";
+  if(granted && enabled) {
+    btn.textContent = "✓ Enabled";
+    btn.className   = "notif-toggle enabled";
+  } else {
+    btn.textContent = "Enable";
+    btn.className   = "notif-toggle";
+  }
+}
+
+async function toggleNotif() {
+  if(Notification.permission === "granted" && localStorage.getItem("examNotifEnabled")==="true") {
+    localStorage.removeItem("examNotifEnabled");
+    updateNotifBtn();
+    return;
+  }
+  try {
+    const perm = await Notification.requestPermission();
+    if(perm === "granted") {
+      localStorage.setItem("examNotifEnabled", "true");
+      updateNotifBtn();
+      // Show test notification
+      const goal = localStorage.getItem("goal") || "JEE";
+      const days = getDaysLeft();
+      new Notification("📚 Untitled World", {
+        body: `${EXAM_INFO[goal]?.name || goal} — ${days > 0 ? days+" days left!" : "Exam today!"} 🔥`,
+        icon: "/icon-192.png",
+        badge: "/icon-192.png"
+      });
+    }
+  } catch(e) { console.log(e); }
+}
+
+function getDaysLeft() {
+  const date = localStorage.getItem("examDate");
+  if(!date) return 0;
+  const d = new Date(date); d.setHours(0,0,0,0);
+  const t = new Date();     t.setHours(0,0,0,0);
+  return Math.ceil((d - t) / 86400000);
+}
+
+// ===== SAVE =====
+async function saveProfile() {
+  const selectedGoal = document.getElementById("goalSelect").value;
+  let examDate = "";
+
+  if(selectedGoal === "JEE") {
+    examDate = document.getElementById("jeeDatePicker").value || EXAM_INFO.JEE.date;
+  } else if(selectedGoal === "Boards") {
+    examDate = document.getElementById("boardsDatePicker").value || "";
+  } else {
+    examDate = EXAM_INFO[selectedGoal]?.date || "";
+  }
+
+  localStorage.setItem("goal",     selectedGoal);
+  localStorage.setItem("examDate", examDate);
   document.getElementById("goalBadge").innerText = selectedGoal;
 
-  // ✅ Dispatch a storage event manually so same-page listeners also fire
-  window.dispatchEvent(new StorageEvent('storage', {
-    key: 'userName',
-    newValue: newName
-  }));
+  try {
+    const docKey = localStorage.getItem("userName") || name;
+    await setDoc(doc(db,"users",docKey), { goal: selectedGoal, examDate: examDate }, { merge: true });
+  } catch(e) { console.log("Firestore:", e); }
+
+  window.dispatchEvent(new StorageEvent('storage', { key: 'goal', newValue: selectedGoal }));
 
   const msgBox = document.getElementById("msg");
-  msgBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> Profile saved successfully!';
+  msgBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> Saved!';
   msgBox.style.display = "block";
   setTimeout(() => { msgBox.style.display = "none"; }, 2500);
 }
 
-function logout(){
+// ===== LOGOUT =====
+function logout() {
   document.body.style.opacity = "0";
   document.body.style.transition = "opacity 0.2s ease";
   setTimeout(() => {
-    localStorage.re
+    ["userName","customUserName","userEmail","goal","examDate","seenWelcome","examNotifEnabled"]
+      .forEach(k => localStorage.removeItem(k));
+    window.location.href = "login.html";
+  }, 200);
+}
+
+window.saveProfile  = saveProfile;
+window.logout       = logout;
+window.onGoalChange = onGoalChange;
+window.toggleNotif  = toggleNotif;
+</script>
+</body>
+</html>
