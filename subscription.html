@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscription - Untitled World</title>
+<link rel="icon" href="/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg-start:#0B1220;
+  --bg-end:#0F172A;
+  --primary:#22D3EE;
+  --primary-dark:#06B6D4;
+  --secondary:#34D399;
+  --gold:#FBBF24;
+  --text-primary:#E2E8F0;
+  --text-secondary:#94A3B8;
+  --card-border:rgba(255,255,255,0.08);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+html{background:var(--bg-start);}
+
+body{
+  background:linear-gradient(160deg,var(--bg-start) 0%,var(--bg-end) 100%);
+  min-height:100vh;
+  color:var(--text-primary);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:24px 20px 40px;
+  overflow-x:hidden;
+  animation:fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* ===== BACK BUTTON ===== */
+.back-btn{
+  position:fixed;
+  top:16px;
+  left:16px;
+  width:40px;height:40px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid var(--card-border);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-secondary);
+  text-decoration:none;
+  font-size:16px;
+  transition:0.2s;
+  z-index:100;
+}
+.back-btn:hover{background:rgba(255,255,255,0.12);color:var(--text-primary);}
+.back-btn:active{transform:scale(0.95);}
+
+/* ===== CROWN ICON ===== */
+.crown-wrap{
+  position:relative;
+  margin-bottom:20px;
+}
+.crown-icon{
+  font-size:56px;
+  color:var(--gold);
+  filter:drop-shadow(0 0 20px rgba(251,191,36,0.5));
+  animation:floatCrown 3s ease-in-out infinite;
+}
+@keyframes floatCrown{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-8px);}
+}
+.crown-pulse{
+  position:absolute;
+  inset:-12px;
+  border-radius:50%;
+  border:2px solid rgba(251,191,36,0.2);
+  animation:pulseCrown 2s ease infinite;
+}
+@keyframes pulseCrown{
+  0%{transform:scale(0.9);opacity:0.6;}
+  100%{transform:scale(1.4);opacity:0;}
+}
+
+/* ===== BADGE ===== */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(251,191,36,0.1);
+  border:1px solid rgba(251,191,36,0.3);
+  color:var(--gold);
+  font-size:11px;
+  font-weight:700;
+  padding:5px 14px;
+  border-radius:50px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:20px;
+}
+
+/* ===== HEADING ===== */
+.main-title{
+  font-size:28px;
+  font-weight:800;
+  text-align:center;
+  line-height:1.25;
+  margin-bottom:10px;
+  background:linear-gradient(135deg,#E2E8F0,#94A3B8);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+/* ===== TYPING LINE ===== */
+.typing-wrap{
+  font-size:18px;
+  font-weight:700;
+  color:var(--primary);
+  text-align:center;
+  margin-bottom:6px;
+  min-height:28px;
+}
+.typing-cursor{
+  display:inline-block;
+  color:var(--primary);
+  animation:blink 0.75s step-end infinite;
+  font-weight:300;
+}
+@keyframes blink{50%{opacity:0;}}
+
+/* ===== ROTATING TAG ===== */
+.rotating-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(34,211,238,0.08);
+  border:1px solid rgba(34,211,238,0.25);
+  color:var(--primary);
+  font-size:13px;
+  font-weight:600;
+  padding:7px 16px;
+  border-radius:50px;
+  margin-bottom:28px;
+  animation:tagPulse 2s ease infinite alternate;
+}
+@keyframes tagPulse{
+  from{border-color:rgba(34,211,238,0.2);}
+  to{border-color:rgba(34,211,238,0.5);}
+}
+.rotating-tag i{
+  animation:spinIcon 4s linear infinite;
+}
+@keyframes spinIcon{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
+/* ===== CARDS GRID ===== */
+.features-grid{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  width:100%;
+  max-width:400px;
+  margin-bottom:28px;
+}
+
+.feature-row{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;
+  padding:14px 16px;
+  transition:0.2s;
+}
+
+.feature-row:hover{
+  background:rgba(255,255,255,0.06);
+  transform:translateX(4px);
+}
+
+.feat-icon{
+  width:42px;height:42px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+
+.feat-text{
+  display:flex;flex-direction:column;gap:2px;flex:1;
+}
+
+.feat-title{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-primary);
+}
+
+.feat-sub{
+  font-size:12px;
+  color:var(--text-secondary);
+}
+
+.feat-soon{
+  font-size:10px;
+  font-weight:700;
+  color:var(--gold);
+  background:rgba(251,191,36,0.1);
+  border:1px solid rgba(251,191,36,0.2);
+  padding:2px 8px;
+  border-radius:50px;
+  white-space:nowrap;
+}
+.feat-free{
+  font-size:10px;
+  font-weight:700;
+  color:var(--secondary);
+  background:rgba(52,211,153,0.1);
+  border:1px solid rgba(52,211,153,0.2);
+  padding:2px 8px;
+  border-radius:50px;
+}
+
+/* ===== NOTIFY BUTTON ===== */
+.notify-btn{
+  width:100%;
+  max-width:400px;
+  padding:16px;
+  border:none;
+  border-radius:50px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#0B1220;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 4px 20px rgba(34,211,238,0.3);
+  transition:0.25s;
+  margin-bottom:16px;
+}
+.notify-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(34,211,238,0.4);}
+.notify-btn:active{transform:scale(0.97);}
+
+.notify-btn.done{
+  background:rgba(52,211,153,0.15);
+  border:1px solid rgba(52,211,153,0.3);
+  color:var(--secondary);
+  box-shadow:none;
+  pointer-events:none;
+}
+
+/* ===== FOOTER LINE ===== */
+.footer-line{
+  font-size:12px;
+  color:var(--text-secondary);
+  text-align:center;
+  margin-top:4px;
+}
+
+/* ===== ORBITING DOTS BG ===== */
+.orbit{
+  position:fixed;
+  width:400px;height:400px;
+  border-radius:50%;
+  border:1px dashed rgba(34,211,238,0.06);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  z-index:0;
+}
+.orbit:nth-child(2){width:600px;height:600px;border-color:rgba(34,211,238,0.04);animation:rotateOrbit 20s linear infinite;}
+.orbit:nth-child(3){width:800px;height:800px;border-color:rgba(34,211,238,0.025);animation:rotateOrbit 35s linear infinite reverse;}
+@keyframes rotateOrbit{from{transform:translate(-50%,-50%) rotate(0deg);}to{transform:translate(-50%,-50%) rotate(360deg);}}
+
+.page-content{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;
+}
+</style>
+</head>
+<body>
+
+<!-- Orbiting bg -->
+<div class="orbit"></div>
+<div class="orbit"></div>
+<div class="orbit"></div>
+
+<!-- Back button -->
+<a href="profile.html" class="back-btn">
+  <i class="fa-solid fa-chevron-left"></i>
+</a>
+
+<div class="page-content">
+
+  <!-- Crown -->
+  <div class="crown-wrap">
+    <div class="crown-pulse"></div>
+    <i class="fa-solid fa-crown crown-icon"></i>
+  </div>
+
+  <!-- Badge -->
+  <div class="badge">
+    <i class="fa-solid fa-bolt" style="font-size:9px;"></i>
+    Pro Plan
+  </div>
+
+  <!-- Title -->
+  <h1 class="main-title">Unlock Premium<br>Features</h1>
+
+  <!-- Typing animation -->
+  <div class="typing-wrap">
+    <span id="typingText"></span><span class="typing-cursor">|</span>
+  </div>
+
+  <!-- Rotating tag -->
+  <div class="rotating-tag">
+    <i class="fa-solid fa-rocket"></i>
+    Mock Test Platform &nbsp;·&nbsp; Coming Soon 🚀
+  </div>
+
+  <!-- Features list -->
+  <div class="features-grid">
+
+    <div class="feature-row">
+      <div class="feat-icon" style="background:rgba(34,211,238,0.1);">
+        <i class="fa-solid fa-file-pen" style="color:#22D3EE;"></i>
+      </div>
+      <div class="feat-text">
+        <div class="feat-title">Mock Test Platform</div>
+        <div class="feat-sub">JEE · NEET · Boards full tests</div>
+      </div>
+      <span class="feat-soon">Soon</span>
+    </div>
+
+    <div class="feature-row">
+      <div class="feat-icon" style="background:rgba(52,211,153,0.1);">
+        <i class="fa-solid fa-stopwatch" style="color:#34D399;"></i>
+      </div>
+      <div class="feat-text">
+        <div class="feat-title">Smart Focus Timer</div>
+        <div class="feat-sub">Global rooms · Earn XP · Leaderboard</div>
+      </div>
+      <span class="feat-free">Free</span>
+    </div>
+
+    <div class="feature-row">
+      <div class="feat-icon" style="background:rgba(255,71,87,0.1);">
+        <i class="fa-brands fa-youtube" style="color:#ff4757;"></i>
+      </div>
+      <div class="feat-text">
+        <div class="feat-title">Study Playlists</div>
+        <div class="feat-sub">Subject-wise videos · Track progress</div>
+      </div>
+      <span class="feat-free">Free</span>
+    </div>
+
+    <div class="feature-row">
+      <div class="feat-icon" style="background:rgba(251,191,36,0.1);">
+        <i class="fa-solid fa-chart-line" style="color:#FBBF24;"></i>
+      </div>
+      <div class="feat-text">
+        <div class="feat-title">Advanced Analytics</div>
+        <div class="feat-sub">Deep performance insights</div>
+      </div>
+      <span class="feat-soon">Soon</span>
+    </div>
+
+    <div class="feature-row">
+      <div class="feat-icon" style="background:rgba(167,139,250,0.1);">
+        <i class="fa-solid fa-brain" style="color:#A78BFA;"></i>
+      </div>
+      <div class="feat-text">
+        <div class="feat-title">AI Study Assistant</div>
+        <div class="feat-sub">Smart doubt solving · Personalised plans</div>
+      </div>
+      <span class="feat-soon">Soon</span>
+    </div>
+
+  </div>
+
+  <!-- CTA Button -->
+  <button class="notify-btn" id="notifyBtn" onclick="notifyMe()">
+    <i class="fa-solid fa-bell"></i> Notify Me When Live
+  </button>
+
+  <p class="footer-line">We'll notify you the moment Pro goes live 🚀<br>Stay tuned — something big is coming.</p>
+
+</div>
+
+<script>
+// ===== TYPING ANIMATION =====
+const phrases = [
+  "Coming Soon 🚀",
+  "Stay Tuned ✨",
+  "Big things ahead 🔥",
+  "Launching very soon ⚡",
+  "Built for toppers 🏆",
+];
+let phraseIdx = 0, charIdx = 0, deleting = false;
+const el = document.getElementById("typingText");
+
+function typeLoop(){
+  const current = phrases[phraseIdx];
+  if(!deleting){
+    el.textContent = current.substring(0, charIdx+1);
+    charIdx++;
+    if(charIdx === current.length){
+      setTimeout(()=>{ deleting=true; typeLoop(); }, 1800);
+      return;
+    }
+  } else {
+    el.textContent = current.substring(0, charIdx-1);
+    charIdx--;
+    if(charIdx === 0){
+      deleting = false;
+      phraseIdx = (phraseIdx+1) % phrases.length;
+    }
+  }
+  setTimeout(typeLoop, deleting ? 45 : 75);
+}
+typeLoop();
+
+// ===== NOTIFY BUTTON =====
+function notifyMe(){
+  const btn = document.getElementById("notifyBtn");
+  localStorage.setItem("subNotifyRequested","true");
+  btn.className = "notify-btn done";
+  btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> You\'re on the list!';
+}
+
+// On load — if already clicked
+if(localStorage.getItem("subNotifyRequested")){
+  const btn = document.getElementById("notifyBtn");
+  btn.className = "notify-btn done";
+  btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> You\'re on the list!';
+}
+</script>
+
+</body>
+</html>
