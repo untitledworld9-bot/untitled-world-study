@@ -24,7 +24,7 @@ messaging.onBackgroundMessage(function(payload) {
 });
 
 // ─── Untitled World – Advanced Service Worker ───────────────────────────────
-const CACHE = "uw-cache-v21";
+const CACHE = "uw-cache-v22";
 
 const ASSETS = [
   "/",
@@ -69,40 +69,34 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
 
   const req = event.request;
-  const url = new URL(req.url);
 
-  // ── HTML NAVIGATION — ALWAYS NETWORK, NEVER CACHE ─────────────────────────
-  // HTML files must ALWAYS come from network so pages like subscription.html
-  // never get swapped out for a cached index.html
-  if (req.mode === "navigate" || url.pathname.endsWith(".html") || url.pathname === "/") {
+  // Only handle same-origin requests
+  if (!req.url.startsWith(self.location.origin)) return;
 
+  // ── HTML NAVIGATION — network first, NO caching of HTML ───────────────────
+  if (req.mode === "navigate") {
     event.respondWith(
-      fetch(req).catch(async () => {
-        // Only on actual network failure → try cache or offline page
-        const cache  = await caches.open(CACHE);
-        const cached = await cache.match(req, { ignoreSearch: true });
-        if (cached) return cached;
-        const offline = await cache.match("/offline.html");
-        if (offline) return offline;
-        return getOfflinePage();
-      })
+      fetch(req)
+        .then(res => res) // always return fresh from network
+        .catch(async () => {
+          // Only on real offline → show offline page
+          const cache = await caches.open(CACHE);
+          const offline = await cache.match("/offline.html");
+          return offline || getOfflinePage();
+        })
     );
-
     return;
   }
 
-  // ── STATIC ASSETS (JS, CSS, images) — CACHE FIRST + BACKGROUND UPDATE ──────
+  // ── STATIC ASSETS (JS, CSS, images, fonts) — cache first ──────────────────
   event.respondWith(
     caches.match(req).then(cached => {
-
       const networkFetch = fetch(req).then(res => {
         if (res && res.status === 200 && res.type === "basic") {
-          const copy = res.clone();
-          caches.open(CACHE).then(cache => cache.put(req, copy));
+          caches.open(CACHE).then(c => c.put(req, res.clone()));
         }
         return res;
       }).catch(() => cached);
-
       return cached || networkFetch;
     })
   );
