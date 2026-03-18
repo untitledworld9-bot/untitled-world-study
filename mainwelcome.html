@@ -1,342 +1,414 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Welcome</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome - Untitled World</title>
+<link rel="icon" href="/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
+/* ===== GLOBAL DESIGN SYSTEM ===== */
+:root{
+  --bg-start: #0B1220;
+  --bg-end: #0F172A;
+  --primary: #22D3EE;
+  --primary-dark: #06B6D4;
+  --secondary: #34D399;
+  --accent: #F43F5E;
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --card-bg: rgba(255,255,255,0.03);
+  --card-border: rgba(255,255,255,0.08);
+  --radius: 16px;
+  --shadow: 0 4px 20px rgba(0,0,0,0.3);
+  --transition: 0.25s ease;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+
+html{ background: var(--bg-start); }
 
 body{
-
-margin:0;
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-
-font-family:Outfit,sans-serif;
-color:white;
-text-align:center;
-overflow:hidden;
-
+  background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-primary);
+  overflow: hidden;
+  animation: pageIn 0.35s ease forwards;
 }
 
-.container{
-
-max-width:420px;
-padding:20px;
-
+@keyframes pageIn{
+  from{ opacity:0; transform:translateY(10px); }
+  to{ opacity:1; transform:translateY(0); }
 }
 
-.avatar{
-
-width:120px;
-height:120px;
-
-border-radius:50%;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-font-size:60px;
-
-margin:auto;
-margin-bottom:20px;
-
-background:linear-gradient(135deg,#5f7cff,#7c4dff);
-
-box-shadow:0 0 30px rgba(0,0,0,0.5);
-
-}
-
-h1{
-
-font-size:34px;
-margin-bottom:10px;
-
-}
-
-p{
-
-opacity:.8;
-line-height:1.5;
-
-}
-
-.btn{
-
-margin-top:30px;
-
-padding:16px 30px;
-
-border-radius:40px;
-
-border:none;
-
-font-size:18px;
-
-background:linear-gradient(135deg,#5f7cff,#7c4dff);
-
-color:white;
-
-cursor:pointer;
-
-}
-
+/* ===== CONFETTI CANVAS ===== */
 canvas{
-
-position:fixed;
-top:0;
-left:0;
-
-pointer-events:none;
-
+  position: fixed;
+  top:0; left:0;
+  pointer-events: none;
+  z-index: 0;
 }
 
+/* ===== MAIN CONTAINER ===== */
+.container{
+  position: relative;
+  z-index: 1;
+  max-width: 400px;
+  width: 92%;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+/* ===== AVATAR ===== */
+.avatar{
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  font-weight: 700;
+  margin: 0 auto 20px auto;
+  box-shadow: 0 0 0 4px rgba(34,211,238,0.15), var(--shadow);
+  animation: avatarPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes avatarPop{
+  from{ transform:scale(0.5); opacity:0; }
+  to{ transform:scale(1); opacity:1; }
+}
+
+/* ===== HEADINGS ===== */
+h1{
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.welcome-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(52,211,153,0.12);
+  border: 1px solid rgba(52,211,153,0.3);
+  color: var(--secondary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 50px;
+  margin-bottom: 16px;
+}
+
+/* ===== CARD ===== */
+.welcome-card{
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+
+.desc{
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  text-align: center;
+  margin: 0;
+}
+
+/* ===== FEATURES LIST ===== */
+.feature-list{
+  list-style: none;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feature-list li{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.feature-list li .fi{
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ===== AGREE CHECKBOX ===== */
 .agree-box{
-
-margin-top:20px;
-font-size:13px;
-opacity:.9;
-
-display:flex;
-align-items:flex-start;
-gap:6px;
-text-align:left;
-
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 16px 0;
+  line-height: 1.5;
 }
 
-.agree-box input{
-
-margin-top:3px;
-cursor:pointer;
-
+.agree-box input[type="checkbox"]{
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .agree-box a{
-
-color:#4da6ff;
-text-decoration:underline;
-
+  color: var(--primary);
+  text-decoration: none;
 }
 
+/* ===== EXPLORE BUTTON ===== */
+.btn{
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #0B1220;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 16px rgba(34,211,238,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(34,211,238,0.4);
+}
+
+.btn:active{
+  transform: scale(0.97);
+}
+
+/* ===== POPUP ===== */
 .popup{
-
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-
-background:rgba(0,0,0,0.6);
-
-display:none;
-align-items:center;
-justify-content:center;
-
-z-index:9999;
-
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
 .popup-box{
+  background: linear-gradient(135deg, #0F1F2E, #162030);
+  border: 1px solid var(--card-border);
+  padding: 28px 24px;
+  border-radius: var(--radius);
+  text-align: center;
+  width: 280px;
+  box-shadow: var(--shadow);
+  animation: popIn 0.25s ease;
+}
 
-background:#1e2f36;
+@keyframes popIn{
+  from{ transform:scale(0.9); opacity:0; }
+  to{ transform:scale(1); opacity:1; }
+}
 
-padding:25px;
-
-border-radius:14px;
-
-text-align:center;
-
-width:260px;
-
-box-shadow:0 10px 40px rgba(0,0,0,0.5);
-
+.popup-box p{
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .popup-box button{
-
-margin-top:20px;
-
-padding:10px 25px;
-
-border:none;
-
-border-radius:20px;
-
-background:linear-gradient(135deg,#5f7cff,#7c4dff);
-
-color:white;
-
-cursor:pointer;
-
+  margin-top: 20px;
+  padding: 10px 28px;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #0B1220;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
+.popup-box button:active{ transform: scale(0.97); }
 </style>
-
 </head>
-
 <body>
 
 <canvas id="confetti"></canvas>
 
 <div class="container">
 
-<div id="avatar" class="avatar">U</div>
+  <div id="avatar" class="avatar">U</div>
 
-<h1 id="welcomeText">Welcome</h1>
+  <div class="welcome-badge">
+    <i class="fa-solid fa-star" style="font-size:10px;"></i> New Member
+  </div>
 
-<p>
+  <h1 id="welcomeText">Welcome!</h1>
 
-A distraction-free study platform built to help you stay focused, track progress and study smarter with tools like Focus Timer, playlists and upcoming mock tests.
+  <div class="welcome-card">
+    <p class="desc">A distraction-free study platform built to help you stay focused, track progress and study smarter.</p>
 
-</p>
+    <ul class="feature-list">
+      <li>
+        <div class="fi" style="background:rgba(34,211,238,0.12); color:#22D3EE;">
+          <i class="fa-solid fa-file-pen"></i>
+        </div>
+        <span>Mock Tests for JEE, NEET &amp; Boards</span>
+      </li>
+      <li>
+        <div class="fi" style="background:rgba(52,211,153,0.12); color:#34D399;">
+          <i class="fa-solid fa-stopwatch"></i>
+        </div>
+        <span>Smart Focus Timer with global rooms</span>
+      </li>
+      <li>
+        <div class="fi" style="background:rgba(249,115,22,0.12); color:#fb923c;">
+          <i class="fa-solid fa-chart-simple"></i>
+        </div>
+        <span>Weekly progress tracking &amp; XP system</span>
+      </li>
+      <li>
+        <div class="fi" style="background:rgba(255,71,87,0.12); color:#ff4757;">
+          <i class="fa-brands fa-youtube"></i>
+        </div>
+        <span>Subject-wise study playlists</span>
+      </li>
+    </ul>
+  </div>
 
-<div class="agree-box">
+  <div class="agree-box">
+    <input type="checkbox" id="agree">
+    <label for="agree">
+      By continuing you agree to
+      <a href="terms.html">Terms &amp; Conditions</a>
+      and
+      <a href="privacy.html">Privacy Policy</a>
+    </label>
+  </div>
 
-<input type="checkbox" id="agree">
-
-<label for="agree">
-By continuing you agree to 
-<a href="terms.html">Terms & Conditions</a> 
-and 
-<a href="privacy.html">Privacy Policy</a>
-</label>
+  <button class="btn" onclick="goHome()">
+    <i class="fa-solid fa-rocket"></i> Start Exploring
+  </button>
 
 </div>
 
-<button class="btn" onclick="goHome()">
-
-Explore →
-
-</button>
-
-</div>
-
+<!-- Agree Popup -->
 <div id="agreePopup" class="popup">
-
-<div class="popup-box">
-
-<p>Please agree to Terms & Privacy Policy</p>
-
-<button onclick="closeAgree()">OK</button>
-
-</div>
-
+  <div class="popup-box">
+    <i class="fa-solid fa-circle-info" style="font-size:32px; color:#22D3EE; margin-bottom:12px;"></i>
+    <p>Please agree to our Terms &amp; Privacy Policy to continue.</p>
+    <button onclick="closeAgree()">Got it</button>
+  </div>
 </div>
 
 <script>
-
+// PWA Guard — only show this on PWA, redirect website to index
 function isPWA(){
-
-return window.matchMedia('(display-mode: standalone)').matches
-|| window.navigator.standalone
-
+  return window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone;
 }
 
 if(!isPWA()){
-
-window.location="index.html"
-
+  window.location.replace("index.html");
 }
 
-const name = localStorage.getItem("userName") || "Learner"
-
-document.getElementById("welcomeText").innerText =
-"Welcome, "+name+"!"
-
-document.getElementById("avatar").innerText =
-name.charAt(0).toUpperCase()
+// Set user name & avatar
+const name = localStorage.getItem("userName") || "Learner";
+document.getElementById("welcomeText").innerText = "Welcome, " + name + "! 🎉";
+document.getElementById("avatar").innerText = name.charAt(0).toUpperCase();
 
 function goHome(){
-
-let agree=document.getElementById("agree")
-
-if(!agree.checked){
-
-document.getElementById("agreePopup").style.display="flex"
-
-return
-
+  const agree = document.getElementById("agree");
+  if(!agree.checked){
+    document.getElementById("agreePopup").style.display = "flex";
+    return;
+  }
+  localStorage.setItem("seenWelcome", "yes");
+  // Smooth fade-out
+  document.body.style.opacity = "0";
+  document.body.style.transition = "opacity 0.2s ease";
+  setTimeout(() => { window.location.href = "index.html"; }, 200);
 }
 
-localStorage.setItem("seenWelcome","yes")
-window.location="index.html"
-
+function closeAgree(){
+  document.getElementById("agreePopup").style.display = "none";
 }
-
 </script>
 
 <script>
+// ===== CONFETTI ANIMATION (PRESERVED) =====
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
 
-// CONFETTI ANIMATION
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-const canvas=document.getElementById("confetti")
-const ctx=canvas.getContext("2d")
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
 
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
+const pieces = [];
+const colors = ["#22D3EE","#34D399","#F43F5E","#FB923C","#A78BFA","#FBBF24"];
 
-const pieces=[]
-
-for(let i=0;i<120;i++){
-
-pieces.push({
-
-x:Math.random()*canvas.width,
-
-y:Math.random()*canvas.height,
-
-size:8,
-
-speed:2+Math.random()*3,
-
-color:`hsl(${Math.random()*360},80%,60%)`
-
-})
-
+for(let i = 0; i < 120; i++){
+  pieces.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    size: 5 + Math.random() * 6,
+    speed: 1.5 + Math.random() * 2.5,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    rotation: Math.random() * 360,
+    rotSpeed: (Math.random() - 0.5) * 3
+  });
 }
 
 function update(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  pieces.forEach(p => {
+    p.y += p.speed;
+    p.rotation += p.rotSpeed;
+    if(p.y > canvas.height){ p.y = 0; p.x = Math.random() * canvas.width; }
 
-ctx.clearRect(0,0,canvas.width,canvas.height)
-
-pieces.forEach(p=>{
-
-p.y+=p.speed
-
-if(p.y>canvas.height){
-
-p.y=0
-
-p.x=Math.random()*canvas.width
-
+    ctx.save();
+    ctx.translate(p.x + p.size/2, p.y + p.size/2);
+    ctx.rotate(p.rotation * Math.PI / 180);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = 0.85;
+    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 0.5);
+    ctx.restore();
+  });
+  requestAnimationFrame(update);
 }
-
-ctx.fillStyle=p.color
-
-ctx.fillRect(p.x,p.y,p.size,p.size)
-
-})
-
-requestAnimationFrame(update)
-
-}
-
-update()
-
-function closeAgree(){
-
-document.getElementById("agreePopup").style.display="none"
-
-}
-
+update();
 </script>
 
 </body>
