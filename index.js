@@ -57,14 +57,16 @@ const seen = {
   announcements : new Set(JSON.parse(sessionStorage.getItem(SK.ANNOUNCEMENTS) || "[]")),
   notifications : new Set(JSON.parse(localStorage.getItem(SK.NOTIFICATIONS)   || "[]")),
   promotions    : new Set(JSON.parse(sessionStorage.getItem(SK.PROMOTIONS)    || "[]")),
-  videoPromos   : new Set(JSON.parse(sessionStorage.getItem(SK.VIDEO_PROMOS)  || "[]"))
+  // BAAD MEIN (localStorage — kabhi repeat nahi)
+videoPromos : new Set(JSON.parse(localStorage.getItem(SK.VIDEO_PROMOS)  || "[]"))
 };
 
 function markSeen(type, id) {
   seen[type].add(id);
   try {
     // notifications → localStorage (permanent); everything else → sessionStorage
-    const storage = (type === "notifications") ? localStorage : sessionStorage;
+    // BAAD MEIN
+const storage = (type === "notifications" || type === "videoPromos") ? localStorage : sessionStorage;
     storage.setItem(SK[type.toUpperCase()], JSON.stringify([...seen[type]]));
   } catch {}
 }
