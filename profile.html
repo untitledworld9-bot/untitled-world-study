@@ -25,11 +25,12 @@ body{
   background:linear-gradient(160deg,var(--bg-start) 0%,var(--bg-end) 100%);
   min-height:100vh; color:var(--text-primary);
   padding-bottom:90px;
-  /* padding-top accounts for fixed header height */
   padding-top:76px;
   animation:pageIn 0.3s ease forwards;
 }
-@keyframes pageIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+/* ⚠️ ONLY opacity — NO transform on body.
+   transform:translateY on body breaks ALL position:fixed children (known CSS bug) */
+@keyframes pageIn{from{opacity:0;}to{opacity:1;}}
 
 /* ===== FIXED TOP HEADER (APP STYLE) ===== */
 .top-bar{
@@ -185,7 +186,7 @@ body{
   <div class="avatar" id="avatar">A</div>
   <div class="user-info">
     <div id="userName">User</div>
-    <div class="user-email" id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8bfef8eef9cbece6eae2e7a5e8e4e6">[email&#160;protected]</a></div>
+    <div class="user-email" id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="473234223507202a262e2b6924282a">[email&#160;protected]</a></div>
   </div>
   <div id="goalBadge" class="goal-badge">JEE</div>
 </div>
@@ -304,13 +305,4 @@ function logout(){
   document.body.style.opacity = "0";
   document.body.style.transition = "opacity 0.2s ease";
   setTimeout(() => {
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("goal");
-    localStorage.removeItem("seenWelcome");
-    window.location.href = "login.html";
-  }, 200);
-}
-</script>
-</body>
-</html>
+    localStorage.re
