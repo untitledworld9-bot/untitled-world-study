@@ -1,325 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile - Untitled World</title>
+<link rel="icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Profile - Untitled World</title>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-body {
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  font-family: 'Poppins', sans-serif;
-  color: white;
-  margin: 0;
-  padding: 0;
-  padding-bottom: 80px; /* Bottom nav ke liye space */
+:root{
+  --bg-start:#0B1220; --bg-end:#0F172A;
+  --primary:#22D3EE; --primary-dark:#06B6D4;
+  --secondary:#34D399; --accent:#F43F5E;
+  --text-primary:#E2E8F0; --text-secondary:#94A3B8;
+  --card-bg:rgba(255,255,255,0.03); --card-border:rgba(255,255,255,0.08);
+  --radius:16px; --shadow:0 4px 20px rgba(0,0,0,0.3); --transition:0.25s ease;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+html{background:var(--bg-start);}
+body{
+  background:linear-gradient(160deg,var(--bg-start) 0%,var(--bg-end) 100%);
+  min-height:100vh; color:var(--text-primary);
+  padding-bottom:90px;
+  animation:pageIn 0.3s ease forwards;
+}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.top-bar{
+  display:flex;align-items:center;gap:12px;
+  padding:20px 20px 12px 20px;
+  max-width:440px;margin:auto;
+}
+.avatar{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:20px;color:#0B1220;
+  box-shadow:0 0 0 3px rgba(34,211,238,0.2),var(--shadow);flex-shrink:0;
+}
+.user-info{display:flex;flex-direction:column;flex:1;}
+#userName{font-weight:600;font-size:16px;color:var(--text-primary);line-height:1.3;}
+.user-email{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+.goal-badge{
+  background:rgba(34,211,238,0.1);color:var(--primary);
+  border:1px solid rgba(34,211,238,0.25);
+  padding:5px 12px;border-radius:50px;font-size:12px;font-weight:600;flex-shrink:0;
 }
 
-/* --- HEADER / TOP BAR --- */
-.top-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 20px 20px 10px 20px;
-  max-width: 420px;
-  margin: auto;
+.profile-container{
+  max-width:440px;margin:auto;
+  padding:8px 20px 24px;
+  display:flex;flex-direction:column;gap:16px;
+}
+.profile-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);
+  transition:var(--transition);
+}
+.profile-card:hover{border-color:rgba(34,211,238,0.2);}
+.section-title{
+  font-size:14px;font-weight:600;color:var(--primary);
+  display:flex;align-items:center;gap:8px;margin-bottom:16px;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.input-label{
+  display:block;font-size:12px;color:var(--text-secondary);
+  font-weight:500;margin-bottom:6px;letter-spacing:0.3px;
+}
+.edtech-input,.edtech-select{
+  width:100%;padding:12px 16px;border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(0,0,0,0.25);color:var(--text-primary);
+  font-size:14px;outline:none;margin-bottom:16px;
+  font-family:'Poppins',sans-serif;box-sizing:border-box;
+  transition:var(--transition);-webkit-appearance:none;appearance:none;
+}
+.edtech-input:focus,.edtech-select:focus{
+  border-color:rgba(34,211,238,0.5);
+  box-shadow:0 0 0 3px rgba(34,211,238,0.08);
+}
+.edtech-input::placeholder{color:var(--text-secondary);}
+.edtech-select option{background:#162030;color:var(--text-primary);}
+
+.save-btn{
+  width:100%;padding:14px;border:none;border-radius:50px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#0B1220;font-weight:700;font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 16px rgba(34,211,238,0.25);transition:var(--transition);
+}
+.save-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(34,211,238,0.35);}
+.save-btn:active{transform:scale(0.97);}
+
+#msg{
+  display:none;margin-top:12px;padding:10px 16px;
+  background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);
+  border-radius:10px;color:var(--secondary);font-size:13px;
+  font-weight:600;text-align:center;
 }
 
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #4facfe;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 20px;
-  box-shadow: 0 4px 10px rgba(0,242,254,0.3);
+.sub-promo-card{
+  background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.25);
+  color:#FBBF24 !important;padding:14px 20px;border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  text-decoration:none;font-weight:600;font-size:14px;transition:var(--transition);cursor:pointer;
+}
+.sub-promo-card:hover{background:rgba(251,191,36,0.1);}
+.sub-promo-card:active{transform:scale(0.97);}
+
+.logout-btn{
+  background:rgba(244,63,94,0.06);border:1px solid rgba(244,63,94,0.25);
+  color:#F87171;width:100%;padding:14px;border-radius:var(--radius);
+  font-weight:600;font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;transition:var(--transition);
+}
+.logout-btn:hover{background:rgba(244,63,94,0.1);}
+.logout-btn:active{transform:scale(0.97);}
+
+.follow-section{text-align:center;padding:4px 0;}
+.follow-section p{
+  margin-bottom:12px;font-size:13px;font-weight:600;
+  color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;
+}
+.social-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+
+.yt-promo-card{
+  background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.3);
+  border-radius:50px;padding:9px 18px;display:inline-flex;align-items:center;
+  justify-content:center;gap:8px;color:#ff4757 !important;text-decoration:none;
+  font-weight:600;font-size:13px;transition:var(--transition);
+}
+.yt-promo-card:hover{background:rgba(255,71,87,0.14);}
+.yt-promo-card:active{transform:scale(0.97);}
+
+.contact-promo-card{
+  background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.3);
+  border-radius:50px;padding:9px 18px;display:inline-flex;align-items:center;
+  justify-content:center;gap:8px;color:var(--primary) !important;text-decoration:none;
+  font-weight:600;font-size:13px;transition:var(--transition);
+}
+.contact-promo-card:hover{background:rgba(34,211,238,0.14);}
+.contact-promo-card:active{transform:scale(0.97);}
+
+.made-line{
+  font-family:'Playfair Display',serif;font-size:14px;
+  font-style:italic;text-align:center;color:var(--text-secondary);padding:8px 0;
 }
 
-.user-info {
-  display: flex;
-  flex-direction: column;
+/* ===== BOTTOM NAV ===== */
+.pwa-bottom-nav{
+  position:fixed;bottom:0;left:0;width:100%;height:64px;
+  background:rgba(11,18,32,0.95);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  display:flex;justify-content:space-around;align-items:center;
+  z-index:2000;border-top:1px solid var(--card-border);
 }
-
-#userName {
-  font-weight: 600;
-  font-size: 16px;
+.pwa-bottom-nav a{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-decoration:none;color:var(--text-secondary);font-size:11px;
+  gap:4px;padding:8px 12px;border-radius:12px;transition:var(--transition);min-width:52px;
 }
-
-.goal-badge {
-  margin-left: auto;
-  background: rgba(0, 242, 254, 0.15);
-  color: #00f2fe;
-  border: 1px solid #00f2fe;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* --- MAIN PROFILE CONTAINER --- */
-.profile-container {
-  max-width: 420px;
-  margin: auto;
-  padding: 10px 20px 30px;
-}
-
-.profile-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 25px 20px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-}
-
-.section-title {
-  margin-top: 0;
-  margin-bottom: 18px;
-  font-size: 16px;
-  color: #00f2fe;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* --- EDTECH INPUTS & SELECT --- */
-.input-label {
-  font-size: 13px;
-  opacity: 0.8;
-  margin-bottom: 6px;
-  display: block;
-  font-weight: 500;
-}
-
-.edtech-input, .edtech-select {
-  width: 100%;
-  padding: 12px 15px;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 242, 254, 0.3);
-  background: rgba(0, 0, 0, 0.2);
-  color: white;
-  font-size: 14px;
-  outline: none;
-  margin-bottom: 18px;
-  font-family: 'Poppins', sans-serif;
-  box-sizing: border-box;
-  transition: 0.3s;
-}
-
-.edtech-input:focus, .edtech-select:focus {
-  border-color: #00f2fe;
-  box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
-}
-
-.edtech-select option {
-  background: #1e2f36;
-  color: white;
-}
-
-.save-btn {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(45deg, #00f2fe, #4facfe);
-  color: #000;
-  font-weight: bold;
-  font-size: 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
-  transition: 0.2s;
-}
-
-.save-btn:active {
-  transform: scale(0.96);
-}
-
-#msg {
-  color: #00ff88;
-  margin-top: 12px;
-  font-size: 13px;
-  text-align: center;
-  display: none;
-  font-weight: 600;
-}
-
-/* --- PROMO CARDS (SUBSCRIPTION, LOGOUT, SOCIALS) --- */
-.sub-promo-card {
-  background: rgba(241, 196, 15, 0.1);
-  border: 1px solid #f1c40f;
-  color: #f1c40f !important;
-  padding: 14px 20px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 15px;
-  margin-top: 20px;
-  transition: 0.2s;
-}
-
-.logout-btn {
-  background: rgba(231, 76, 60, 0.1);
-  border: 1px solid #e74c3c;
-  color: #e74c3c;
-  width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  font-weight: bold;
-  font-size: 15px;
-  cursor: pointer;
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: 0.2s;
-}
-
-.sub-promo-card:active, .logout-btn:active {
-  transform: scale(0.96);
-}
-
-.follow-section {
-  margin-top: 35px;
-  text-align: center;
-}
-
-.follow-section p {
-  margin-bottom: 12px;
-  font-weight: 600;
-  font-size: 15px;
-  opacity: 0.9;
-}
-
-/* Same Exact YouTube & Contact Us cards as Sidebar */
-.yt-promo-card {
-  background: rgba(255, 71, 87, 0.1);
-  border: 1px solid #ff4757;
-  border-radius: 10px;
-  padding: 8px 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #ff4757 !important;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 14px;
-  transition: 0.2s;
-  margin-bottom: 10px;
-}
-
-.contact-promo-card {
-  background: rgba(0, 242, 254, 0.1);
-  border: 1px solid #00f2fe;
-  border-radius: 10px;
-  padding: 8px 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #00f2fe !important;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 14px;
-  transition: 0.2s;
-}
-
-.yt-promo-card i, .contact-promo-card i {
-  font-size: 16px;
-}
-
-.made-line {
-  margin-top: 30px;
-  font-family: 'Playfair Display', serif;
-  font-size: 16px;
-  font-style: italic;
-  font-weight: 500;
-  text-align: center;
-  opacity: 0.8;
-}
-
-/* --- BOTTOM NAV (EXACT HOME MATCH) --- */
-.pwa-bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 65px;
-  background: #0f2027;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 2000;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.pwa-bottom-nav a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  color: white;
-  font-size: 12px;
-  opacity: 0.7;
-  transition: 0.3s;
-}
-
-.pwa-bottom-nav a.active {
-  color: #00f2fe;
-  opacity: 1;
-}
-
-.pwa-bottom-nav a i {
-  font-size: 18px;
-  margin-bottom: 4px;
-}
-
-/* Home wali specific YT red styling bypass for bottom nav */
-.pwa-bottom-nav a .fa-youtube {
-  color: #ff4757 !important; 
-}
+.pwa-bottom-nav a i{font-size:18px;}
+.pwa-bottom-nav a.active{color:var(--primary);}
+.pwa-bottom-nav a:not(.active):hover{color:var(--text-primary);}
+.pwa-bottom-nav a .fa-youtube{color:#ff4757 !important;}
 </style>
 </head>
-
 <body>
 
 <div class="top-bar">
   <div class="avatar" id="avatar">A</div>
   <div class="user-info">
     <div id="userName">User</div>
-    <div style="font-size:12px; opacity:0.7;" id="userEmail">email@gmail.com</div>
+    <div class="user-email" id="userEmail">user@gmail.com</div>
   </div>
-  <div id="goalBadge" class="goal-badge">No Goal</div>
+  <div id="goalBadge" class="goal-badge">JEE</div>
 </div>
-
 
 <div class="profile-container">
 
   <div class="profile-card">
     <h3 class="section-title"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
-    
     <label class="input-label">Your Name</label>
     <input type="text" id="nameInput" class="edtech-input" placeholder="Enter your name">
-
     <label class="input-label">Select Goal</label>
     <select id="goalSelect" class="edtech-select">
       <option value="JEE">JEE</option>
@@ -327,9 +193,8 @@ body {
       <option value="CUET">CUET</option>
       <option value="Boards">Boards</option>
     </select>
-
     <button class="save-btn" onclick="saveProfile()">
-      <i class="fa-solid fa-floppy-disk"></i> Save Details
+      <i class="fa-solid fa-floppy-disk"></i> Save Changes
     </button>
     <div id="msg"></div>
   </div>
@@ -344,109 +209,90 @@ body {
 
   <div class="follow-section">
     <p>Follow us on</p>
-    <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
-      <i class="fa-brands fa-youtube"></i> YouTube
-    </a><br>
-    <a href="contact.html" class="contact-promo-card">
-      <i class="fa-solid fa-headset"></i> Contact Us
-    </a>
+    <div class="social-row">
+      <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
+        <i class="fa-brands fa-youtube"></i> YouTube
+      </a>
+      <a href="contact.html" class="contact-promo-card">
+        <i class="fa-solid fa-headset"></i> Contact Us
+      </a>
+    </div>
   </div>
 
-  <p class="made-line">Crafted with <span>❤️</span> for Focused Learners</p>
+  <p class="made-line">Crafted with ❤️ for Focused Learners</p>
 
 </div>
-
 
 <div id="pwaBottomNav" class="pwa-bottom-nav">
   <a href="index.html">
     <i class="fa-solid fa-house"></i>
     <span>Home</span>
   </a>
-
   <a href="mocktest.html">
     <i class="fa-solid fa-file-pen"></i>
     <span>Mock Test</span>
   </a>
-
   <a href="timer.html">
     <i class="fa-solid fa-stopwatch"></i>
     <span>Focus</span>
   </a>
-
   <a href="playlist.html">
     <i class="fa-brands fa-youtube"></i>
     <span>Playlist</span>
   </a>
-
   <a href="profile.html" class="active">
     <i class="fa-solid fa-user"></i>
     <span>Profile</span>
   </a>
 </div>
 
-
 <script>
-// --- LOAD DATA ON START ---
 let name = localStorage.getItem("userName") || "User";
 let email = localStorage.getItem("userEmail") || "user@gmail.com";
-let savedGoal = localStorage.getItem("goal") || "JEE"; // Default to JEE
+let savedGoal = localStorage.getItem("goal") || "JEE";
 
-// Top Bar update
 document.getElementById("userName").innerText = name;
 document.getElementById("userEmail").innerText = email;
 document.getElementById("avatar").innerText = name.charAt(0).toUpperCase();
 document.getElementById("goalBadge").innerText = savedGoal;
-
-// Inputs me pre-fill karna
 document.getElementById("nameInput").value = name;
 document.getElementById("goalSelect").value = savedGoal;
 
-
-// --- SAVE PROFILE LOGIC ---
-function saveProfile() {
+function saveProfile(){
   let newName = document.getElementById("nameInput").value.trim();
   let selectedGoal = document.getElementById("goalSelect").value;
 
-  if(!newName) {
-    alert("Please enter a valid name.");
+  if(!newName){
+    const inp = document.getElementById("nameInput");
+    inp.style.borderColor = "rgba(244,63,94,0.6)";
+    setTimeout(() => { inp.style.borderColor = ""; }, 1500);
     return;
   }
 
-  // LocalStorage me Save karo
   localStorage.setItem("userName", newName);
   localStorage.setItem("goal", selectedGoal);
 
-  // Top Bar immediately update karo
   document.getElementById("userName").innerText = newName;
   document.getElementById("avatar").innerText = newName.charAt(0).toUpperCase();
   document.getElementById("goalBadge").innerText = selectedGoal;
 
-  // Success Message Dikhao (Green Check ke sath)
-  let msgBox = document.getElementById("msg");
+  const msgBox = document.getElementById("msg");
   msgBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> Profile saved successfully!';
   msgBox.style.display = "block";
-
-  // Thodi der me message hata do
-  setTimeout(() => {
-    msgBox.style.display = "none";
-  }, 2500);
+  setTimeout(() => { msgBox.style.display = "none"; }, 2500);
 }
 
-
-// --- LOGOUT LOGIC ---
 function logout(){
-  localStorage.removeItem("userName");
-  localStorage.removeItem("userEmail");
-  localStorage.removeItem("goal");
-  window.location.href = "login.html";
-}
-
-// PWA Check
-if(!window.matchMedia('(display-mode: standalone)').matches){
-  // If you want to force PWA only, keep this. Otherwise you can remove it.
-  // window.location.href="index.html"; 
+  document.body.style.opacity = "0";
+  document.body.style.transition = "opacity 0.2s ease";
+  setTimeout(() => {
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("goal");
+    localStorage.removeItem("seenWelcome");
+    window.location.href = "login.html";
+  }, 200);
 }
 </script>
-
 </body>
 </html>
