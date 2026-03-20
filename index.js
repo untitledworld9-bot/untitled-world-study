@@ -155,7 +155,9 @@ function isPWA() {
 
 function initServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
-  navigator.serviceWorker.register("/firebase-messaging-sw.js");
+
+navigator.serviceWorker.register("/firebase-messaging-sw.js");
+}
 
 /* ─────────────────────────────
    ANNOUNCEMENTS
