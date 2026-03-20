@@ -1102,7 +1102,7 @@ window.sendNotification = async () => {
       url,                          // ← NEW: stored so foreground handler can route too
       read:      false,
       time:      Date.now(),
-      sentAt:    serverTimestamp()
+      createdAt: serverTimestamp()
     });
 
     // ── 2. Background push via Replit backend (drives system popup when app is closed)
