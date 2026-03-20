@@ -486,18 +486,32 @@ function listenUsers() {
 
 /** Compute aggregate stats and update dashboard cards */
 function updateUserStats() {
-  const users     = STATE.allUsers;
-  const total     = users.length;
-  const online = users.filter(u =>
-  u.status === "Online" ||
-  (u.status && u.status.includes("Focusing"))
-).length;
+  const users = STATE.allUsers;
+  const total = users.length;
 
-const focusing = users.filter(u =>
-  u.status && u.status.includes("Focusing")
-).length;
-  const totalFocMin = users.reduce((sum, u) => sum + (u.focusTime || 0), 0);
-  const focHours  = totalFocMin < 60
+  const STALE_MS = 5 * 60 * 1000; // 5 minutes — stale threshold
+  const now = Date.now();
+
+  const online = users.filter(u => {
+    const s = (u.status || "").toLowerCase();
+    if (s !== "online" && !s.includes("focus")) return false;
+    // Stale check — agar lastActive 5+ min purana hai toh offline maano
+    const ts = u.lastActive || u.lastSeen || 0;
+    if (ts && (now - ts) > STALE_MS) return false;
+    return true;
+  }).length;
+
+  const focusing = users.filter(u => {
+    const s = (u.status || "").toLowerCase();
+    if (!s.includes("focus")) return false;
+    const ts = u.lastActive || u.lastSeen || 0;
+    if (ts && (now - ts) > STALE_MS) return false;
+    return true;
+  }).length;
+
+  const totalFocMin = users.reduce((sum, u) =>
+    sum + (u.focusTime || u.totalFocusTime || u.timerMinutes || 0), 0);
+  const focHours = totalFocMin < 60
     ? `${totalFocMin}m`
     : `${Math.floor(totalFocMin / 60)}h ${totalFocMin % 60}m`;
 
@@ -505,6 +519,8 @@ const focusing = users.filter(u =>
   animateStat($("onlineUsers"),   online);
   animateStat($("focusingUsers"), focusing);
   animateStat($("focusTime"),     focHours);
+  animateStat($("liveVisitors"),  online);
+}
 
   // Live visitors = online + focusing
   animateStat($("liveVisitors"),  online);
@@ -1704,12 +1720,10 @@ function renderLeaderboardSection() {
 
 /** Full Leaderboard: sorted by XP, shows Level + Badge */
 function renderFullLeaderboard(container) {
-  // Show ALL users sorted by XP — even if xp = 0, they get a rank
   const users = [...STATE.allUsers]
     .sort((a, b) => {
-      // Support both 'xp' and 'totalXP' field names
-      const axp = a.xp ?? a.totalXP ?? a.score ?? 0;
-      const bxp = b.xp ?? b.totalXP ?? b.score ?? 0;
+      const axp = a.xp ?? a.totalXP ?? a.points ?? a.score ?? 0;
+      const bxp = b.xp ?? b.totalXP ?? b.points ?? b.score ?? 0;
       return bxp - axp;
     })
     .slice(0, 50);
@@ -1739,10 +1753,10 @@ function renderFullLeaderboard(container) {
       </thead>
       <tbody>
         ${users.map((u, i) => {
-          const xp     = u.xp ?? u.totalXP ?? u.score ?? 0;
-          const level  = u.level || adminGetLevel(xp);
+          const xp     = u.xp ?? u.totalXP ?? u.points ?? u.score ?? 0;
+          const level  = u.level ?? adminGetLevel(xp);
           const badge  = adminGetBadge(xp);
-          const streak = u.streak || u.currentStreak || 0;
+          const streak = u.streak ?? u.currentStreak ?? 0;
           const rank   = medals[i] || `#${i + 1}`;
           return `
           <tr style="border-bottom:1px solid var(--border);">
@@ -1760,9 +1774,7 @@ function renderFullLeaderboard(container) {
             <td style="padding:12px;">
               <span style="background:rgba(124,92,252,0.15);color:var(--accent-violet);
                 border:1px solid rgba(124,92,252,0.3);border-radius:20px;
-                padding:2px 10px;font-size:12px;font-weight:600;">
-                Lv.${level}
-              </span>
+                padding:2px 10px;font-size:12px;font-weight:600;">Lv.${level}</span>
             </td>
             <td style="padding:12px;font-size:12px;">${badge}</td>
             <td style="padding:12px;font-family:var(--font-mono);font-size:12px;color:var(--accent-amber);">🔥 ${streak}</td>
@@ -1777,7 +1789,10 @@ function renderFullLeaderboard(container) {
 /** Timer Leaderboard: sorted by focusTime (minutes) */
 function renderTimerLeaderboard(container) {
   const users = [...STATE.allUsers]
-    .sort((a, b) => (b.focusTime || b.totalFocusTime || 0) - (a.focusTime || a.totalFocusTime || 0))
+    .sort((a, b) =>
+      (b.focusTime || b.totalFocusTime || b.timerMinutes || 0) -
+      (a.focusTime || a.totalFocusTime || a.timerMinutes || 0)
+    )
     .slice(0, 50);
 
   if (!users.length) {
@@ -1798,14 +1813,16 @@ function renderTimerLeaderboard(container) {
           <th style="padding:10px 12px;text-align:left;font-size:12px;color:var(--text-muted);font-weight:600;">User</th>
           <th style="padding:10px 12px;text-align:left;font-size:12px;color:var(--text-muted);font-weight:600;">Focus Time</th>
           <th style="padding:10px 12px;text-align:left;font-size:12px;color:var(--text-muted);font-weight:600;">XP</th>
+          <th style="padding:10px 12px;text-align:left;font-size:12px;color:var(--text-muted);font-weight:600;">Level</th>
           <th style="padding:10px 12px;text-align:left;font-size:12px;color:var(--text-muted);font-weight:600;">Badge</th>
           <th style="padding:10px 12px;text-align:left;font-size:12px;color:var(--text-muted);font-weight:600;">Status</th>
         </tr>
       </thead>
       <tbody>
         ${users.map((u, i) => {
-          const xp    = u.xp ?? u.totalXP ?? u.score ?? 0;
-          const ft    = u.focusTime || u.totalFocusTime || 0;
+          const ft    = u.focusTime || u.totalFocusTime || u.timerMinutes || 0;
+          const xp    = u.xp ?? u.totalXP ?? u.points ?? u.score ?? 0;
+          const level = u.level ?? adminGetLevel(xp);
           const badge = adminGetBadge(xp);
           const rank  = medals[i] || `#${i + 1}`;
           return `
@@ -1822,6 +1839,11 @@ function renderTimerLeaderboard(container) {
             </td>
             <td style="padding:12px;font-family:var(--font-mono);color:var(--accent-cyan);">${formatFocusTime(ft)}</td>
             <td style="padding:12px;font-family:var(--font-mono);color:var(--accent-amber);">⚡ ${xp}</td>
+            <td style="padding:12px;">
+              <span style="background:rgba(124,92,252,0.15);color:var(--accent-violet);
+                border:1px solid rgba(124,92,252,0.3);border-radius:20px;
+                padding:2px 10px;font-size:12px;font-weight:600;">Lv.${level}</span>
+            </td>
             <td style="padding:12px;font-size:12px;">${badge}</td>
             <td style="padding:12px;">${statusBadge(u.status)}</td>
           </tr>`;
@@ -1845,8 +1867,15 @@ function formatLastActive(u) {
   const s = (u.status || "").toLowerCase();
   if (s === "online" || s.includes("focus")) return `<span style="color:var(--accent-green)">Now</span>`;
 
-  // Use lastActive (ms timestamp) for real-time relative display
-  const ts = u.lastActive || u.lastSeen || null;
+  // Try lastActive (ms) first, then lastSeen, then parse lastActiveDate string
+  let ts = u.lastActive || u.lastSeen || null;
+
+  // If no ms timestamp, try to parse lastActiveDate string into ms
+  if (!ts && u.lastActiveDate) {
+    const parsed = Date.parse(u.lastActiveDate);
+    if (!isNaN(parsed)) ts = parsed;
+  }
+
   if (ts) {
     const diffMs  = Date.now() - ts;
     const diffSec = Math.floor(diffMs / 1000);
@@ -1854,18 +1883,16 @@ function formatLastActive(u) {
     const diffHr  = Math.floor(diffMin / 60);
     const diffDay = Math.floor(diffHr / 24);
 
-    if (diffSec < 60)  return `<span style="color:var(--text-secondary)">just now</span>`;
+    if (diffSec < 60)  return `<span style="color:var(--accent-green)">just now</span>`;
     if (diffMin < 60)  return `<span style="color:var(--text-secondary)">${diffMin} min ago</span>`;
     if (diffHr  < 24)  return `<span style="color:var(--text-muted)">${diffHr} hr ago</span>`;
-    // More than 1 day — show actual date + time
+    if (diffDay < 7)   return `<span style="color:var(--text-muted)">${diffDay}d ago</span>`;
     const d = new Date(ts);
     const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: diffDay > 300 ? "numeric" : undefined });
     const timeStr = d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
     return `<span style="color:var(--text-muted)">${dateStr}, ${timeStr}</span>`;
   }
 
-  // Fallback to lastActiveDate string
-  if (u.lastActiveDate) return `<span style="color:var(--text-muted)">${u.lastActiveDate}</span>`;
   return "—";
 }
 
