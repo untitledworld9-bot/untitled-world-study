@@ -510,59 +510,101 @@ function renderPromotionBanner(data) {
 
 // ── POPUP — centered overlay (reuses #promoPopup, unchanged)
 function renderPromotionPopup(data) {
-  const popup = document.getElementById("promoPopup");
-  if (!popup) return;
+  const overlay = document.createElement("div");
+  overlay.style.cssText = `
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0.85);
+    backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;
+    z-index:99999;
+    animation:fadeIn .3s ease;
+    font-family:inherit;
+  `;
 
-  const box = popup.querySelector(".promo-box");
-  if (!box) return;
+  const card = document.createElement("div");
+  card.style.cssText = `
+    position:relative;
+    width:90%;max-width:400px;
+    background:${data.bgColor || "#0d1117"};
+    border:1px solid rgba(0,224,255,0.25);
+    border-radius:20px;
+    padding:32px 24px 24px;
+    text-align:center;
+    box-shadow:0 24px 80px rgba(0,0,0,0.8);
+    animation:slideUp .35s ease;
+    color:#eef0ff;
+  `;
 
-  box.innerHTML = "";
+  // Close ✕
+  const close = document.createElement("span");
+  close.textContent = "✕";
+  close.style.cssText = `
+    position:absolute;top:14px;right:16px;
+    color:rgba(255,255,255,0.4);font-size:18px;
+    cursor:pointer;line-height:1;
+  `;
+  close.onclick = () => overlay.remove();
+  card.appendChild(close);
 
-  const closeBtn = document.createElement("span");
-  closeBtn.className = "promo-close";
-  closeBtn.textContent = "✕";
-  closeBtn.onclick = () => popup.style.setProperty("display", "none", "important");
+  // Emoji / icon at top
+  const icon = document.createElement("div");
+  icon.style.cssText = "font-size:36px;margin-bottom:14px;";
+  icon.textContent = "🎉";
+  card.appendChild(icon);
 
-  const titleEl = document.createElement("h3");
-  titleEl.style.cssText = "color:#fff;margin:16px 0 10px;font-size:18px;font-weight:700;padding:0 10px;";
-  titleEl.textContent = data.title || "";
+  if (data.title) {
+    const t = document.createElement("h3");
+    t.style.cssText = `
+      font-size:18px;font-weight:700;
+      color:#fff;margin:0 0 10px;line-height:1.3;
+    `;
+    t.textContent = data.title;
+    card.appendChild(t);
+  }
 
-  const bodyEl = document.createElement("p");
-  bodyEl.style.cssText = "color:#a4b0be;font-size:14px;line-height:1.6;margin:0 0 18px;padding:0 10px;";
-  bodyEl.textContent = data.body || "";
-
-  box.appendChild(closeBtn);
-  box.appendChild(titleEl);
-  box.appendChild(bodyEl);
+  if (data.body) {
+    const b = document.createElement("p");
+    b.style.cssText = `
+      font-size:14px;color:rgba(255,255,255,0.60);
+      line-height:1.6;margin:0 0 20px;
+    `;
+    b.textContent = data.body;
+    card.appendChild(b);
+  }
 
   if (data.cta) {
     const btn = document.createElement("button");
-    btn.style.cssText = `
-      display:block;margin:0 auto 20px;
-      background:linear-gradient(45deg,#00f2fe,#4facfe);
-      border:none;border-radius:20px;padding:10px 28px;
-      color:#fff;font-weight:600;cursor:pointer;font-size:14px;
-    `;
     btn.textContent = data.cta;
-    // FIX-W: open URL if present
+    btn.style.cssText = `
+      display:block;width:100%;
+      background:linear-gradient(45deg,#00f2fe,#4facfe);
+      border:none;border-radius:12px;padding:12px;
+      color:#000;font-weight:700;font-size:14px;
+      cursor:pointer;margin-bottom:10px;
+    `;
     btn.onclick = () => {
       if (data.url) window.open(data.url, "_blank");
-      popup.style.setProperty("display", "none", "important");
+      overlay.remove();
     };
-    box.appendChild(btn);
+    card.appendChild(btn);
   }
 
-  popup.style.setProperty("display", "flex", "important");
+  const dismiss = document.createElement("button");
+  dismiss.textContent = "Close";
+  dismiss.style.cssText = `
+    background:none;border:none;
+    color:rgba(255,255,255,0.3);font-size:12px;
+    cursor:pointer;padding:6px;
+  `;
+  dismiss.onclick = () => overlay.remove();
+  card.appendChild(dismiss);
 
-  popup.addEventListener("click", function handler(e) {
-    if (e.target === popup) {
-      popup.style.setProperty("display", "none", "important");
-      popup.removeEventListener("click", handler);
-    }
-  });
+  overlay.appendChild(card);
+  overlay.addEventListener("click", e => { if (e.target === overlay) overlay.remove(); });
+  safeAppend(document.body, overlay);
 
   const ms = (data.duration || 8) * 1000;
-  if (ms > 0) setTimeout(() => popup.style.setProperty("display", "none", "important"), ms);
+  if (ms > 0) autoRemove(overlay, ms);
 }
 
 // ── MODAL — full centered overlay, distinct violet style
