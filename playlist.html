@@ -20,13 +20,7 @@
     user-select: none; 
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent; 
-    overscroll-behavior-y: none; 
-}
-
-/* Taki input aur notes likhte waqt dikat na ho */
-input, textarea {
-    user-select: auto !important;
-    -webkit-user-select: auto !important;
+    /* Yahan se maine overscroll wali line hata di hai */
 }
 
         .study-section {
@@ -1174,6 +1168,8 @@ container.innerHTML="";
 if(videos.length===0){
 
 container.innerHTML="<p style='opacity:0.5;'>No videos added yet. Start learning!</p>";
+// 🔥 YE LINE MISSING THI JISKI WAJAH SE MUSIC DELETE NAHI HOTA THA
+document.getElementById("musicRow").innerHTML = ""; 
 return;
 
 }
