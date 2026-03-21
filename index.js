@@ -302,7 +302,7 @@ function initNotifications() {
       if (d.platform === "pwa" && !isPWA()) return;
       if (d.platform === "web" && isPWA())  return;
 
-      fireNotification(d.title, d.body, d.url || null);
+      fireNotification(d.title, d.body, d.url || null, d.image || null); // ← image pass karo
       markSeen("notifications", id);
       updateDoc(doc(db, "notifications", id), { read: true });
     });
@@ -317,12 +317,13 @@ function initNotifications() {
   unsubs.notifications = () => { unsubAll(); unsubUser(); };
 }
 
-function fireNotification(title, body, url) {
+function fireNotification(title, body, url, image) {   // ← image param add
   if (Notification.permission !== "granted") return;
   const opts = {
     body,
     icon  : "/icon-192.png",
     badge : "/icon-192.png",
+    image : image || undefined,          // ← YE ADD KARO — poster image
     data  : { url: url || "/" }
   };
   if (navigator.serviceWorker?.controller) {
@@ -331,7 +332,6 @@ function fireNotification(title, body, url) {
     try { new Notification(title, opts); } catch {}
   }
 }
-
 
 /* ─────────────────────────────
    PROMOTIONS
