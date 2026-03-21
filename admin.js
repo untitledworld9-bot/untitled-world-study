@@ -1101,6 +1101,7 @@ window.sendNotification = async () => {
   const icon     = ($("notifyIcon")?.value   || "🔔").trim();
   const image    = ($("notifyImage")?.value  || "").trim(); // ← ADD
   const platform = $("notifyPlatform")?.value || "both";
+  const btn      = $("notifyBtn");  
 
   if (!title || !body)                { toast("Please fill in title and message.", "warning"); return; }
   if (target === "user" && !user)     { toast("Please enter a target username or UID.", "warning"); return; }
