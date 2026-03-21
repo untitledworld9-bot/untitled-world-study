@@ -21,27 +21,24 @@ const messaging = firebase.messaging();
 // payload.notification → title/body set in Firebase Console or FCM API
 // payload.data         → custom keys, e.g. { url: "/todo.html" }
 messaging.onBackgroundMessage(function(payload) {
-
   const notification = payload.notification || {};
   const data         = payload.data         || {};
 
-  const title = notification.title || "Untitled World";
-  const body  = notification.body  || "";
-  // data.url: relative ("/todo.html") or absolute ("https://...")
-  const url   = data.url || "/";
+  const title = notification.title  || "Untitled World";
+  const body  = notification.body   || "";
+  const url   = data.url            || "/";
+  const image = notification.image  || data.image || null; // ← ADD
 
   self.registration.showNotification(title, {
     body,
     icon    : "/icon-192.png",
     badge   : "/icon-192.png",
+    image   : image || undefined,    // ← ADD — yahi poster dikhata hai!
     vibrate : [200, 100, 200],
-    data    : { url },       // passed through to notificationclick
-    actions : [
-      { action: "open", title: "Open" }
-    ]
+    data    : { url },
+    actions : [{ action: "open", title: "Open" }]
   });
 });
-
 // ── NOTIFICATION CLICK ─────────────────────────────────────────────────────
 // Tapping the notification opens the app at the correct page.
 // data.url is set from payload.data.url sent by admin/FCM.
