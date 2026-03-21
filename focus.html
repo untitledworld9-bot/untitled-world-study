@@ -177,13 +177,15 @@ body {
 
 /* ✅ Fits inside circle properly */
 .timer {
-    font-size: 62px;       /* ← 52 se 62 */
+    font-size: 54px;       /* 62px se kam karke 54px kar do */
     font-weight: 700;
     color: #00f2fe;
     line-height: 1;
-    letter-spacing: 0px;   /* ← 2px tha, ye extra space kha raha tha */
+    letter-spacing: 0px;   
     font-variant-numeric: tabular-nums;
     text-shadow: 0 0 22px rgba(0, 242, 254, 0.45);
+    width: 100%;           /* Ye add kar do safety ke liye */
+    text-align: center;    /* Ye bhi add kar do */
 }
 
 .timer-container.running .timer {
@@ -281,12 +283,12 @@ body {
 /* --- RESPONSIVE --- */
 @media (max-width: 380px) {
     .timer-container { width: 270px; height: 270px; }
-    .timer { font-size: 68px; }
+    .timer { font-size: 50px; } /* 68px ki jagah 46px karein taaki circle mein aaye */
 }
 
 @media (min-width: 768px) {
     .timer-container { width: 400px; height: 400px; }
-    .timer { font-size: 100px; }
+    .timer { font-size: 80px; } /* Isko bhi 100px ki jagah 80px rakhein taaki perfect lage */
 }
 
 </style>
