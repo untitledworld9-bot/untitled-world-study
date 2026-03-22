@@ -767,4 +767,75 @@ document.addEventListener("DOMContentLoaded", () => {
       }).catch(()=>{});
   }
 
+/* ══ RAIN EFFECT ══════════════════════════════════════════════════════════ */
+(function() {
+  const canvas  = document.getElementById('rainCanvas');
+  const ctx     = canvas.getContext('2d');
+  let drops     = [];
+  let animId    = null;
+  let raining   = false;
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function mkDrop() {
+    return {
+      x:      Math.random() * canvas.width,
+      y:      Math.random() * -canvas.height,
+      len:    Math.random() * 18 + 8,       // drop length
+      speed:  Math.random() * 6 + 7,        // fall speed
+      width:  Math.random() * 0.8 + 0.3,    // stroke width
+      alpha:  Math.random() * 0.35 + 0.08,  // opacity
+    };
+  }
+
+  function initDrops(n) {
+    drops = [];
+    for (let i = 0; i < n; i++) {
+      const d = mkDrop();
+      d.y = Math.random() * canvas.height;  // scatter at start
+      drops.push(d);
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drops.forEach(d => {
+      ctx.beginPath();
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x - d.len * 0.15, d.y + d.len);  // slight angle
+      ctx.strokeStyle = `rgba(0,255,136,${d.alpha})`;
+      ctx.lineWidth   = d.width;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+
+      d.y += d.speed;
+      d.x -= d.speed * 0.12;
+
+      // reset drop when it goes off screen
+      if (d.y > canvas.height + 20) {
+        Object.assign(d, mkDrop());
+      }
+    });
+    animId = requestAnimationFrame(draw);
+  }
+
+  window.toggleRain = function() {
+    raining = !raining;
+    if (raining) {
+      initDrops(160);
+      canvas.classList.add('active');
+      draw();
+    } else {
+      canvas.classList.remove('active');
+      cancelAnimationFrame(animId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  };
+})();
+
 }); // end DOMContentLoaded
