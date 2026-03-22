@@ -2126,13 +2126,9 @@ header {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  pointer-events: none;   /* ← buttons block nahi honge */
+  pointer-events: none;
   opacity: 0;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.8s ease;
 }
-#rainCanvas.active {
-  opacity: 1;
-}
-.timer-ring {
-  cursor: pointer;
-}
+#rainCanvas.active { opacity: 1; }
+.timer-ring { cursor: pointer; }
