@@ -667,6 +667,12 @@ document.addEventListener('DOMContentLoaded',()=>{
     isOn = !isOn;
     ov.style.display = isOn ? 'block' : 'none'; /* Direct — guaranteed works */
   };
+
+/* Capture phase — koi bhi block nahi kar sakta */
+  document.getElementById('ring').addEventListener('click', function(){
+    toggleRain();
+  }, true);
+
 })();
 </script>
 
