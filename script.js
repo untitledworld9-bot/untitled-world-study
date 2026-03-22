@@ -767,13 +767,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }).catch(()=>{});
   }
 
-/* ══ RAIN EFFECT ══════════════════════════════════════════════════════════ */
+// ─── REALISTIC RAIN EFFECT ────────────────────────────────────────────────────
 (function() {
-  const canvas  = document.getElementById('rainCanvas');
-  const ctx     = canvas.getContext('2d');
-  let drops     = [];
-  let animId    = null;
-  let raining   = false;
+  const canvas = document.getElementById('rainCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let drops = [], animId = null, raining = false;
 
   function resize() {
     canvas.width  = window.innerWidth;
@@ -786,48 +785,56 @@ document.addEventListener("DOMContentLoaded", () => {
     return {
       x:      Math.random() * canvas.width,
       y:      Math.random() * -canvas.height,
-      len:    Math.random() * 18 + 8,       // drop length
-      speed:  Math.random() * 6 + 7,        // fall speed
-      width:  Math.random() * 0.8 + 0.3,    // stroke width
-      alpha:  Math.random() * 0.35 + 0.08,  // opacity
+      len:    Math.random() * 22 + 10,
+      speed:  Math.random() * 5 + 8,
+      width:  Math.random() * 1.2 + 0.4,
+      alpha:  Math.random() * 0.18 + 0.06,  // very subtle
     };
-  }
-
-  function initDrops(n) {
-    drops = [];
-    for (let i = 0; i < n; i++) {
-      const d = mkDrop();
-      d.y = Math.random() * canvas.height;  // scatter at start
-      drops.push(d);
-    }
   }
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     drops.forEach(d => {
+      // Main drop streak — white/silver like real rain
+      const grad = ctx.createLinearGradient(d.x, d.y, d.x - d.len*0.2, d.y + d.len);
+      grad.addColorStop(0, `rgba(255,255,255,0)`);
+      grad.addColorStop(0.4, `rgba(220,240,255,${d.alpha})`);
+      grad.addColorStop(1, `rgba(255,255,255,0)`);
+
       ctx.beginPath();
       ctx.moveTo(d.x, d.y);
-      ctx.lineTo(d.x - d.len * 0.15, d.y + d.len);  // slight angle
-      ctx.strokeStyle = `rgba(0,255,136,${d.alpha})`;
+      ctx.lineTo(d.x - d.len * 0.2, d.y + d.len);
+      ctx.strokeStyle = grad;
       ctx.lineWidth   = d.width;
       ctx.lineCap     = 'round';
       ctx.stroke();
 
-      d.y += d.speed;
-      d.x -= d.speed * 0.12;
+      // Small highlight dot at top of drop
+      ctx.beginPath();
+      ctx.arc(d.x, d.y + 2, d.width * 0.8, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${d.alpha * 0.6})`;
+      ctx.fill();
 
-      // reset drop when it goes off screen
-      if (d.y > canvas.height + 20) {
+      d.y += d.speed;
+      d.x -= d.speed * 0.18;
+
+      if (d.y > canvas.height + 30) {
         Object.assign(d, mkDrop());
       }
     });
+
     animId = requestAnimationFrame(draw);
   }
 
   window.toggleRain = function() {
     raining = !raining;
     if (raining) {
-      initDrops(160);
+      drops = Array.from({length: 120}, () => {
+        const d = mkDrop();
+        d.y = Math.random() * canvas.height;
+        return d;
+      });
       canvas.classList.add('active');
       draw();
     } else {
