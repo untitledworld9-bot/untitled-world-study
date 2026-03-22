@@ -619,6 +619,18 @@ header{
   .action-btn{padding:12px;font-size:14px;}
   .session-box{margin-top:8px;padding:10px 12px;}
 }
+
+#rainCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+#rainCanvas.active { opacity: 1; }
+.timer-ring { cursor: pointer; }
+
 @media(min-width:600px){
   .timer-ring{width:260px;height:260px;}
   .time-display{font-size:58px;}
