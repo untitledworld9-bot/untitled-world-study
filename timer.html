@@ -1165,10 +1165,11 @@ onSnapshot(
 }
 .rain-overlay.on{display:block;}
 .drop{
-  position:absolute;top:-20px;
-  width:1px;background:linear-gradient(transparent,rgba(210,235,255,0.4));
+  position:absolute;top:-60px;
+  width:2px;
+  background:linear-gradient(to bottom,transparent,rgba(200,230,255,0.7),transparent);
   animation:fall linear infinite;
-  border-radius:2px;
+  border-radius:4px;
 }
 @keyframes fall{to{transform:translateY(110vh);}}
 </style>
@@ -1184,8 +1185,8 @@ onSnapshot(
     var d = document.createElement('div');
     d.className = 'drop';
     d.style.left = Math.random()*100 + '%';
-    d.style.height = (Math.random()*20+10) + 'px';
-    d.style.opacity = Math.random()*0.5+0.1;
+    d.style.height = (Math.random()*40+20) + 'px';
+d.style.opacity = Math.random()*0.4+0.4;
     d.style.animationDuration = (Math.random()*0.8+0.6) + 's';
     d.style.animationDelay = (Math.random()*2) + 's';
     overlay.appendChild(d);
