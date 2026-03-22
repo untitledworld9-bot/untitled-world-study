@@ -1160,6 +1160,85 @@ onSnapshot(
 );
 </script>
 
+<script>
+(function() {
+  var canvas = document.getElementById('rainCanvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var drops = [], animId = null, raining = false;
+
+  canvas.style.position = 'fixed';
+  canvas.style.inset = '0';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.style.zIndex = '9999';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.display = 'none';
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function mkDrop() {
+    return {
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      len: Math.random() * 20 + 10,
+      speed: Math.random() * 5 + 8,
+      width: Math.random() * 1 + 0.3,
+      alpha: Math.random() * 0.15 + 0.05
+    };
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < drops.length; i++) {
+      var d = drops[i];
+      var grad = ctx.createLinearGradient(d.x, d.y, d.x - d.len*0.2, d.y + d.len);
+      grad.addColorStop(0, 'rgba(200,230,255,0)');
+      grad.addColorStop(0.5, 'rgba(210,235,255,' + d.alpha + ')');
+      grad.addColorStop(1, 'rgba(200,230,255,0)');
+      ctx.beginPath();
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x - d.len*0.2, d.y + d.len);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = d.width;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      d.y += d.speed;
+      d.x -= d.speed * 0.15;
+      if (d.y > canvas.height + 30) {
+        drops[i] = mkDrop();
+      }
+    }
+    animId = requestAnimationFrame(draw);
+  }
+
+  window.toggleRain = function() {
+    raining = !raining;
+    if (raining) {
+      drops = [];
+      for (var i = 0; i < 130; i++) {
+        var d = mkDrop();
+        d.y = Math.random() * canvas.height;
+        drops.push(d);
+      }
+      canvas.style.display = 'block';
+      draw();
+    } else {
+      canvas.style.display = 'none';
+      cancelAnimationFrame(animId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  };
+})();
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>eruda.init();</script>
 <script type="module" src="script.js"></script>
