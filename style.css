@@ -577,9 +577,40 @@ header {
   box-shadow: 0 6px 20px rgba(0, 0, 0, .4);
 }
 
-.start { background: var(--green); color: #000; }
-.stop  { background: var(--red);   color: #fff; }
+.start {
+  position: relative;
+  width: 220px;
+  padding: 16px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
 
+  background: linear-gradient(145deg,#00ff88,#00c96b);
+  color: #002b1a;
+
+  box-shadow:
+    0 10px 30px rgba(0,255,136,0.5),
+    inset 0 3px 10px rgba(255,255,255,0.4),
+    inset 0 -5px 15px rgba(0,0,0,0.3);
+
+  transition: .2s;
+}
+
+.start:active {
+  transform: scale(0.92);
+}
+
+.start::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 50px;
+  background: radial-gradient(circle,rgba(0,255,136,0.5),transparent);
+  filter: blur(15px);
+  z-index: -1;
+}
 
 /* ============================================================
    11. SESSION INFO BOX (Global / Room)
@@ -2120,4 +2151,16 @@ header {
   font-size: 14px; color: #000;
 }
 .rc-confirm-btn:hover { transform: scale(1.04); }
+
+#rainCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.page {
+  position: relative;
+  z-index: 2;
+}
 
