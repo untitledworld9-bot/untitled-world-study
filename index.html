@@ -45,13 +45,24 @@
 
 <style>
 /* ===== GLOBAL DESIGN SYSTEM ===== */
-:root{
-  --bg-start:#0B1220; --bg-end:#0F172A;
-  --primary:#22D3EE; --primary-dark:#06B6D4;
-  --secondary:#34D399; --accent:#F43F5E;
-  --text-primary:#E2E8F0; --text-secondary:#94A3B8;
-  --card-bg:rgba(255,255,255,0.03); --card-border:rgba(255,255,255,0.08);
-  --radius:16px; --shadow:0 4px 20px rgba(0,0,0,0.3); --transition:0.25s ease;
+:root {
+  /* LIGHT MODE (default like real apps) */
+  --bg-start:#ffffff;
+  --bg-end:#f5f5f5;
+  --text-primary:#111111;
+  --text-secondary:#555555;
+  --card-bg:rgba(0,0,0,0.03);
+  --card-border:rgba(0,0,0,0.08);
+}
+
+/* DARK MODE */
+[data-theme="dark"] {
+  --bg-start:#0B1220;
+  --bg-end:#0F172A;
+  --text-primary:#E2E8F0;
+  --text-secondary:#94A3B8;
+  --card-bg:rgba(255,255,255,0.03);
+  --card-border:rgba(255,255,255,0.08);
 }
 
 /* --- CSS START --- */
@@ -1909,6 +1920,29 @@ body.pwa-mode .header-right-actions { display: flex; }
     margin: 0 auto;
   }
 }
+
+.theme-toggle-btn{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  cursor:pointer;
+  transition:0.25s;
+  font-size:14px;
+}
+
+.theme-toggle-btn:hover{
+  background:rgba(255,255,255,0.08);
+}
+
+.theme-toggle-btn span:first-child{
+  font-size:18px;
+}
 </style>
 </head>
 
@@ -1975,6 +2009,11 @@ pointer-events:none;">
     </div>
 
   </div>
+
+<div class="theme-toggle-btn" onclick="toggleTheme()">
+  <span id="themeToggleIcon">✨</span>
+  <span>Theme</span>
+</div>
 
 <div class="pwa-links">
     <a href="mocktest.html"><i class="fa-solid fa-file-pen" style="color: #00f2fe;"></i> Mock Test</a>
@@ -3414,6 +3453,8 @@ function closeExamPopup(){
   setTimeout(() => { el.style.display = "none"; el.style.opacity = ""; }, 200);
 }
 </script>
+
+<script src="theme.js"></script>
 
 <script type="module" src="/index.js"></script>
 
