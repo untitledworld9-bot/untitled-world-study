@@ -36,6 +36,20 @@
 })();
 </script>
 
+<script>
+(function(){
+  const saved = localStorage.getItem("theme");
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved ? saved : (systemDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+})();
+</script>
+
+<style>
+html{visibility:hidden;}
+html[data-theme]{visibility:visible;}
+</style>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -46,23 +60,37 @@
 <style>
 /* ===== GLOBAL DESIGN SYSTEM ===== */
 :root {
-  /* LIGHT MODE (default like real apps) */
+  /* LIGHT MODE (REAL APP LOOK) */
   --bg-start:#ffffff;
   --bg-end:#f5f5f5;
+
   --text-primary:#111111;
   --text-secondary:#555555;
-  --card-bg:rgba(0,0,0,0.03);
+
+  --card-bg:rgba(0,0,0,0.04);
   --card-border:rgba(0,0,0,0.08);
+
+  --header-bg:#ffffff;
+  --nav-bg:#ffffff;
+
+  --glass-bg:rgba(0,0,0,0.03);
 }
 
 /* DARK MODE */
 [data-theme="dark"] {
   --bg-start:#0B1220;
   --bg-end:#0F172A;
+
   --text-primary:#E2E8F0;
   --text-secondary:#94A3B8;
-  --card-bg:rgba(255,255,255,0.03);
+
+  --card-bg:rgba(255,255,255,0.04);
   --card-border:rgba(255,255,255,0.08);
+
+  --header-bg:rgba(11,18,32,0.95);
+  --nav-bg:rgba(11,18,32,0.95);
+
+  --glass-bg:rgba(255,255,255,0.04);
 }
 
 /* --- CSS START --- */
@@ -1943,6 +1971,20 @@ body.pwa-mode .header-right-actions { display: flex; }
 .theme-toggle-btn span:first-child{
   font-size:18px;
 }
+
+.app-box,
+.pwa-card,
+.web-card,
+.daily-streak-card,
+.edtech-section-card{
+  background: var(--card-bg);
+  border:1px solid var(--card-border);
+}
+
+.notif-panel{
+  background: var(--bg-start);
+}
+
 </style>
 </head>
 
