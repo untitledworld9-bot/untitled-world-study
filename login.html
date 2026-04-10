@@ -1,373 +1,396 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<!-- ✅ ZOOM BLOCK -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Login - Study Grid Prep</title>
-<link rel="icon" href="/icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<!-- ✅ INSTANT LOGIN CHECK — NO BLINK -->
-<script>
-(function(){
-  if(localStorage.getItem("userName")){
-    // Already logged in — skip login page instantly
-    var isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    if(isPWA){
-      window.location.replace("mainwelcome.html");
-    } else {
-      window.location.replace("index.html");
-    }
-  }
-})();
-</script>
-
-<!-- ✅ THEME DETECTION — matches index.html logic exactly -->
-<script>
-(function(){
-  var saved = localStorage.getItem("theme");
-  var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  var theme = saved ? saved : (systemDark ? "dark" : "light");
-  document.documentElement.setAttribute("data-theme", theme);
-})();
-</script>
-
-<!-- ✅ FLASH PREVENTION — same as index.html -->
-<style>
-html{ visibility: hidden; }
-html[data-theme]{ visibility: visible; }
-</style>
-
-<style>
-/* ===== GLOBAL DESIGN SYSTEM ===== */
-
-/* LIGHT MODE (default) */
-:root{
-  --bg-start: #ffffff;
-  --bg-end: #f0f4f8;
-  --primary: #22D3EE;
-  --primary-dark: #06B6D4;
-  --secondary: #34D399;
-  --accent: #F43F5E;
-  --text-primary: #111111;
-  --text-secondary: #555555;
-  --card-bg: rgba(0,0,0,0.03);
-  --card-border: rgba(0,0,0,0.08);
-  --radius: 16px;
-  --shadow: 0 4px 20px rgba(0,0,0,0.10);
-  --transition: 0.25s ease;
-  --pill-bg: rgba(0,0,0,0.05);
-  --pill-border: rgba(0,0,0,0.08);
-  --logo-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  --footer-link: #0891B2;
-}
-
-/* DARK MODE */
-[data-theme="dark"]{
-  --bg-start: #0B1220;
-  --bg-end: #0F172A;
-  --text-primary: #E2E8F0;
-  --text-secondary: #94A3B8;
-  --card-bg: rgba(255,255,255,0.03);
-  --card-border: rgba(255,255,255,0.08);
-  --shadow: 0 4px 20px rgba(0,0,0,0.3);
-  --pill-bg: rgba(255,255,255,0.04);
-  --pill-border: rgba(255,255,255,0.08);
-  --logo-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  --footer-link: #22D3EE;
-}
-
-*{
-  margin:0; padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
-}
-
-html{ background: var(--bg-start); }
-
-body{
-  background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-end) 100%);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--text-primary);
-
-  /* ✅ TEXT SELECT BLOCK */
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-
-  /* ✅ TOUCH HIGHLIGHT REMOVE */
-  -webkit-tap-highlight-color: transparent;
-
-  /* ✅ PULL-TO-REFRESH BLOCK */
-  overscroll-behavior-y: none;
-
-  /* Fade-in on arrival */
-  animation: pageIn 0.35s ease forwards;
-}
-
-@keyframes pageIn{
-  from{ opacity:0; transform:translateY(8px); }
-  to{ opacity:1; transform:translateY(0); }
-}
-
-/* ===== LOGIN BOX ===== */
-.login-box{
-  text-align: center;
-  max-width: 360px;
-  width: 90%;
-  padding: 16px;
-}
-
-.logo{
-  width: 88px;
-  height: 88px;
-  border-radius: 24px;
-  margin-bottom: 24px;
-  box-shadow: var(--logo-shadow);
-  animation: floatLogo 3.5s ease-in-out infinite;
-}
-
-@keyframes floatLogo{
-  0%,100%{ transform:translateY(0px); }
-  50%{ transform:translateY(-10px); }
-}
-
-h1{
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-  min-height: 34px;
-}
-
-.sub{
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--primary);
-  margin-bottom: 8px;
-  letter-spacing: 0.3px;
-}
-
-.desc{
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: 32px;
-  line-height: 1.5;
-}
-
-/* ===== CARD WRAPPER ===== */
-.login-card{
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  padding: 24px 20px;
-  box-shadow: var(--shadow);
-  margin-bottom: 20px;
-}
-
-/* ===== GOOGLE BUTTON ===== */
-.google-btn{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-  padding: 14px 20px;
-  background: linear-gradient(135deg, #22D3EE, #06B6D4);
-  color: #0B1220;
-  border: none;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 4px 16px rgba(34,211,238,0.3);
-  letter-spacing: 0.3px;
-}
-
-.google-btn img{
-  width: 20px;
-  height: 20px;
-  background: white;
-  border-radius: 50%;
-  padding: 2px;
-}
-
-.google-btn:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(34,211,238,0.4);
-}
-
-.google-btn:active{
-  transform: scale(0.97);
-  box-shadow: 0 2px 8px rgba(34,211,238,0.2);
-}
-
-/* ===== LOADING STATE ===== */
-.google-btn.loading{
-  opacity: 0.7;
-  pointer-events: none;
-  cursor: not-allowed;
-}
-
-/* ===== FEATURES PILLS ===== */
-.features-row{
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.pill{
-  font-size: 12px;
-  color: var(--text-secondary);
-  background: var(--pill-bg);
-  border: 1px solid var(--pill-border);
-  border-radius: 50px;
-  padding: 5px 12px;
-}
-
-/* ===== FOOTER ===== */
-.login-footer{
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-.login-footer a{
-  color: var(--footer-link);
-  text-decoration: none;
-}
-
-/* ===== TYPING CURSOR ===== */
-.cursor{
-  display: inline-block;
-  color: var(--primary);
-  animation: blink 0.75s step-end infinite;
-}
-@keyframes blink{ 50%{ opacity:0; } }
-
-/* ===== ERROR TOAST ===== */
-.error-toast{
-  display: none;
-  margin-top: 16px;
-  padding: 12px 16px;
-  background: rgba(244,63,94,0.12);
-  border: 1px solid rgba(244,63,94,0.3);
-  border-radius: 12px;
-  color: #F43F5E;
-  font-size: 13px;
-  text-align: center;
-}
-</style>
-</head>
-<body>
-
-<div class="login-box">
-
-  <img src="/icon-512.png" class="logo" alt="Study Grid Prep">
-
-  <h1><span id="typing"></span><span class="cursor">|</span></h1>
-
-  <p class="sub">Smart Study Platform</p>
-  <p class="desc">Learn Smarter. Stay Focused. Track Progress.</p>
-
-  <div class="login-card">
-    <button class="google-btn" id="loginBtn" onclick="login()">
-      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
-      Continue with Google
-    </button>
-
-    <div class="error-toast" id="errorToast">
-      Login failed. Please try again.
-    </div>
-  </div>
-
-  <div class="features-row">
-    <span class="pill">📚 MOCK TESTS</span>
-    <span class="pill">⏱ FOCUS TIMER</span>
-    <span class="pill">▶️ YT STUDY PLAYLIST</span>
-    <span class="pill">TODO LIST</span>
-    <span class="pill">🏆 LEADERBOARD</span>
-  </div>
-
-  <p class="login-footer" style="margin-top:20px;">
-    By continuing you agree to our
-    <a href="terms.html">Terms</a> &amp;
-    <a href="privacy.html">Privacy Policy</a>
-  </p>
-
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",
-  authDomain: "untitledworld.us.cc",
-  projectId: "untitled-world-2e645",
-  storageBucket: "untitled-world-2e645.firebasestorage.app",
-  messagingSenderId: "990115586087",
-  appId: "1:990115586087:web:963f68bd59dec5ef0c6e02"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-
-getRedirectResult(auth)
-  .then(async (result) => {
-    if (result && result.user) {
-      const user = result.user;
-
-      localStorage.setItem("userName", user.displayName);
-      localStorage.setItem("userEmail", user.email);
-
-      await setDoc(doc(db,"users",user.displayName),{
-        name: user.displayName,
-        email: user.email
-      },{merge:true});
-
-      window.location.href = "index.html";
-    }
-  })
-  .catch(console.log);
-
-function getTodayDate(){
-  const d = new Date();
-  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
-}
-
-window.login = async function(){
-  const btn = document.getElementById("loginBtn");
-
-  btn.classList.add("loading");
-  btn.innerText = "Redirecting...";
-
-  await signInWithRedirect(auth, provider);
-};
-
-// Typing animation
-const text = "Welcome to Study Grid Prep";
-let i = 0;
-function typeText(){
-  if(i < text.length){
-    document.getElementById("typing").textContent += text.charAt(i);
-    i++;
-    setTimeout(typeText, 65);
-  }
-}
-typeText();
-</script>
-
-</body>
-</html>
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<!-- ✅ ZOOM BLOCK -->  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">  
+<title>Login - Study Grid Prep</title>  
+<link rel="icon" href="/icon-192.png">  
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">  
+  
+<!-- ✅ INSTANT LOGIN CHECK — NO BLINK -->  
+<script>  
+(function(){  
+  if(localStorage.getItem("userName")){  
+    // Already logged in — skip login page instantly  
+    var isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;  
+    if(isPWA){  
+      window.location.replace("mainwelcome.html");  
+    } else {  
+      window.location.replace("index.html");  
+    }  
+  }  
+})();  
+</script>  
+  
+<!-- ✅ THEME DETECTION — matches index.html logic exactly -->  
+<script>  
+(function(){  
+  var saved = localStorage.getItem("theme");  
+  var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;  
+  var theme = saved ? saved : (systemDark ? "dark" : "light");  
+  document.documentElement.setAttribute("data-theme", theme);  
+})();  
+</script>  
+  
+<!-- ✅ FLASH PREVENTION — same as index.html -->  
+<style>  
+html{ visibility: hidden; }  
+html[data-theme]{ visibility: visible; }  
+</style>  
+  
+<style>  
+/* ===== GLOBAL DESIGN SYSTEM ===== */  
+  
+/* LIGHT MODE (default) */  
+:root{  
+  --bg-start: #ffffff;  
+  --bg-end: #f0f4f8;  
+  --primary: #22D3EE;  
+  --primary-dark: #06B6D4;  
+  --secondary: #34D399;  
+  --accent: #F43F5E;  
+  --text-primary: #111111;  
+  --text-secondary: #555555;  
+  --card-bg: rgba(0,0,0,0.03);  
+  --card-border: rgba(0,0,0,0.08);  
+  --radius: 16px;  
+  --shadow: 0 4px 20px rgba(0,0,0,0.10);  
+  --transition: 0.25s ease;  
+  --pill-bg: rgba(0,0,0,0.05);  
+  --pill-border: rgba(0,0,0,0.08);  
+  --logo-shadow: 0 4px 20px rgba(0,0,0,0.12);  
+  --footer-link: #0891B2;  
+}  
+  
+/* DARK MODE */  
+[data-theme="dark"]{  
+  --bg-start: #0B1220;  
+  --bg-end: #0F172A;  
+  --text-primary: #E2E8F0;  
+  --text-secondary: #94A3B8;  
+  --card-bg: rgba(255,255,255,0.03);  
+  --card-border: rgba(255,255,255,0.08);  
+  --shadow: 0 4px 20px rgba(0,0,0,0.3);  
+  --pill-bg: rgba(255,255,255,0.04);  
+  --pill-border: rgba(255,255,255,0.08);  
+  --logo-shadow: 0 4px 20px rgba(0,0,0,0.3);  
+  --footer-link: #22D3EE;  
+}  
+  
+*{  
+  margin:0; padding:0;  
+  box-sizing:border-box;  
+  font-family:'Poppins',sans-serif;  
+}  
+  
+html{ background: var(--bg-start); }  
+  
+body{  
+  background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-end) 100%);  
+  min-height: 100vh;  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+  color: var(--text-primary);  
+  
+  /* ✅ TEXT SELECT BLOCK */  
+  user-select: none;  
+  -webkit-user-select: none;  
+  -moz-user-select: none;  
+  -ms-user-select: none;  
+  
+  /* ✅ TOUCH HIGHLIGHT REMOVE */  
+  -webkit-tap-highlight-color: transparent;  
+  
+  /* ✅ PULL-TO-REFRESH BLOCK */  
+  overscroll-behavior-y: none;  
+  
+  /* Fade-in on arrival */  
+  animation: pageIn 0.35s ease forwards;  
+}  
+  
+@keyframes pageIn{  
+  from{ opacity:0; transform:translateY(8px); }  
+  to{ opacity:1; transform:translateY(0); }  
+}  
+  
+/* ===== LOGIN BOX ===== */  
+.login-box{  
+  text-align: center;  
+  max-width: 360px;  
+  width: 90%;  
+  padding: 16px;  
+}  
+  
+.logo{  
+  width: 88px;  
+  height: 88px;  
+  border-radius: 24px;  
+  margin-bottom: 24px;  
+  box-shadow: var(--logo-shadow);  
+  animation: floatLogo 3.5s ease-in-out infinite;  
+}  
+  
+@keyframes floatLogo{  
+  0%,100%{ transform:translateY(0px); }  
+  50%{ transform:translateY(-10px); }  
+}  
+  
+h1{  
+  font-size: 24px;  
+  font-weight: 700;  
+  color: var(--text-primary);  
+  margin-bottom: 8px;  
+  min-height: 34px;  
+}  
+  
+.sub{  
+  font-size: 16px;  
+  font-weight: 600;  
+  color: var(--primary);  
+  margin-bottom: 8px;  
+  letter-spacing: 0.3px;  
+}  
+  
+.desc{  
+  font-size: 14px;  
+  color: var(--text-secondary);  
+  margin-bottom: 32px;  
+  line-height: 1.5;  
+}  
+  
+/* ===== CARD WRAPPER ===== */  
+.login-card{  
+  background: var(--card-bg);  
+  border: 1px solid var(--card-border);  
+  border-radius: var(--radius);  
+  padding: 24px 20px;  
+  box-shadow: var(--shadow);  
+  margin-bottom: 20px;  
+}  
+  
+/* ===== GOOGLE BUTTON ===== */  
+.google-btn{  
+  display: flex;  
+  align-items: center;  
+  justify-content: center;  
+  gap: 12px;  
+  width: 100%;  
+  padding: 14px 20px;  
+  background: linear-gradient(135deg, #22D3EE, #06B6D4);  
+  color: #0B1220;  
+  border: none;  
+  border-radius: 50px;  
+  font-weight: 700;  
+  font-size: 15px;  
+  cursor: pointer;  
+  transition: var(--transition);  
+  box-shadow: 0 4px 16px rgba(34,211,238,0.3);  
+  letter-spacing: 0.3px;  
+}  
+  
+.google-btn img{  
+  width: 20px;  
+  height: 20px;  
+  background: white;  
+  border-radius: 50%;  
+  padding: 2px;  
+}  
+  
+.google-btn:hover{  
+  transform: translateY(-2px);  
+  box-shadow: 0 8px 24px rgba(34,211,238,0.4);  
+}  
+  
+.google-btn:active{  
+  transform: scale(0.97);  
+  box-shadow: 0 2px 8px rgba(34,211,238,0.2);  
+}  
+  
+/* ===== LOADING STATE ===== */  
+.google-btn.loading{  
+  opacity: 0.7;  
+  pointer-events: none;  
+  cursor: not-allowed;  
+}  
+  
+/* ===== FEATURES PILLS ===== */  
+.features-row{  
+  display: flex;  
+  justify-content: center;  
+  flex-wrap: wrap;  
+  gap: 8px;  
+  margin-top: 20px;  
+}  
+  
+.pill{  
+  font-size: 12px;  
+  color: var(--text-secondary);  
+  background: var(--pill-bg);  
+  border: 1px solid var(--pill-border);  
+  border-radius: 50px;  
+  padding: 5px 12px;  
+}  
+  
+/* ===== FOOTER ===== */  
+.login-footer{  
+  font-size: 12px;  
+  color: var(--text-secondary);  
+  line-height: 1.6;  
+}  
+  
+.login-footer a{  
+  color: var(--footer-link);  
+  text-decoration: none;  
+}  
+  
+/* ===== TYPING CURSOR ===== */  
+.cursor{  
+  display: inline-block;  
+  color: var(--primary);  
+  animation: blink 0.75s step-end infinite;  
+}  
+@keyframes blink{ 50%{ opacity:0; } }  
+  
+/* ===== ERROR TOAST ===== */  
+.error-toast{  
+  display: none;  
+  margin-top: 16px;  
+  padding: 12px 16px;  
+  background: rgba(244,63,94,0.12);  
+  border: 1px solid rgba(244,63,94,0.3);  
+  border-radius: 12px;  
+  color: #F43F5E;  
+  font-size: 13px;  
+  text-align: center;  
+}  
+</style>  
+</head>  
+<body>  
+  
+<div class="login-box">  
+  
+  <img src="/icon-512.png" class="logo" alt="Study Grid Prep">  
+  
+  <h1><span id="typing"></span><span class="cursor">|</span></h1>  
+  
+  <p class="sub">Smart Study Platform</p>  
+  <p class="desc">Learn Smarter. Stay Focused. Track Progress.</p>  
+  
+  <div class="login-card">  
+    <button class="google-btn" id="loginBtn" onclick="login()">  
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">  
+      Continue with Google  
+    </button>  
+  
+    <div class="error-toast" id="errorToast">  
+      Login failed. Please try again.  
+    </div>  
+  </div>  
+  
+  <div class="features-row">  
+    <span class="pill">📚 MOCK TESTS</span>  
+    <span class="pill">⏱ FOCUS TIMER</span>  
+    <span class="pill">▶️ YT STUDY PLAYLIST</span>  
+    <span class="pill">TODO LIST</span>  
+    <span class="pill">🏆 LEADERBOARD</span>  
+  </div>  
+  
+  <p class="login-footer" style="margin-top:20px;">  
+    By continuing you agree to our  
+    <a href="terms.html">Terms</a> &amp;  
+    <a href="privacy.html">Privacy Policy</a>  
+  </p>  
+  
+</div>  
+  
+<script type="module">  
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";  
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";  
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";  
+  
+const firebaseConfig = {  
+  apiKey: "AIzaSyB_13GJOiLQwxsirfJ7T_4WinaxVmSp7fs",  
+  authDomain: "untitled-world-2e645.firebaseapp.com",  
+  projectId: "untitled-world-2e645",  
+  storageBucket: "untitled-world-2e645.firebasestorage.app",  
+  messagingSenderId: "990115586087",  
+  appId: "1:990115586087:web:963f68bd59dec5ef0c6e02"  
+};  
+  
+const app = initializeApp(firebaseConfig);  
+const auth = getAuth(app);  
+const db = getFirestore(app);  
+const provider = new GoogleAuthProvider();  
+  
+function getTodayDate(){  
+  const d = new Date();  
+  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();  
+}  
+  
+window.login = async function(){  
+  const btn = document.getElementById("loginBtn");  
+  const toast = document.getElementById("errorToast");  
+  
+  btn.classList.add("loading");  
+  btn.innerText = "Signing in…";  
+  toast.style.display = "none";  
+  
+  try{  
+    const result = await signInWithPopup(auth, provider);  
+    const user = result.user;  
+    const name = user.displayName;  
+    const email = user.email;  
+  
+    localStorage.setItem("userName", name);  
+    localStorage.setItem("userEmail", email);  
+  
+    await setDoc(doc(db,"users",name),{  
+      name: name,  
+      email: email,  
+      focusTime: 0,  
+      weeklyXP: 0,  
+      status: "Online",  
+      room: "global",  
+      lastActiveDate: getTodayDate()  
+    },{merge:true});  
+  
+    // Smooth fade-out before redirect  
+    document.body.style.opacity = "0";  
+    document.body.style.transition = "opacity 0.2s ease";  
+  
+    setTimeout(() => {  
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;  
+      if(isPWA){  
+        // ✅ ALWAYS go to mainwelcome.html on PWA  
+        // mainwelcome.html itself handles New Member vs Welcome Back  
+        window.location.href = "mainwelcome.html";  
+      } else {  
+        window.location.href = "index.html";  
+      }  
+    }, 200);  
+  
+  } catch(err){  
+    console.log(err);  
+    btn.classList.remove("loading");  
+    btn.innerHTML = '<img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" style="width:20px;height:20px;background:white;border-radius:50%;padding:2px;"> Continue with Google';  
+    toast.style.display = "block";  
+  }  
+};  
+  
+// Typing animation  
+const text = "Welcome to Study Grid Prep";  
+let i = 0;  
+function typeText(){  
+  if(i < text.length){  
+    document.getElementById("typing").textContent += text.charAt(i);  
+    i++;  
+    setTimeout(typeText, 65);  
+  }  
+}  
+typeText();  
+</script>  
+  
+</body>  
+</html>  
