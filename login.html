@@ -307,7 +307,7 @@ h1{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -324,6 +324,24 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
+getRedirectResult(auth)
+  .then(async (result) => {
+    if (result && result.user) {
+      const user = result.user;
+
+      localStorage.setItem("userName", user.displayName);
+      localStorage.setItem("userEmail", user.email);
+
+      await setDoc(doc(db,"users",user.displayName),{
+        name: user.displayName,
+        email: user.email
+      },{merge:true});
+
+      window.location.href = "index.html";
+    }
+  })
+  .catch(console.log);
+
 function getTodayDate(){
   const d = new Date();
   return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
@@ -331,52 +349,11 @@ function getTodayDate(){
 
 window.login = async function(){
   const btn = document.getElementById("loginBtn");
-  const toast = document.getElementById("errorToast");
 
   btn.classList.add("loading");
-  btn.innerText = "Signing in…";
-  toast.style.display = "none";
+  btn.innerText = "Redirecting...";
 
-  try{
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    const name = user.displayName;
-    const email = user.email;
-
-    localStorage.setItem("userName", name);
-    localStorage.setItem("userEmail", email);
-
-    await setDoc(doc(db,"users",name),{
-      name: name,
-      email: email,
-      focusTime: 0,
-      weeklyXP: 0,
-      status: "Online",
-      room: "global",
-      lastActiveDate: getTodayDate()
-    },{merge:true});
-
-    // Smooth fade-out before redirect
-    document.body.style.opacity = "0";
-    document.body.style.transition = "opacity 0.2s ease";
-
-    setTimeout(() => {
-      const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-      if(isPWA){
-        // ✅ ALWAYS go to mainwelcome.html on PWA
-        // mainwelcome.html itself handles New Member vs Welcome Back
-        window.location.href = "mainwelcome.html";
-      } else {
-        window.location.href = "index.html";
-      }
-    }, 200);
-
-  } catch(err){
-    console.log(err);
-    btn.classList.remove("loading");
-    btn.innerHTML = '<img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" style="width:20px;height:20px;background:white;border-radius:50%;padding:2px;"> Continue with Google';
-    toast.style.display = "block";
-  }
+  await signInWithRedirect(auth, provider);
 };
 
 // Typing animation
