@@ -17,13 +17,12 @@ messaging.onBackgroundMessage(function(payload) {
   });
 });
 
-// ─── Cache version — CHANGE KARO JAB BHI SW UPDATE KARO ──────────────────
-const CACHE = "sgp-cache-v3";
+const CACHE = "sgp-cache-v5"; // ← version badla
 
 const ASSETS = [
   "/",
   "/index.html",
-  "/offline.html",   // ← MUST exist on server
+  "/offline.html",
   "/timer.html",
   "/playlist.html",
   "/todo.html",
@@ -34,25 +33,25 @@ const ASSETS = [
   "/icon-512.png"
 ];
 
-// ── INSTALL ──────────────────────────────────────────────────────────────
+// ── INSTALL ───────────────────────────────────────────────────
 self.addEventListener("install", event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE).then(async cache => {
-      // offline.html PEHLE cache karo — agar yeh fail hua toh SW install rok do
-      await cache.add("/offline.html");
-
-      // Baaki files — ek fail ho toh doosre continue karein
-      await Promise.allSettled(
-        ASSETS.filter(u => u !== "/offline.html").map(url =>
-          cache.add(url).catch(e => console.warn("[SW] Cache miss:", url, e))
-        )
-      );
-    })
+    caches.open(CACHE).then(cache =>
+      // ✅ allSettled — koi bhi file fail ho, install rukta nahi
+      Promise.allSettled(
+        ASSETS.map(url => cache.add(url))
+      ).then(results => {
+        results.forEach((r, i) => {
+          if (r.status === "rejected")
+            console.warn("[SW] Failed to cache:", ASSETS[i]);
+        });
+      })
+    )
   );
 });
 
-// ── ACTIVATE ─────────────────────────────────────────────────────────────
+// ── ACTIVATE ──────────────────────────────────────────────────
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys()
@@ -63,54 +62,55 @@ self.addEventListener("activate", event => {
   );
 });
 
-// ── FETCH ─────────────────────────────────────────────────────────────────
+// ── FETCH ─────────────────────────────────────────────────────
 self.addEventListener("fetch", event => {
   const req = event.request;
-
   if (!req.url.startsWith(self.location.origin)) return;
   if (req.method !== "GET") return;
 
-  // ── NAVIGATION — CACHE FIRST (offline ke liye instant response) ──────
+  // NAVIGATION — cache first, turant response
   if (req.mode === "navigate") {
     event.respondWith(
       caches.open(CACHE).then(async cache => {
 
-        // 1. Cache check karo pehle (ignoreSearch = ?mode=pwa bhi match ho)
-        const cached = await cache.match(req, { ignoreSearch: true });
+        // Cache mein dhundho (query string ignore)
+        const cached = await cache.match(req, { ignoreSearch: true })
+                    || await cache.match("/index.html")
+                    || await cache.match("/");
 
-        // 2. Background mein network se update karo
-        const updateCache = fetch(req)
+        // Background mein network update
+        const networkUpdate = fetch(req)
           .then(res => {
-            if (res && res.status === 200) cache.put(req, res.clone());
+            if (res?.status === 200) cache.put(req, res.clone());
             return res;
           })
           .catch(() => null);
 
-        // 3. Cache mila → TURANT return karo (no wait for network)
+        // Cache mila → turant dikha
         if (cached) {
-          event.waitUntil(updateCache);
+          event.waitUntil(networkUpdate);
           return cached;
         }
 
-        // 4. Cache nahi → network try karo
-        const networkRes = await updateCache;
-        if (networkRes) return networkRes;
+        // Cache nahi → network try
+        const netRes = await networkUpdate;
+        if (netRes) return netRes;
 
-        // 5. Dono fail → offline.html serve karo (browser URL bar nahi badlega)
-        return cache.match("/offline.html");
+        // Dono fail → offline page
+        return await cache.match("/offline.html");
       })
     );
     return;
   }
 
-  // ── STATIC ASSETS — Cache first, background update ───────────────────
+  // STATIC FILES — cache first
   event.respondWith(
     caches.open(CACHE).then(async cache => {
       const cached = await cache.match(req, { ignoreSearch: true });
 
       const networkFetch = fetch(req)
         .then(res => {
-          if (res && res.status === 200) cache.put(req, res.clone());
+          if (res?.status === 200) cache.put(req, res.clone());
           return res;
         })
         .catch(() => null);
@@ -125,7 +125,7 @@ self.addEventListener("fetch", event => {
   );
 });
 
-// ── MESSAGE ───────────────────────────────────────────────────────────────
+// ── MESSAGE ───────────────────────────────────────────────────
 const scheduledNotifications = new Map();
 
 self.addEventListener("message", event => {
@@ -180,7 +180,7 @@ self.addEventListener("message", event => {
   }
 });
 
-// ── NOTIFICATION CLICK ────────────────────────────────────────────────────
+// ── NOTIFICATION CLICK ────────────────────────────────────────
 self.addEventListener("notificationclick", event => {
   event.notification.close();
   const url = event.notification.data?.url || "/";
