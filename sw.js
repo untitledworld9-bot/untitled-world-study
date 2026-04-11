@@ -10,6 +10,7 @@ firebase.initializeApp({
 });
 
 const messaging = firebase.messaging();
+
 messaging.onBackgroundMessage(function(payload) {
   self.registration.showNotification(payload.notification.title, {
     body: payload.notification.body,
@@ -17,10 +18,11 @@ messaging.onBackgroundMessage(function(payload) {
   });
 });
 
-const CACHE = "sgp-cache-v5"; // ← version badla
+// ─────────────────────────────────────────────────────────────
+const CACHE = "sgp-cache-v1";
 
+// ✅ Sirf wahi files jo 100% exist karti hain
 const ASSETS = [
-  "/",
   "/index.html",
   "/offline.html",
   "/timer.html",
@@ -33,99 +35,94 @@ const ASSETS = [
   "/icon-512.png"
 ];
 
-// ── INSTALL ───────────────────────────────────────────────────
+// ── INSTALL ──────────────────────────────────────────────────
 self.addEventListener("install", event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE).then(cache =>
-      // ✅ allSettled — koi bhi file fail ho, install rukta nahi
-      Promise.allSettled(
-        ASSETS.map(url => cache.add(url))
-      ).then(results => {
-        results.forEach((r, i) => {
-          if (r.status === "rejected")
-            console.warn("[SW] Failed to cache:", ASSETS[i]);
-        });
-      })
-    )
+    caches.open(CACHE).then(cache => {
+      // ✅ Individual try — ek fail ho toh baaki cache hoti rahe
+      return Promise.allSettled(
+        ASSETS.map(url =>
+          cache.add(url).catch(err =>
+            console.warn("Cache miss:", url, err)
+          )
+        )
+      );
+    })
   );
 });
 
-// ── ACTIVATE ──────────────────────────────────────────────────
+// ── ACTIVATE ─────────────────────────────────────────────────
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
+    caches.keys().then(keys =>
+      Promise.all(
         keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
-// ── FETCH ─────────────────────────────────────────────────────
+// ── FETCH ────────────────────────────────────────────────────
 self.addEventListener("fetch", event => {
   const req = event.request;
+
+  // External requests — ignore
   if (!req.url.startsWith(self.location.origin)) return;
+
+  // POST etc. — ignore
   if (req.method !== "GET") return;
 
-  // NAVIGATION — cache first, turant response
+  // ── NAVIGATION (page open) ──────────────────────────────
   if (req.mode === "navigate") {
     event.respondWith(
-      caches.open(CACHE).then(async cache => {
+      fetch(req)
+        .then(res => {
+          // Network se mila → cache update karo aur return karo
+          if (res && res.status === 200) {
+            caches.open(CACHE).then(c => c.put(req, res.clone()));
+          }
+          return res;
+        })
+        .catch(async () => {
+          // Network fail → cache check karo
+          const cached = await caches.match(req, { ignoreSearch: true });
+          if (cached) return cached;
 
-        // Cache mein dhundho (query string ignore)
-        const cached = await cache.match(req, { ignoreSearch: true })
-                    || await cache.match("/index.html")
-                    || await cache.match("/");
-
-        // Background mein network update
-        const networkUpdate = fetch(req)
-          .then(res => {
-            if (res?.status === 200) cache.put(req, res.clone());
-            return res;
-          })
-          .catch(() => null);
-
-        // Cache mila → turant dikha
-        if (cached) {
-          event.waitUntil(networkUpdate);
-          return cached;
-        }
-
-        // Cache nahi → network try
-        const netRes = await networkUpdate;
-        if (netRes) return netRes;
-
-        // Dono fail → offline page
-        return await cache.match("/offline.html");
-      })
+          // Cache mein bhi nahi → offline page
+          const offlinePage = await caches.match("/offline.html");
+          return offlinePage || new Response(
+            "<h2>Offline</h2><button onclick='location.reload()'>Retry</button>",
+            { headers: { "Content-Type": "text/html" } }
+          );
+        })
     );
     return;
   }
 
-  // STATIC FILES — cache first
+  // ── STATIC FILES (CSS, JS, images) ──────────────────────
   event.respondWith(
-    caches.open(CACHE).then(async cache => {
-      const cached = await cache.match(req, { ignoreSearch: true });
+    caches.match(req, { ignoreSearch: true }).then(cached => {
+      const networkFetch = fetch(req).then(res => {
+        if (res && res.status === 200) {
+          caches.open(CACHE).then(c => c.put(req, res.clone()));
+        }
+        return res;
+      }).catch(() => null);
 
-      const networkFetch = fetch(req)
-        .then(res => {
-          if (res?.status === 200) cache.put(req, res.clone());
-          return res;
-        })
-        .catch(() => null);
-
+      // Cache hai → turant serve, background mein update
       if (cached) {
         event.waitUntil(networkFetch);
         return cached;
       }
 
-      return await networkFetch;
+      // Cache nahi → network se lo
+      return networkFetch;
     })
   );
 });
 
-// ── MESSAGE ───────────────────────────────────────────────────
+// ── MESSAGE ──────────────────────────────────────────────────
 const scheduledNotifications = new Map();
 
 self.addEventListener("message", event => {
@@ -134,6 +131,16 @@ self.addEventListener("message", event => {
 
   if (data === "skipWaiting" || data.type === "skipWaiting") {
     self.skipWaiting();
+    return;
+  }
+
+  // Net wapas aaya → sab pages reload karo
+  if (data.type === "CLIENT_ONLINE") {
+    event.waitUntil(
+      self.clients.matchAll({ type: "window" }).then(list => {
+        list.forEach(c => c.postMessage({ type: "RELOAD_NOW" }));
+      })
+    );
     return;
   }
 
