@@ -31,6 +31,9 @@ const ASSETS = [
   "/todo.html",
   "/profile.html",
   "/subscription.html",
+  "/timer.html",
+  "/playlist.html",
+  "/mock.html",
   "/manifest.json",
   "/icon-192.png",
   "/icon-512.png",
@@ -83,10 +86,17 @@ self.addEventListener("fetch", event => {
 
   // 🔥 STATIC FILES
   event.respondWith(
-    caches.match(req).then(cached => {
-      return cached || fetch(req);
-    })
-  );
+  caches.match(req).then(cached => {
+    const fetchPromise = fetch(req).then(res => {
+      if(res && res.status === 200){
+        caches.open(CACHE).then(cache => cache.put(req, res.clone()));
+      }
+      return res;
+    }).catch(() => cached);
+
+    return cached || fetchPromise;
+  })
+);
 });
 
 // ── ✅ BACKGROUND NOTIFICATION SCHEDULING ────────────────────────────────────
