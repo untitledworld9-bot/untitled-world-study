@@ -6,7 +6,7 @@
   "start_url": "/index.html?mode=pwa",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
@@ -38,23 +38,23 @@
   "categories": ["education", "productivity"],
 
   "widgets": [
-  {
-    "name": "Target Exam",
-    "short_name": "Exam",
-    "description": "Days left for your target exam",
-    "tag": "target-exam",
-    "url": "/widget-exam.html",
-    "auth": false,
-    "update": 3600,
-    "icons": [
-      {
-        "src": "/icon-192.png",
-        "sizes": "192x192",
-        "type": "image/png"
-      }
-    ]
-  }
-],
+    {
+      "name": "Target Exam",
+      "short_name": "Exam",
+      "description": "Days left for your target exam",
+      "tag": "target-exam",
+      "url": "/widget-exam.html",
+      "auth": false,
+      "update": 3600,
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
 
   "shortcuts": [
     {
