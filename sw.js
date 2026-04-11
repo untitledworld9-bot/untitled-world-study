@@ -20,8 +20,8 @@ messaging.onBackgroundMessage(function(payload) {
  self.registration.showNotification(title, options);
 });
 
-// ─── Untitled World – Advanced Service Worker ───────────────────────────────
-const CACHE = "uw-cache-v23";
+// ─── Study Grid Prep – Advanced Service Worker ───────────────────────────────
+const CACHE = "uw-cache-v24";
 
 const ASSETS = [
   "/",
@@ -61,30 +61,30 @@ self.addEventListener("activate", event => {
 // ── FETCH ────────────────────────────────────────────────────────────────────
 self.addEventListener("fetch", event => {
   const req = event.request;
+
   if (!req.url.startsWith(self.location.origin)) return;
 
+  // 🔥 NAVIGATION REQUEST (page load)
   if (req.mode === "navigate") {
     event.respondWith(
-      fetch(req)
-        .then(res => res)
-        .catch(async () => {
+      caches.match(req).then(cached => {
+        // ✅ agar cached page hai → turant dikha
+        if (cached) return cached;
+
+        // ❌ nahi hai → try network
+        return fetch(req).catch(async () => {
           const cache = await caches.open(CACHE);
-          const offline = await cache.match("/offline.html");
-          return offline || getOfflinePage();
-        })
+          return await cache.match("/offline.html");
+        });
+      })
     );
     return;
   }
 
+  // 🔥 STATIC FILES
   event.respondWith(
     caches.match(req).then(cached => {
-      const networkFetch = fetch(req).then(res => {
-        if (res && res.status === 200 && res.type === "basic") {
-          caches.open(CACHE).then(c => c.put(req, res.clone()));
-        }
-        return res;
-      }).catch(() => cached);
-      return cached || networkFetch;
+      return cached || fetch(req);
     })
   );
 });
@@ -124,7 +124,7 @@ self.addEventListener("message", event => {
     // event.waitUntil keeps the SW alive until the Promise resolves
     event.waitUntil(new Promise(resolve => {
       const timeout = setTimeout(async () => {
-        await self.registration.showNotification(title || "Untitled World", {
+        await self.registration.showNotification(title || "Study Grid Prep", {
           body: body || "",
           icon: "/icon-192.png",
           badge: "/icon-192.png",
