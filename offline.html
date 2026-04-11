@@ -2,42 +2,82 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Offline – Untitled World</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Offline – Study Grid Prep</title>
+
+<!-- ✅ Theme — index.html ke saath match karega -->
+<script>
+(function(){
+  const saved = localStorage.getItem("theme");
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved ? saved : (systemDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+  // ✅ White flash rokne ke liye
+  document.documentElement.style.background =
+    theme === "dark" ? "#0B1220" : "#ffffff";
+})();
+</script>
+
+<!-- ✅ White progress bar hatao — theme ke hisab se -->
+<meta name="theme-color" content="#0B1220" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+/* Flash prevention */
+html { visibility: hidden; }
+html[data-theme] { visibility: visible; }
+
 :root {
-  --primary:       #ff7a18;
+  --primary: #ff7a18;
   --primary-hover: #e66a10;
-  --bg:            #f4f6f8;
-  --text:          #1f2937;
-  --muted:         #6b7280;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[data-theme="light"] {
+  --bg: #f5f5f5;
+  --card-bg: #ffffff;
+  --text: #111111;
+  --muted: #555555;
+  --shortcut-bg: #f0f0f0;
+}
+
+[data-theme="dark"] {
+  --bg: #0B1220;
+  --card-bg: rgba(255,255,255,0.05);
+  --text: #E2E8F0;
+  --muted: #94A3B8;
+  --shortcut-bg: #0f2027;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0; padding: 0;
+}
 
 body {
   min-height: 100vh;
+  min-height: 100dvh; /* ✅ notch/safe area */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   text-align: center;
-  padding: 16px;
-  gap: 0;
+  padding: 20px;
+  gap: 16px;
+  /* ✅ White bar disable */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* ── OFFLINE SHORTCUT BUTTONS (PWA only) ─────────────────────────────────── */
+/* ── OFFLINE SHORTCUT BUTTONS — PWA ONLY ────────────────────── */
 .offline-shortcuts {
-  display: none;           /* hidden on website */
+  display: none;
   gap: 14px;
-  margin-bottom: 28px;
   width: 100%;
   max-width: 320px;
-  justify-content: space-between;
 }
 
 @media (display-mode: standalone) {
@@ -56,57 +96,39 @@ body {
   text-decoration: none;
   font-weight: 700;
   font-size: 13px;
-  letter-spacing: 0.02em;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--shortcut-bg);
 }
 
-/* Timer — green accent */
 .shortcut-btn.timer {
-  background: #0f2027;
   border: 2px solid #00ff88;
   color: #00ff88;
-  box-shadow: 0 0 14px rgba(0, 255, 136, 0.18);
+  box-shadow: 0 0 14px rgba(0,255,136,0.18);
 }
-
-.shortcut-btn.timer:hover,
-.shortcut-btn.timer:active {
-  transform: scale(1.05);
-  box-shadow: 0 0 24px rgba(0, 255, 136, 0.35);
-}
-
-/* Todo List — cyan accent */
 .shortcut-btn.todo {
-  background: #0f2027;
   border: 2px solid #00f2fe;
   color: #00f2fe;
-  box-shadow: 0 0 14px rgba(0, 242, 254, 0.18);
+  box-shadow: 0 0 14px rgba(0,242,254,0.18);
 }
+.shortcut-btn:active { transform: scale(0.97); }
 
-.shortcut-btn.todo:hover,
-.shortcut-btn.todo:active {
-  transform: scale(1.05);
-  box-shadow: 0 0 24px rgba(0, 242, 254, 0.35);
-}
-
-.shortcut-btn .btn-icon {
-  width: 44px;
-  height: 44px;
+.btn-icon {
+  width: 44px; height: 44px;
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
 }
+.shortcut-btn.timer .btn-icon { background: rgba(0,255,136,0.12); }
+.shortcut-btn.todo  .btn-icon { background: rgba(0,242,254,0.12); }
 
-.shortcut-btn.timer .btn-icon { background: rgba(0, 255, 136, 0.12); }
-.shortcut-btn.todo  .btn-icon { background: rgba(0, 242, 254, 0.12); }
-
-/* ── OFFLINE CARD ────────────────────────────────────────────────────────── */
+/* ── CARD ────────────────────────────────────────────────────── */
 .card {
-  background: #fff;
+  background: var(--card-bg);
   padding: 40px 30px;
   border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
   width: 100%;
   max-width: 320px;
   display: flex;
@@ -115,9 +137,8 @@ body {
 }
 
 .icon-wrap {
-  width: 80px;
-  height: 80px;
-  background: #fff0e6;
+  width: 80px; height: 80px;
+  background: rgba(255,122,24,0.12);
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -128,9 +149,9 @@ body {
 }
 
 @keyframes pulse {
-  0%   { box-shadow: 0 0 0 0   rgba(255,122,24,.40); }
-  70%  { box-shadow: 0 0 0 20px rgba(255,122,24,.00); }
-  100% { box-shadow: 0 0 0 0   rgba(255,122,24,.00); }
+  0%   { box-shadow: 0 0 0 0   rgba(255,122,24,.4); }
+  70%  { box-shadow: 0 0 0 20px rgba(255,122,24,.0); }
+  100% { box-shadow: 0 0 0 0   rgba(255,122,24,.0); }
 }
 
 h1 { font-size: 22px; margin-bottom: 8px; font-weight: 700; }
@@ -153,67 +174,47 @@ p {
   font-weight: 600;
   cursor: pointer;
   transition: all .2s ease;
-  box-shadow: 0 4px 12px rgba(255,122,24,.30);
+  box-shadow: 0 4px 12px rgba(255,122,24,.3);
 }
-
-.retry:hover  { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,122,24,.40); }
-.retry:active { transform: translateY(0);          box-shadow: 0 2px 8px  rgba(255,122,24,.30); }
-
-@media (min-width: 480px) {
-  .card                { max-width: 400px; padding: 50px; }
-  h1                   { font-size: 28px; }
-  .offline-shortcuts   { max-width: 400px; }
+.retry:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(255,122,24,.3);
 }
 </style>
 </head>
-
 <body>
 
-<!-- Offline shortcut buttons — only visible in PWA mode -->
+<!-- PWA shortcut buttons -->
 <div class="offline-shortcuts">
-
-  <!-- Timer (left) -->
   <a href="/focus.html" class="shortcut-btn timer">
-    <div class="btn-icon">
-      <i class="fa-solid fa-stopwatch"></i>
-    </div>
+    <div class="btn-icon"><i class="fa-solid fa-stopwatch"></i></div>
     Timer
   </a>
-
-  <!-- Todo List (right) — same size, professional matching style -->
   <a href="/todo.html" class="shortcut-btn todo">
-    <div class="btn-icon">
-      <i class="fa-solid fa-list-check"></i>
-    </div>
+    <div class="btn-icon"><i class="fa-solid fa-list-check"></i></div>
     Todo List
   </a>
-
 </div>
 
-<!-- Main offline card -->
+<!-- Main card -->
 <div class="card">
   <div class="icon-wrap">📡</div>
   <h1>You're Offline</h1>
-  <p>Connect to the internet to continue studying🚀</p>
-  <button class="retry" id="retryBtn">Retry</button>
+  <p>Internet connection nahi hai.<br>Check karo aur retry karo.</p>
+  <button class="retry" onclick="window.location.href='/'">🔄 Retry</button>
 </div>
 
 <script>
-  // Retry button → go home (SW serves live page when back online)
-  document.getElementById("retryBtn").addEventListener("click", function () {
-    window.location.href = "/";
+  // ✅ Net wapas aaya → home pe bhejo
+  window.addEventListener("online", () => {
+    window.location.replace("/");
   });
 
-  // Auto-redirect the moment the browser regains connectivity
-  window.addEventListener("online", function () {
-    window.location.href = "/";
-  });
-
-  // Polling fallback — navigator.onLine can lag on some Android WebViews
-  var poll = setInterval(function () {
+  // Polling fallback (Android WebView ke liye)
+  const poll = setInterval(() => {
     if (navigator.onLine) {
       clearInterval(poll);
-      window.location.href = "/";
+      window.location.replace("/");
     }
   }, 2000);
 </script>
