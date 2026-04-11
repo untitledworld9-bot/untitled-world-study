@@ -3932,5 +3932,23 @@ function closeExamPopup(){
 
 <script type="module" src="/index.js"></script>
 
+<script>
+// ✅ Theme-color dynamically update karo — white bar fix
+(function(){
+  function updateThemeColor(){
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    document.querySelector('meta[name="theme-color"]').content =
+      isDark ? "#0B1220" : "#ffffff";
+  }
+  updateThemeColor();
+
+  // Theme toggle ke baad bhi update ho
+  const observer = new MutationObserver(updateThemeColor);
+  observer.observe(document.documentElement, {
+    attributes: true, attributeFilter: ["data-theme"]
+  });
+})();
+</script>
+
 </body>
 </html>
