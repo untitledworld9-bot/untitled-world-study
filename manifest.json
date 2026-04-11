@@ -108,3 +108,35 @@
     }
   }
 }
+
+"widgets": [
+  {
+    "name": "Target Exam",
+    "short_name": "My Exam",
+    "description": "Shows your target exam and study streak",
+    "tag": "target-exam-widget",
+    "template": "pwamp-widget",
+    "ms_ac_template": "adaptive-card.json",
+    "data": "/widget-data.json",
+    "type": "application/json",
+    "screenshots": [
+      {
+        "src": "/widget-preview.png",
+        "sizes": "400x200",
+        "label": "Target Exam Widget"
+      }
+    ],
+    "icons": [
+      {
+        "src": "/icon-192.png",
+        "sizes": "192x192"
+      }
+    ],
+    "backgrounds": [
+      {
+        "src": "/icon-512.png",
+        "sizes": "512x512"
+      }
+    ]
+  }
+]
