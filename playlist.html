@@ -1446,7 +1446,9 @@ return;
 
 }
 
-const subjects=["Physics","Chemistry","Maths"];
+const goal = localStorage.getItem("goal") || "JEE";
+const allSubjects = (window.GOAL_SUBJECTS && window.GOAL_SUBJECTS[goal]) || ["Physics","Chemistry","Maths"];
+const subjects = allSubjects.filter(s => s !== "Music");
 
 subjects.forEach(sub=>{
 
@@ -2166,6 +2168,8 @@ window.updateVideoTitle = function(id, newTitle) {
     CUET:   ["Physics","Chemistry","Maths","Biology","English","GAT","Music"],
     Boards: ["Physics","Chemistry","Maths","English","Physical Education","Music"]
   };
+
+window.GOAL_SUBJECTS = GOAL_SUBJECTS;
 
   function updateSubjectSelect(){
     var goal = localStorage.getItem("goal") || "JEE";
