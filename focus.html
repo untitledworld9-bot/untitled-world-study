@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Timer | Untitled World</title>
+<title>Timer | Study Grid Prep</title>
 <link rel="icon" href="/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -151,13 +151,75 @@ body {
     width: 100%;
 }
 
-/* --- ✅ BIG CIRCLE TIMER --- */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ✅ BIG PROFESSIONAL RING — CSS only changes
+   Logic is 100% unchanged
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Outer wrapper — holds the decorative SVG ring + timer circle */
+.timer-ring-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 36px;
+
+    /* Size matches the SVG ring viewbox */
+    width: 380px;
+    height: 380px;
+}
+
+/* ── Decorative SVG ring (behind the circle) ── */
+.timer-ring-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: visible;
+}
+
+.ring-track {
+    fill: none;
+    stroke: rgba(0, 242, 254, 0.08);
+    stroke-width: 3;
+}
+
+.ring-deco {
+    fill: none;
+    stroke: rgba(0, 242, 254, 0.18);
+    stroke-width: 1.5;
+    stroke-dasharray: 12 8;
+    animation: rotateDeco 18s linear infinite;
+    transform-origin: 190px 190px;
+}
+
+.ring-outer-glow {
+    fill: none;
+    stroke: rgba(0, 242, 254, 0.06);
+    stroke-width: 12;
+}
+
+@keyframes rotateDeco {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* ── Main timer circle ── */
 .timer-container {
-    background: rgba(255, 255, 255, 0.03);
-    border: 3px solid rgba(0, 242, 254, 0.2);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 0 30px rgba(0, 242, 254, 0.04);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.025);
+    border: 3px solid rgba(0, 242, 254, 0.25);
+    box-shadow:
+        0 0 0 1px rgba(0,242,254,0.06),         /* inner halo ring 1 */
+        0 0 0 12px rgba(0,242,254,0.03),         /* inner halo ring 2 */
+        0 12px 48px rgba(0,0,0,0.6),             /* depth shadow */
+        inset 0 0 50px rgba(0, 242, 254, 0.04),  /* inner glow */
+        inset 0 2px 0 rgba(255,255,255,0.05);    /* top gloss */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 50%;
     width: 320px;
     height: 320px;
@@ -165,32 +227,51 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-bottom: 32px;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     cursor: pointer;
 }
 
+/* Running state — green ring */
 .timer-container.running {
     border-color: #00ff88;
-    box-shadow: 0 0 45px rgba(0, 255, 136, 0.45), inset 0 0 30px rgba(0, 255, 136, 0.08);
+    box-shadow:
+        0 0 0 1px rgba(0,255,136,0.12),
+        0 0 0 16px rgba(0,255,136,0.04),
+        0 0 70px rgba(0, 255, 136, 0.35),
+        0 12px 48px rgba(0,0,0,0.55),
+        inset 0 0 50px rgba(0, 255, 136, 0.06),
+        inset 0 2px 0 rgba(255,255,255,0.05);
 }
 
-/* ✅ Fits inside circle properly */
+/* SVG ring color changes when running */
+.running-ring .ring-track {
+    stroke: rgba(0, 255, 136, 0.10);
+}
+.running-ring .ring-deco {
+    stroke: rgba(0, 255, 136, 0.22);
+    animation-duration: 10s;
+}
+
+/* ✅ Timer text — fits inside circle */
 .timer {
-    font-size: 54px;       /* 62px se kam karke 54px kar do */
+    font-size: 54px;
     font-weight: 700;
     color: #00f2fe;
     line-height: 1;
-    letter-spacing: 0px;   
+    letter-spacing: 0px;
     font-variant-numeric: tabular-nums;
-    text-shadow: 0 0 22px rgba(0, 242, 254, 0.45);
-    width: 100%;           /* Ye add kar do safety ke liye */
-    text-align: center;    /* Ye bhi add kar do */
+    text-shadow:
+        0 0 22px rgba(0, 242, 254, 0.55),
+        0 0 60px rgba(0, 242, 254, 0.15);
+    width: 100%;
+    text-align: center;
 }
 
 .timer-container.running .timer {
     color: #00ff88;
-    text-shadow: 0 0 22px rgba(0, 255, 136, 0.5);
+    text-shadow:
+        0 0 22px rgba(0, 255, 136, 0.6),
+        0 0 60px rgba(0, 255, 136, 0.2);
 }
 
 .timer-tap-hint {
@@ -282,13 +363,17 @@ body {
 
 /* --- RESPONSIVE --- */
 @media (max-width: 380px) {
-    .timer-container { width: 270px; height: 270px; }
-    .timer { font-size: 50px; } /* 68px ki jagah 46px karein taaki circle mein aaye */
+    .timer-ring-wrapper { width: 310px; height: 310px; }
+    .timer-ring-svg     { width: 310px; height: 310px; }
+    .timer-container    { width: 260px; height: 260px; }
+    .timer              { font-size: 46px; }
 }
 
 @media (min-width: 768px) {
-    .timer-container { width: 400px; height: 400px; }
-    .timer { font-size: 80px; } /* Isko bhi 100px ki jagah 80px rakhein taaki perfect lage */
+    .timer-ring-wrapper { width: 460px; height: 460px; }
+    .timer-ring-svg     { width: 460px; height: 460px; }
+    .timer-container    { width: 390px; height: 390px; }
+    .timer              { font-size: 80px; }
 }
 
 </style>
@@ -311,9 +396,25 @@ body {
 
 <section class="timer-section">
 
-<div class="timer-container" id="timerBox" onclick="toggleTimer()">
-    <div class="timer" id="timer">00:00:00</div>
-    <div class="timer-tap-hint" id="tapHint">tap to pause</div>
+<!-- ✅ Ring wrapper + decorative SVG ring (purely visual) -->
+<div class="timer-ring-wrapper" id="ringWrapper">
+
+    <!-- Decorative rings — behind the timer circle -->
+    <svg class="timer-ring-svg" id="timerRingSvg" viewBox="0 0 380 380" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer soft glow ring -->
+        <circle class="ring-outer-glow" cx="190" cy="190" r="178"/>
+        <!-- Solid track ring -->
+        <circle class="ring-track" cx="190" cy="190" r="170"/>
+        <!-- Dashed rotating decoration ring -->
+        <circle class="ring-deco" cx="190" cy="190" r="162"/>
+    </svg>
+
+    <!-- Timer circle (existing, logic unchanged) -->
+    <div class="timer-container" id="timerBox" onclick="toggleTimer()">
+        <div class="timer" id="timer">00:00:00</div>
+        <div class="timer-tap-hint" id="tapHint">tap to pause</div>
+    </div>
+
 </div>
 
 <div class="custom-time-container">
@@ -375,6 +476,17 @@ function updateTapHint() {
     const hint = document.getElementById("tapHint");
     if (!hint) return;
     hint.style.display = (time > 0) ? "block" : "none";
+}
+
+// ── Sync decorative ring color to running state ──
+function syncRingState(running) {
+    const svg = document.getElementById("timerRingSvg");
+    if (!svg) return;
+    if (running) {
+        svg.classList.add("running-ring");
+    } else {
+        svg.classList.remove("running-ring");
+    }
 }
 
 // --- INITIAL LOAD (Refresh Handle) ---
@@ -475,6 +587,7 @@ function startTimer(duration, isResumeFromRefresh = false) {
     // ✅ Show correct full time FIRST before any interval fires
     displayTime(time);
     timerBox.classList.add("running");
+    syncRingState(true);
     updateTapHint();
     saveTimerState();
 
@@ -482,7 +595,6 @@ function startTimer(duration, isResumeFromRefresh = false) {
     scheduleSwNotification();
 
     // ✅ 200ms interval — delta-time based, so always accurate
-    // Fixes the "feels like 58" bug — display updates every 200ms not 1000ms
     timerInterval = setInterval(() => {
         const remaining = Math.floor((targetEndTime - Date.now()) / 1000);
 
@@ -491,6 +603,7 @@ function startTimer(duration, isResumeFromRefresh = false) {
             time = 0;
             displayTime(0);
             timerBox.classList.remove("running");
+            syncRingState(false);
             updateTapHint();
             clearTimerState();
             // ✅ Cancel SW notification (page is open, we handle it here)
@@ -518,6 +631,7 @@ function pauseTimer() {
         btn.innerText = "Resume";
         isPaused = true;
         timerBox.classList.remove("running");
+        syncRingState(false);
         time = Math.floor((targetEndTime - Date.now()) / 1000);
         // ✅ Cancel SW notification while paused
         cancelSwNotification();
@@ -540,6 +654,7 @@ function resetTimer() {
     document.getElementById("pauseBtn").innerText = "Pause";
     document.getElementById("timer").innerHTML = "00:00:00";
     timerBox.classList.remove("running");
+    syncRingState(false);
     updateTapHint();
     clearTimerState();
 }
@@ -562,3 +677,4 @@ function displayTime(t) {
 </script>
 </body>
 </html>
+
