@@ -1,5 +1,5 @@
 /**
- * index.js — Untitled World (FINAL)
+ * index.js — Study Grid Prep (FINAL)
  *
  * FIX-I   announcements composite index error
  * FIX-J   notifications query safe
@@ -85,12 +85,15 @@ const unsubs = {
 // ── Which page are we on? Used for page-targeted promos/announcements
 function getCurrentPage() {
   const path = window.location.pathname.toLowerCase();
-  if (path.includes("timer"))    return "timer";
-  if (path.includes("playlist")) return "playlist";
-  if (path.includes("todo"))     return "todo";
-  return "home"; // index.html = "home"
+  if (path.includes("timer"))      return "timer";
+  if (path.includes("playlist"))   return "playlist";
+  if (path.includes("todo"))       return "todo";
+  if (path.includes("profile"))    return "profile";
+  if (path.includes("mock"))       return "mock";
+  if (path.includes("progress"))   return "progress";
+  if (path.includes("leaderboard"))return "leaderboard";
+  return "home";
 }
-
 
 /* ─────────────────────────────
    HELPERS
@@ -1231,7 +1234,6 @@ async function initPresence() {
     status:      "online",
     currentPage: page,
     lastActive:  Date.now(),
-    lastActiveDate: new Date().toISOString()
   };
 
   try {
@@ -1243,7 +1245,6 @@ async function initPresence() {
     try {
       await updateDoc(doc(db, "users", uid), {
         lastActive:     Date.now(),
-        lastActiveDate: new Date().toISOString(),
         status:         "online",
         currentPage:    getCurrentPageFull()
       });
@@ -1258,7 +1259,6 @@ async function initPresence() {
         await updateDoc(doc(db, "users", _presenceUid), {
           currentPage:    page,
           lastActive:     Date.now(),
-          lastActiveDate: new Date().toISOString()
         });
       } catch {}
     }
@@ -1274,7 +1274,6 @@ async function setOffline() {
     await updateDoc(doc(db, "users", uid), {
       status:         "offline",
       lastActive:     Date.now(),
-      lastActiveDate: new Date().toISOString(),
       currentPage:    ""
     });
   } catch {}
