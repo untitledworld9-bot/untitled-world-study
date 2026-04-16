@@ -37,6 +37,8 @@ const ASSETS = [
   "/theme.js",
   "/icon-192.png",
   "/icon-512.png"
+  "/admin/studygridadmin.html",
+  "/admin/manifestadmin.json"
 ];
 
 // ── INSTALL ──────────────────────────────────────────────────
@@ -199,7 +201,7 @@ self.addEventListener("notificationclick", event => {
     clients.matchAll({ type: "window", includeUncontrolled: true })
       .then(list => {
         for (const c of list) {
-          if (c.url.includes(url) && "focus" in c) return c.focus();
+  if ("focus" in c) { await c.focus(); return; }
         }
         if (clients.openWindow) return clients.openWindow(url);
       })
