@@ -649,14 +649,12 @@ function renderUserTable() {
             color:var(--accent-green);border-radius:7px;padding:5px 9px;
             font-size:13px;cursor:pointer;transition:all .15s;
           " onmouseover="this.style.background='rgba(0,229,160,.25)'" onmouseout="this.style.background='rgba(0,229,160,.1)'">▶️</button>
-        </div>
-      </td>
-      <td>
-        <button title="Delete User" onclick="deleteUser('${uid}','${uname}')" style="
+<button title="Delete User" onclick="deleteUser('${uid}','${uname}')" style="
           background:rgba(255,79,106,.1);border:1px solid rgba(255,79,106,.25);
           color:var(--accent-red);border-radius:7px;padding:5px 9px;
           font-size:13px;cursor:pointer;transition:all .15s;font-weight:600;
         " onmouseover="this.style.background='rgba(255,79,106,.25)'" onmouseout="this.style.background='rgba(255,79,106,.1)'">🗑️</button>
+        </div>
       </td>
     </tr>`;
   }).join("");
