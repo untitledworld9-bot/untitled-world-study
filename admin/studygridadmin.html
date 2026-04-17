@@ -825,6 +825,10 @@
     </button>
   </div>
 
+    <button class="nav-btn" onclick="showSection('upload')" id="nav-upload">
+  📤 Upload
+    </button>
+
   <div class="sidebar-footer">
     <div class="admin-profile">
       <div class="admin-avatar" id="adminAvatarSidebar">A</div>
@@ -1702,7 +1706,32 @@
       </div>
     </div>
   </section>
+  <!------ UPLOAD TAB ------>
+  <section id="upload" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Upload System</div>
+      <div class="section-subtitle">Manage and upload images for banners, ads and thumbnails</div>
+    </div>
+  </div>
 
+  <div class="form-panel">
+    <div class="form-panel-title">
+      Open Media Manager <span class="pill">Cloudinary + Firebase</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Media Upload Panel</label>
+      <div style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
+        Click below to open full media upload system (images, banners, ads)
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="openMediaPage()">
+      📤 Open Upload System
+    </button>
+  </div>
+  </section>
   <!-- ─────────── USER PERFORMANCE ANALYSIS ─────────── -->
   <section id="performance" class="section">
     <div class="section-header">
