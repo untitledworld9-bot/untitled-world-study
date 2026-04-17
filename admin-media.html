@@ -244,7 +244,6 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -257,8 +256,24 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const storage = getStorage(app);
     const db = getFirestore(app);
+
+async function uploadToCloudinary(file){
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "e3vwvepk");
+
+  const res = await fetch(
+    "https://api.cloudinary.com/v1_1/dm9hqkipf/image/upload",
+    {
+      method: "POST",
+      body: formData
+    }
+  );
+
+  const data = await res.json();
+  return data.secure_url;
+}
 
     // Navigation
     window.showSection = (id) => {
@@ -288,50 +303,55 @@
     }
 
     // Upload Logic
-    window.upload = () => {
-      const fileInput = document.getElementById('file');
-      const file = fileInput.files[0];
-      const folder = document.getElementById('folder').value;
+    window.upload = async () => {
+  const fileInput = document.getElementById('file');
+  const file = fileInput.files[0];
+  const folder = document.getElementById('folder').value;
 
-      if (!file) return showToast("Please select a file to upload.", true);
+  if (!file) return showToast("Please select a file to upload.", true);
 
-      const path = `media/${folder}/${Date.now()}_${file.name}`;
-      const storageRef = ref(storage, path);
-      const task = uploadBytesResumable(storageRef, file);
+  const wrapper = document.getElementById('progress-wrapper');
+  const bar = document.getElementById('progress-bar');
 
-      const wrapper = document.getElementById('progress-wrapper');
-      const bar = document.getElementById('progress-bar');
-      wrapper.style.display = 'block';
+  wrapper.style.display = 'block';
+  bar.style.width = "30%";
 
-      task.on('state_changed', snap => {
-        const p = (snap.bytesTransferred / snap.totalBytes) * 100;
-        bar.style.width = p + "%";
-      }, err => {
-        showToast("Upload failed: " + err.message, true);
-        wrapper.style.display = 'none';
-      }, async () => {
-        const url = await getDownloadURL(task.snapshot.ref);
-        const tags = generateTags(file.name);
+  try {
+    const url = await uploadToCloudinary(file);
 
-        await addDoc(collection(db, 'media'), {
-          url,
-          folder,
-          path,
-          name: file.name,
-          tags,
-          used: 0,
-          time: Date.now()
-        });
+    bar.style.width = "80%";
 
-        wrapper.style.display = 'none';
-        bar.style.width = "0%";
-        fileInput.value = ""; // clear input
-        
-        showToast("Image Uploaded & Processed!");
-        loadMedia();
-        loadStats();
-      });
-    };
+    const tags = generateTags(file.name);
+
+    await addDoc(collection(db, 'media'), {
+      url,
+      folder,
+      name: file.name,
+      tags,
+      used: 0,
+      time: Date.now()
+    });
+
+    bar.style.width = "100%";
+
+    setTimeout(() => {
+      wrapper.style.display = 'none';
+      bar.style.width = "0%";
+    }, 500);
+
+    fileInput.value = "";
+
+    navigator.clipboard.writeText(url);
+
+    showToast("Uploaded 🚀");
+    loadMedia();
+    loadStats();
+
+  } catch (err) {
+    showToast("Upload failed: " + err.message, true);
+    wrapper.style.display = 'none';
+  }
+};
 
     // Load & Render Gallery
     window.loadMedia = async () => {
@@ -398,39 +418,15 @@
       loadStats();
     };
 
-    window.replaceImg = (path) => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
+    window.replaceImg = () => {
+  showToast("Replace disabled (Cloudinary mode)");
+};
 
-      input.onchange = async () => {
-        const file = input.files[0];
-        if(!file) return;
-        
-        showToast("Replacing image in background...");
-        const storageRef = ref(storage, path);
-        await uploadBytesResumable(storageRef, file);
-        
-        showToast("Image Replaced Successfully");
-        setTimeout(loadMedia, 1000); // Wait for cdn invalidation (rough)
-      };
-
-      input.click();
-    };
-
-    window.deleteImg = async (id, path) => {
-      if (!confirm("Are you sure you want to permanently delete this media asset?")) return;
-
-      try {
-        await deleteDoc(doc(db, "media", id));
-        await deleteObject(ref(storage, path));
-        showToast("Asset Deleted");
-        loadMedia();
-        loadStats();
-      } catch (e) {
-        showToast("Error deleting: " + e.message, true);
-      }
-    };
+window.deleteImg = async (id) => {
+  await deleteDoc(doc(db, "media", id));
+  showToast("Deleted from database");
+  loadMedia();
+};
 
     // Dashboard Stats
     window.loadStats = async () => {
