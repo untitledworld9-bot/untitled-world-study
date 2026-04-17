@@ -19,7 +19,7 @@ messaging.onBackgroundMessage(function(payload) {
 });
 
 // ─────────────────────────────────────────────────────────────
-const CACHE = "sgp-cache-v1";
+const CACHE = "sgp-cache-v2";
 
 // ✅ Sirf wahi files jo 100% exist karti hain
 const ASSETS = [
@@ -36,7 +36,7 @@ const ASSETS = [
   "/script.js",
   "/theme.js",
   "/icon-192.png",
-  "/icon-512.png"
+  "/icon-512.png",
   "/admin/studygridadmin.html",
   "/admin/manifestadmin.json"
 ];
