@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Test Analysis — Study Grid Prep</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="/icon-192.png">
+<meta name="theme-color" content="#0f2027">
+
+<!-- AUTH GATE -->
+<script>
+(function(){
+  var isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if(isPWA && !localStorage.getItem("userName")){
+    document.documentElement.style.display='none';
+    window.location.replace("login.html");
+  }
+})();
+</script>
+
+<!-- THEME — instant -->
+<script>
+(function(){
+  var saved = localStorage.getItem("theme");
+  var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute("data-theme", saved || (systemDark ? "dark" : "light"));
+})();
+</script>
+<style>html{ visibility:hidden; } html[data-theme]{ visibility:visible; }</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS — exact mirror of existing pages
+============================================================ */
+:root {
+  --bg-start:       #ffffff;
+  --bg-end:         #f0f4f8;
+  --primary:        #22D3EE;
+  --primary-dark:   #06B6D4;
+  --secondary:      #34D399;
+  --accent:         #F43F5E;
+  --text-primary:   #111111;
+  --text-secondary: #555555;
+  --card-bg:        rgba(0,0,0,0.04);
+  --card-border:    rgba(0,0,0,0.08);
+  --header-bg:      #ffffff;
+  --glass-bg:       rgba(0,0,0,0.03);
+  --radius:         16px;
+  --shadow:         0 4px 24px rgba(0,0,0,0.09);
+  --transition:     0.26s ease;
+  --green:          #10B981;
+  --red:            #EF4444;
+  --amber:          #F59E0B;
+  --purple:         #8B5CF6;
+}
+[data-theme="dark"] {
+  --bg-start:       #0B1220;
+  --bg-end:         #0F172A;
+  --text-primary:   #E2E8F0;
+  --text-secondary: #94A3B8;
+  --card-bg:        rgba(255,255,255,0.04);
+  --card-border:    rgba(255,255,255,0.08);
+  --header-bg:      rgba(11,18,32,0.98);
+  --glass-bg:       rgba(255,255,255,0.04);
+  --shadow:         0 4px 28px rgba(0,0,0,0.38);
+}
+
+/* ============================================================
+   RESET / BASE
+============================================================ */
+*, *::before, *::after {
+  margin:0; padding:0; box-sizing:border-box;
+  font-family:'Poppins', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+html { background:var(--bg-start); height:100%; }
+body {
+  background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  color: var(--text-primary);
+  min-height:100%; min-height:100dvh;
+  display:flex; flex-direction:column;
+  overscroll-behavior-y: none;
+  animation: pageIn 0.36s ease forwards;
+}
+@keyframes pageIn {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ============================================================
+   PAGE TRANSITION
+============================================================ */
+#pageTransition {
+  position:fixed; inset:0; background:var(--bg-start);
+  z-index:99999; opacity:0; pointer-events:none;
+  transition:opacity 0.22s ease;
+}
+#pageTransition.leaving { opacity:1; pointer-events:all; }
+
+/* ============================================================
+   FIXED HEADER
+============================================================ */
+header {
+  position:sticky; top:0; z-index:900;
+  display:flex; align-items:center;
+  justify-content:space-between;
+  padding:13px 18px;
+  background:var(--header-bg);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--card-border);
+  flex-shrink:0; gap:12px;
+}
+.hdr-back {
+  width:34px; height:34px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--card-bg); border:1px solid var(--card-border);
+  color:var(--text-secondary); font-size:14px;
+  cursor:pointer; flex-shrink:0;
+  transition:all 0.18s;
+  text-decoration:none;
+}
+.hdr-back:hover { background:var(--primary); color:#0B1220; border-color:var(--primary); }
+.hdr-back:active { transform:scale(0.93); }
+.hdr-center {
+  flex:1; min-width:0; text-align:center;
+}
+.hdr-title {
+  font-size:clamp(13px,3.5vw,16px); font-weight:700;
+  color:var(--text-primary);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.hdr-sub { font-size:10px; color:var(--text-secondary); font-weight:500; }
+.hdr-avatar {
+  width:34px; height:34px; border-radius:50%;
+  background:linear-gradient(135deg,#22D3EE,#06B6D4);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:700; color:#0B1220;
+  flex-shrink:0; box-shadow:0 2px 8px rgba(34,211,238,0.3);
+}
+
+/* ============================================================
+   SCROLLABLE BODY
+============================================================ */
+main {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  padding:20px 18px 120px;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+}
+main::-webkit-scrollbar { width:3px; }
+main::-webkit-scrollbar-thumb { background:var(--card-border); border-radius:99px; }
+
+/* ============================================================
+   SECTION LABEL
+============================================================ */
+.sec-label {
+  font-size:10px; font-weight:700; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--text-secondary);
+  margin-bottom:10px; padding-left:2px;
+  display:flex; align-items:center; gap:8px;
+}
+.sec-label::after {
+  content:''; flex:1; height:1px; background:var(--card-border);
+}
+
+/* ============================================================
+   TOP INFO BLOCK (exam name + big bold)
+============================================================ */
+.top-info {
+  margin-bottom:20px;
+  animation:fadeUp 0.38s ease 0.05s both;
+}
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.top-exam-name {
+  font-size:clamp(20px,5vw,28px); font-weight:800;
+  color:var(--text-primary); line-height:1.15;
+  letter-spacing:-0.02em;
+}
+.top-exam-meta {
+  font-size:13px; color:var(--text-secondary);
+  font-weight:500; margin-top:5px;
+  display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+}
+.top-meta-chip {
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--card-bg); border:1px solid var(--card-border);
+  padding:4px 10px; border-radius:99px;
+  font-size:11px; font-weight:600; color:var(--text-secondary);
+}
+.top-meta-chip i { font-size:10px; color:var(--primary); }
+
+/* ============================================================
+   SCORE + STATS ROW (score circle left, stats right)
+============================================================ */
+.hero-row {
+  display:flex; gap:14px; margin-bottom:18px;
+  align-items:stretch;
+  animation:fadeUp 0.4s ease 0.1s both;
+}
+
+/* Score circle card */
+.score-circle-card {
+  flex:0 0 auto; width:148px;
+  background:var(--header-bg);
+  border:1px solid var(--card-border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:20px 12px;
+  position:relative; overflow:hidden;
+}
+.score-circle-card::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+}
+
+/* SVG donut */
+.donut-wrap {
+  position:relative; width:110px; height:110px;
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:10px;
+}
+.donut-svg { width:110px; height:110px; transform:rotate(-90deg); }
+.donut-track {
+  fill:none; stroke:var(--card-border);
+  stroke-width:8;
+}
+.donut-fill {
+  fill:none;
+  stroke:url(#scoreGrad);
+  stroke-width:8;
+  stroke-linecap:round;
+  stroke-dasharray:283;   /* 2π × r (r=45) */
+  stroke-dashoffset:283;  /* starts fully hidden */
+  transition:stroke-dashoffset 1.3s cubic-bezier(0.4,0,0.2,1) 0.4s;
+}
+.donut-center {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center; pointer-events:none;
+}
+.donut-score-val {
+  font-size:20px; font-weight:800; color:var(--text-primary);
+  line-height:1; letter-spacing:-0.03em;
+}
+.donut-score-max {
+  font-size:10px; color:var(--text-secondary); font-weight:600;
+  margin-top:2px;
+}
+.score-label {
+  font-size:11px; font-weight:700; color:var(--text-secondary);
+  text-transform:uppercase; letter-spacing:0.08em;
+}
+
+/* Stats grid card */
+.stats-card {
+  flex:1; min-width:0;
+  background:var(--header-bg);
+  border:1px solid var(--card-border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:14px;
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:10px; align-content:center;
+}
+
+.mini-stat {
+  display:flex; flex-direction:column; gap:2px;
+  padding:10px; border-radius:12px;
+  background:var(--glass-bg);
+  border:1px solid var(--card-border);
+}
+.mini-stat-val {
+  font-size:18px; font-weight:800;
+  color:var(--text-primary); line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.mini-stat-val.green  { color:var(--green); }
+.mini-stat-val.red    { color:var(--red); }
+.mini-stat-val.amber  { color:var(--amber); }
+.mini-stat-val.cyan   { color:var(--primary); }
+.mini-stat-label {
+  font-size:10px; font-weight:500; color:var(--text-secondary);
+  line-height:1.2;
+}
+
+/* ============================================================
+   CARDS (general)
+============================================================ */
+.analysis-card {
+  background:var(--header-bg);
+  border:1px solid var(--card-border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+  overflow:hidden;
+}
+.analysis-card-hdr {
+  display:flex; align-items:center; gap:10px;
+  padding:14px 18px;
+  border-bottom:1px solid var(--card-border);
+}
+.ac-hdr-icon {
+  width:30px; height:30px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; background:rgba(34,211,238,0.1); color:var(--primary);
+  flex-shrink:0;
+}
+.ac-hdr-title { font-size:13px; font-weight:700; color:var(--text-primary); }
+.ac-hdr-sub   { font-size:11px; color:var(--text-secondary); }
+.ac-body { padding:14px 18px; }
+
+/* ============================================================
+   SUBJECT BREAKDOWN
+============================================================ */
+.subject-item {
+  padding:14px 18px;
+  border-bottom:1px solid var(--card-border);
+  animation:fadeUp 0.35s ease both;
+}
+.subject-item:last-child { border-bottom:none; }
+.sub-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px;
+}
+.sub-name {
+  font-size:13px; font-weight:700; color:var(--text-primary);
+  display:flex; align-items:center; gap:8px;
+}
+.sub-badge {
+  font-size:10px; padding:2px 8px; border-radius:99px;
+  font-weight:700; background:rgba(34,211,238,0.1);
+  color:var(--primary); border:1px solid rgba(34,211,238,0.2);
+}
+.sub-accuracy {
+  font-size:13px; font-weight:800;
+}
+.sub-mini-stats {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+  margin-bottom:10px;
+}
+.sub-mini {
+  background:var(--glass-bg); border:1px solid var(--card-border);
+  border-radius:10px; padding:8px 10px; text-align:center;
+}
+.sub-mini-val { font-size:15px; font-weight:800; color:var(--text-primary); }
+.sub-mini-val.green  { color:var(--green); }
+.sub-mini-val.red    { color:var(--red); }
+.sub-mini-lbl { font-size:9px; color:var(--text-secondary); font-weight:600; letter-spacing:0.06em; text-transform:uppercase; margin-top:1px; }
+
+/* Subject accuracy bar */
+.sub-bar-track {
+  height:5px; background:var(--card-bg);
+  border-radius:99px; overflow:hidden;
+  border:1px solid var(--card-border);
+}
+.sub-bar-fill {
+  height:100%; border-radius:99px; width:0;
+  transition:width 1s cubic-bezier(0.4,0,0.2,1) 0.5s;
+}
+
+/* ============================================================
+   RANK / PERCENTILE (Future ready)
+============================================================ */
+.rank-row {
+  display:flex; gap:10px;
+}
+.rank-item {
+  flex:1; background:var(--glass-bg);
+  border:1px solid var(--card-border);
+  border-radius:12px; padding:14px;
+  text-align:center;
+}
+.rank-val {
+  font-size:22px; font-weight:800; color:var(--text-primary);
+  letter-spacing:-0.03em;
+}
+.rank-label {
+  font-size:10px; font-weight:600; color:var(--text-secondary);
+  text-transform:uppercase; letter-spacing:0.08em; margin-top:3px;
+}
+.rank-note {
+  font-size:10px; color:var(--amber); margin-top:5px; font-weight:500;
+}
+
+/* ============================================================
+   COMPARISON (Topper vs You)
+============================================================ */
+.comparison-table {
+  width:100%; border-collapse:collapse;
+}
+.cmp-hdr th {
+  padding:10px 14px; font-size:10px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--text-secondary); text-align:left;
+  background:var(--glass-bg); border-bottom:1px solid var(--card-border);
+}
+.cmp-body td {
+  padding:11px 14px; font-size:12px;
+  border-bottom:1px solid var(--card-border);
+  color:var(--text-secondary); vertical-align:middle;
+}
+.cmp-body tr:last-child td { border-bottom:none; }
+.cmp-body td:first-child { color:var(--text-primary); font-weight:500; }
+.cmp-you   { color:var(--primary) !important; font-weight:700 !important; }
+.cmp-top   { color:var(--green)   !important; font-weight:700 !important; }
+
+/* ============================================================
+   PERFORMANCE MESSAGE
+============================================================ */
+.perf-msg {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:14px;
+  background:rgba(34,211,238,0.06);
+  border:1px solid rgba(34,211,238,0.18);
+  border-radius:12px;
+}
+.perf-msg-icon { font-size:20px; flex-shrink:0; margin-top:1px; }
+.perf-msg-text { font-size:13px; color:var(--text-secondary); line-height:1.6; }
+.perf-msg-text strong { color:var(--text-primary); }
+
+/* ============================================================
+   FLOATING BACK BUTTON
+============================================================ */
+#fabBack {
+  position:fixed; bottom:28px; right:20px;
+  display:flex; align-items:center; gap:8px;
+  padding:13px 20px;
+  background:rgba(239,68,68,0.12);
+  border:1.5px solid rgba(239,68,68,0.28);
+  border-radius:99px;
+  color:var(--red); font-size:13px; font-weight:700;
+  cursor:pointer; z-index:700;
+  box-shadow:0 6px 20px rgba(239,68,68,0.15);
+  transition:all 0.22s ease;
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  animation:fabIn 0.4s ease 0.5s both;
+  -webkit-tap-highlight-color:transparent;
+}
+@keyframes fabIn {
+  from{opacity:0;transform:translateY(20px) scale(0.85);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+#fabBack:hover {
+  background:rgba(239,68,68,0.2);
+  border-color:rgba(239,68,68,0.45);
+  transform:translateY(-2px);
+  box-shadow:0 8px 28px rgba(239,68,68,0.2);
+}
+#fabBack:active { transform:scale(0.95); }
+
+/* ============================================================
+   NO DATA
+============================================================ */
+.no-data {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:14px; padding:60px 24px; text-align:center;
+}
+.no-data-icon { font-size:44px; color:var(--text-secondary); opacity:0.4; }
+.no-data-title { font-size:16px; font-weight:600; }
+.no-data-sub   { font-size:13px; color:var(--text-secondary); }
+.no-data-btn {
+  margin-top:8px; padding:11px 24px;
+  background:var(--primary); color:#0B1220;
+  border:none; border-radius:12px;
+  font-size:13px; font-weight:700; cursor:pointer;
+  transition:all 0.18s;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Page Transition -->
+<div id="pageTransition"></div>
+
+<!-- ===== FIXED HEADER ===== -->
+<header>
+  <div class="hdr-back" onclick="navigate('result-summary.html')" title="Back to Summary">
+    <i class="fa-solid fa-arrow-left"></i>
+  </div>
+  <div class="hdr-center">
+    <div class="hdr-title" id="hdrTitle">Mock Test Analysis</div>
+    <div class="hdr-sub">Study Grid Prep</div>
+  </div>
+  <div class="hdr-avatar" id="hdrAvatar">S</div>
+</header>
+
+<!-- ===== SCROLLABLE MAIN ===== -->
+<main>
+
+  <!-- TOP INFO -->
+  <div class="top-info" id="topInfo">
+    <div class="top-exam-name" id="topExamName">Loading...</div>
+    <div class="top-exam-meta" id="topExamMeta"></div>
+  </div>
+
+  <!-- HERO ROW: Score circle + stats grid -->
+  <div class="hero-row" id="heroRow">
+
+    <!-- Score Circle -->
+    <div class="score-circle-card">
+      <div class="donut-wrap">
+        <svg class="donut-svg" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%"   stop-color="#22D3EE"/>
+              <stop offset="100%" stop-color="#34D399"/>
+            </linearGradient>
+          </defs>
+          <circle class="donut-track" cx="50" cy="50" r="45"/>
+          <circle class="donut-fill" cx="50" cy="50" r="45" id="donutFill"/>
+        </svg>
+        <div class="donut-center">
+          <div class="donut-score-val" id="donutScoreVal">—</div>
+          <div class="donut-score-max" id="donutScoreMax">/ —</div>
+        </div>
+      </div>
+      <div class="score-label">Your Score</div>
+    </div>
+
+    <!-- Mini stats grid -->
+    <div class="stats-card" id="miniStatsGrid"></div>
+
+  </div>
+
+  <!-- PERFORMANCE MESSAGE -->
+  <div class="analysis-card" style="animation:fadeUp 0.4s ease 0.15s both; margin-bottom:16px;">
+    <div class="ac-body" style="padding:16px 18px;">
+      <div class="perf-msg" id="perfMsg">
+        <div class="perf-msg-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="perf-msg-text" id="perfMsgText">Loading your performance insight...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBJECT-WISE ANALYSIS -->
+  <div class="sec-label" style="animation:fadeUp 0.4s ease 0.2s both;">Subject-wise Analysis</div>
+  <div class="analysis-card" style="animation:fadeUp 0.4s ease 0.22s both;" id="subjectCard">
+    <div class="analysis-card-hdr">
+      <div class="ac-hdr-icon"><i class="fa-solid fa-book-open"></i></div>
+      <div>
+        <div class="ac-hdr-title">Subject Breakdown</div>
+        <div class="ac-hdr-sub">Accuracy and attempt rate per subject</div>
+      </div>
+    </div>
+    <div id="subjectList"></div>
+  </div>
+
+  <!-- RANK & PERCENTILE (future ready) -->
+  <div class="sec-label" style="animation:fadeUp 0.4s ease 0.28s both;">Rank &amp; Percentile</div>
+  <div class="analysis-card" style="animation:fadeUp 0.4s ease 0.3s both;">
+    <div class="analysis-card-hdr">
+      <div class="ac-hdr-icon"><i class="fa-solid fa-trophy"></i></div>
+      <div>
+        <div class="ac-hdr-title">Your Standing</div>
+        <div class="ac-hdr-sub">Compared to all test takers</div>
+      </div>
+    </div>
+    <div class="ac-body">
+      <div class="rank-row">
+        <div class="rank-item">
+          <!--
+            FUTURE: Replace "--" with rank fetched from Firestore leaderboard.
+            Collection: testResults — query by exam+year+shift, order by score DESC, find user rank.
+          -->
+          <div class="rank-val">--</div>
+          <div class="rank-label">Rank</div>
+          <div class="rank-note">Available after more students attempt</div>
+        </div>
+        <div class="rank-item">
+          <!--
+            FUTURE: Percentile = (students with lower score / total students) × 100
+            Pull from Firebase cloud function or client-side aggregate.
+          -->
+          <div class="rank-val">--</div>
+          <div class="rank-label">Percentile</div>
+          <div class="rank-note">Firebase leaderboard integration coming</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARISON: Topper vs You -->
+  <div class="sec-label" style="animation:fadeUp 0.4s ease 0.34s both;">Performance Comparison</div>
+  <div class="analysis-card" style="animation:fadeUp 0.4s ease 0.36s both;">
+    <div class="analysis-card-hdr">
+      <div class="ac-hdr-icon"><i class="fa-solid fa-users"></i></div>
+      <div>
+        <div class="ac-hdr-title">Topper vs You</div>
+        <div class="ac-hdr-sub">Benchmark against top performer (demo data)</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="comparison-table">
+        <thead class="cmp-hdr">
+          <tr>
+            <th>Metric</th>
+            <th class="cmp-top">Topper</th>
+            <th class="cmp-you">You</th>
+          </tr>
+        </thead>
+        <tbody class="cmp-body" id="comparisonBody"></tbody>
+      </table>
+    </div>
+    <!--
+      FUTURE: Replace dummy topper data with Firestore query:
+      getDocs(query(collection(db,'testResults'), where('exam','==',exam), orderBy('score','desc'), limit(1)))
+    -->
+  </div>
+
+  <!-- IMPROVEMENT TIPS -->
+  <div class="sec-label" style="animation:fadeUp 0.4s ease 0.4s both;">Study Tips</div>
+  <div class="analysis-card" style="animation:fadeUp 0.4s ease 0.42s both; margin-bottom:20px;">
+    <div class="analysis-card-hdr">
+      <div class="ac-hdr-icon"><i class="fa-solid fa-lightbulb"></i></div>
+      <div>
+        <div class="ac-hdr-title">Improvement Areas</div>
+        <div class="ac-hdr-sub">Based on your performance</div>
+      </div>
+    </div>
+    <div class="ac-body" id="tipsBody" style="display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+
+</main>
+
+<!-- Floating Back Button -->
+<button id="fabBack" onclick="navigate('mock-home.html')">
+  <i class="fa-solid fa-house"></i> Back to Home
+</button>
+
+<script src="theme.js"></script>
+
+<script>
+/* ============================================================
+   RESULT ANALYSIS PAGE — result-analysis.html
+   Data source: localStorage.lastTestResult (written by mock.html)
+   Structure is Firebase-ready — replace localStorage reads with
+   Firestore queries to support live leaderboard in future.
+============================================================ */
+
+/* ── Navigate ── */
+window.navigate = function(url) {
+  const v = document.getElementById('pageTransition');
+  if (v) v.classList.add('leaving');
+  setTimeout(() => { window.location.href = url; }, 210);
+};
+
+/* ── Helpers ── */
+function escHtml(str) {
+  if (!str && str !== 0) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+function pct(a, b) { return b > 0 ? Math.round((a / b) * 100) : 0; }
+
+/* Animate number 0 → target */
+function animateNum(el, target, duration, suffix) {
+  if (!el || isNaN(target)) return;
+  const startTime = performance.now();
+  function tick(now) {
+    const p = Math.min((now - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = Math.round(target * eased);
+    el.textContent = val + (suffix || '');
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = target + (suffix || '');
+  }
+  requestAnimationFrame(tick);
+}
+
+/* Performance message based on accuracy */
+function getPerformanceInsight(accuracy, score, maxScore) {
+  if (accuracy >= 80) return { icon:'fa-fire', msg:`<strong>Outstanding performance!</strong> You scored ${accuracy}% accuracy. You're well on track for your exam. Focus on maintaining this consistency.` };
+  if (accuracy >= 60) return { icon:'fa-thumbs-up', msg:`<strong>Good attempt!</strong> You scored ${accuracy}% accuracy. With targeted revision on your weaker subjects, you can push this above 80%.` };
+  if (accuracy >= 40) return { icon:'fa-book', msg:`<strong>Keep practicing!</strong> ${accuracy}% accuracy shows you understand the basics. Focus on concept clarity and time management.` };
+  return { icon:'fa-seedling', msg:`<strong>Every expert was once a beginner.</strong> ${accuracy}% accuracy — focus on fundamentals first. Consistent daily practice will show rapid improvement.` };
+}
+
+/* Subject accuracy color */
+function accColor(a) {
+  if (a >= 70) return var_('--green');
+  if (a >= 40) return var_('--amber');
+  return var_('--red');
+}
+function accTextClass(a) {
+  if (a >= 70) return 'green';
+  if (a >= 40) return 'amber';
+  return 'red';
+}
+function var_(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function gradientForAccuracy(a) {
+  if (a >= 70) return 'linear-gradient(90deg,#10B981,#34D399)';
+  if (a >= 40) return 'linear-gradient(90deg,#F59E0B,#FBBF24)';
+  return 'linear-gradient(90deg,#EF4444,#F87171)';
+}
+
+/* Improvement tips generator */
+function generateTips(subjectData, accuracy) {
+  const tips = [];
+  // Low accuracy subjects
+  subjectData.forEach(s => {
+    if (s.accuracy < 50 && s.attempted > 0) {
+      tips.push({ icon:'fa-circle-exclamation', color:'var(--red)', text:`<strong>${escHtml(s.subject)}</strong>: Only ${s.accuracy}% accuracy. Revisit core concepts and practice previous year questions.` });
+    }
+  });
+  // High unattempted
+  subjectData.forEach(s => {
+    if (s.unattempted > s.total * 0.4) {
+      tips.push({ icon:'fa-clock', color:'var(--amber)', text:`<strong>${escHtml(s.subject)}</strong>: ${s.unattempted} questions unattempted. Work on time management — try timed subject-wise drills.` });
+    }
+  });
+  if (accuracy >= 70) {
+    tips.push({ icon:'fa-star', color:'var(--green)', text:`<strong>Strong overall performance.</strong> Now focus on your weakest subject to improve total score significantly.` });
+  }
+  if (tips.length === 0) {
+    tips.push({ icon:'fa-chart-line', color:'var(--primary)', text:`<strong>Keep attempting all questions.</strong> Even eliminating wrong options improves your score in MCQ exams.` });
+    tips.push({ icon:'fa-repeat', color:'var(--primary)', text:`<strong>Attempt more mock tests</strong> to track your improvement over time. Consistency is key.` });
+  }
+  return tips;
+}
+
+/* ── MAIN INIT ── */
+(function init() {
+
+  /* 1. Load result data */
+  let result = null;
+  try {
+    const raw = localStorage.getItem('lastTestResult');
+    if (raw) result = JSON.parse(raw);
+  } catch(e) {}
+
+  const exam     = (result?.exam  || localStorage.getItem('selectedExam')  || 'EXAM').toUpperCase();
+  const year     = result?.year   || localStorage.getItem('selectedYear')   || '';
+  const shift    = result?.shift  || localStorage.getItem('selectedShift')  || '';
+  let subjects   = result?.subjects;
+  if (!subjects) { try { subjects = JSON.parse(localStorage.getItem('selectedSubjects')||'[]'); } catch(e){subjects=[];} }
+  const userName = localStorage.getItem('userName') || 'Student';
+
+  /* 2. Header */
+  const hdrTitle = document.getElementById('hdrTitle');
+  if (hdrTitle) hdrTitle.textContent = `${exam} Test Analysis`;
+  const avatar = document.getElementById('hdrAvatar');
+  if (avatar) avatar.textContent = (userName || 'S').charAt(0).toUpperCase();
+
+  /* 3. No result guard */
+  if (!result) {
+    const main = document.querySelector('main');
+    if (main) main.innerHTML = `
+      <div class="no-data">
+        <div class="no-data-icon"><i class="fa-regular fa-circle-xmark"></i></div>
+        <div class="no-data-title">No Analysis Data Found</div>
+        <div class="no-data-sub">Please complete a mock test first to see your analysis.</div>
+        <button class="no-data-btn" onclick="navigate('mock-home.html')">Go to Mock Tests</button>
+      </div>`;
+    return;
+  }
+
+  /* 4. Pull numbers */
+  const total       = result.total       || 0;
+  const correct     = result.correct     || 0;
+  const incorrect   = result.incorrect   || 0;
+  const unattempted = result.unattempted || (total - correct - incorrect);
+  const attempted   = correct + incorrect;
+  const score       = result.score       || 0;
+  const maxScore    = total * 4;
+  const marksGained = correct * 4;
+  const negMarks    = incorrect; // -1 each
+  const accuracy    = attempted > 0 ? pct(correct, attempted) : 0;
+
+  /* 5. Top info */
+  const topExamName = document.getElementById('topExamName');
+  if (topExamName) topExamName.textContent = `${exam} Mock Test`;
+
+  const topExamMeta = document.getElementById('topExamMeta');
+  if (topExamMeta) {
+    const chips = [
+      year  ? `<div class="top-meta-chip"><i class="fa-solid fa-calendar"></i>${year}</div>`     : '',
+      shift ? `<div class="top-meta-chip"><i class="fa-solid fa-clock"></i>${escHtml(shift)}</div>` : '',
+      Array.isArray(subjects) && subjects.length > 0
+        ? `<div class="top-meta-chip"><i class="fa-solid fa-book-open"></i>${subjects.map(escHtml).join(', ')}</div>`
+        : '',
+    ].filter(Boolean);
+    topExamMeta.innerHTML = chips.join('');
+  }
+
+  /* 6. Score donut */
+  const donutFill     = document.getElementById('donutFill');
+  const donutScoreVal = document.getElementById('donutScoreVal');
+  const donutScoreMax = document.getElementById('donutScoreMax');
+
+  if (donutScoreMax) donutScoreMax.textContent = '/ ' + maxScore;
+
+  // Animate donut: stroke-dashoffset from 283 down to (1 - pct/100) * 283
+  const scorePct = maxScore > 0 ? Math.max(0, Math.min(1, score / maxScore)) : 0;
+  const targetOffset = 283 - (283 * scorePct);
+  if (donutFill) {
+    setTimeout(() => { donutFill.style.strokeDashoffset = targetOffset; }, 200);
+  }
+  if (donutScoreVal) setTimeout(() => animateNum(donutScoreVal, score, 1200, ''), 300);
+
+  /* 7. Mini stats grid */
+  const miniStatsGrid = document.getElementById('miniStatsGrid');
+  if (miniStatsGrid) {
+    const items = [
+      { val: attempted,   label:'Attempted',   cls:'cyan'  },
+      { val: correct,     label:'Correct',     cls:'green' },
+      { val: incorrect,   label:'Incorrect',   cls:'red'   },
+      { val: marksGained, label:'Marks Gained',cls:''      },
+      { val: negMarks,    label:'Neg. Marks',  cls:'red'   },
+      { val: accuracy,    label:'Accuracy %',  cls:'cyan'  },
+    ];
+    miniStatsGrid.innerHTML = items.map((it,i) =>
+      `<div class="mini-stat" style="animation:fadeUp 0.35s ease ${0.2+i*0.06}s both;">
+        <div class="mini-stat-val ${it.cls}" id="ms_${i}">0</div>
+        <div class="mini-stat-label">${it.label}</div>
+      </div>`).join('');
+    items.forEach((it, i) => {
+      const el = document.getElementById('ms_' + i);
+      setTimeout(() => animateNum(el, it.val, 900, i === 5 ? '%' : ''), 350 + i * 60);
+    });
+  }
+
+  /* 8. Performance message */
+  const perfMsgText = document.getElementById('perfMsgText');
+  const perfMsg     = document.getElementById('perfMsg');
+  if (perfMsgText) {
+    const insight = getPerformanceInsight(accuracy, score, maxScore);
+    const iconEl = perfMsg.querySelector('.perf-msg-icon');
+    if (iconEl) iconEl.innerHTML = `<i class="fa-solid ${insight.icon}"></i>`;
+    perfMsgText.innerHTML = insight.msg;
+  }
+
+  /* 9. Subject breakdown */
+  const answers  = result.answers || {};
+  const subjectList = document.getElementById('subjectList');
+
+  // Build subject-level stats
+  const subjectsToAnalyze = Array.isArray(subjects) && subjects.length > 0
+    ? subjects
+    : Object.keys(answers);
+
+  const subjectData = [];
+
+  if (subjectsToAnalyze.length === 0) {
+    if (subjectList) {
+      subjectList.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-secondary);font-size:13px;">No subject data available.</div>`;
+    }
+  } else {
+    subjectsToAnalyze.forEach(sub => {
+      const subAnswers = answers[sub] || {};
+      let sTotal = 0, sCorrect = 0, sIncorrect = 0, sAttempted = 0, sUnattempted = 0;
+
+      // Try to reconstruct from answers object
+      Object.values(subAnswers).forEach(a => {
+        sTotal++;
+        if (a && a.answer !== null && a.answer !== undefined) {
+          sAttempted++;
+          // We don't have question-level correctAnswer here — only score-level data
+          // For now derive from result-level data proportionally if only 1 subject
+          // Full per-question correct-check would need questions stored in answers
+        } else {
+          sUnattempted++;
+        }
+      });
+
+      // If we have multi-subject, distribute proportionally; for single subject use total
+      let sScore = 0;
+      if (subjectsToAnalyze.length === 1) {
+        sCorrect   = correct;
+        sIncorrect = incorrect;
+        sScore     = score;
+      } else if (sTotal > 0 && total > 0) {
+        // Proportional distribution (approximate)
+        const ratio = sTotal / total;
+        sCorrect   = Math.round(correct   * ratio);
+        sIncorrect = Math.round(incorrect * ratio);
+        sScore     = sCorrect * 4 - sIncorrect;
+      }
+
+      const sAccuracy = sAttempted > 0 ? pct(sCorrect, sAttempted) : 0;
+      subjectData.push({ subject:sub, total:sTotal, attempted:sAttempted, unattempted:sUnattempted, correct:sCorrect, incorrect:sIncorrect, accuracy:sAccuracy, score:sScore });
+    });
+
+    if (subjectList) {
+      subjectList.innerHTML = subjectData.map((s, i) => {
+        const acc = s.accuracy;
+        const barColor = gradientForAccuracy(acc);
+        const accClass = accTextClass(acc);
+        return `
+          <div class="subject-item" style="animation-delay:${0.22+i*0.08}s;">
+            <div class="sub-header">
+              <div class="sub-name">
+                ${escHtml(s.subject)}
+                <span class="sub-badge">${s.total} Q</span>
+              </div>
+              <span class="sub-accuracy" style="color:${accColor(acc)};">${acc}%</span>
+            </div>
+            <div class="sub-mini-stats">
+              <div class="sub-mini">
+                <div class="sub-mini-val">${s.attempted}</div>
+                <div class="sub-mini-lbl">Attempted</div>
+              </div>
+              <div class="sub-mini">
+                <div class="sub-mini-val green">${s.correct}</div>
+                <div class="sub-mini-lbl">Correct</div>
+              </div>
+              <div class="sub-mini">
+                <div class="sub-mini-val red">${s.incorrect}</div>
+                <div class="sub-mini-lbl">Incorrect</div>
+              </div>
+            </div>
+            <div class="sub-bar-track">
+              <div class="sub-bar-fill" id="sbf_${i}" style="background:${barColor};"></div>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Animate bars
+      subjectData.forEach((s, i) => {
+        setTimeout(() => {
+          const bar = document.getElementById('sbf_' + i);
+          if (bar) bar.style.width = s.accuracy + '%';
+        }, 500 + i * 120);
+      });
+    }
+  }
+
+  /* 10. Comparison table (dummy topper data — FUTURE: replace with Firestore) */
+  const comparisonBody = document.getElementById('comparisonBody');
+  if (comparisonBody) {
+    // Dummy topper values (realistic benchmark)
+    // FUTURE: fetch topperResult from Firestore: query('testResults').orderBy('score','desc').limit(1)
+    const topperScore    = Math.max(score + Math.round(maxScore * 0.2), Math.round(maxScore * 0.75));
+    const topperAcc      = Math.min(95, accuracy + 22);
+    const topperAttempt  = Math.min(total, attempted + Math.round(total * 0.15));
+    const topperCorrect  = Math.min(topperAttempt, correct + Math.round(total * 0.15));
+
+    const rows = [
+      { label:'Score',       topper:topperScore,    you:score,    youClass:score >= topperScore * 0.7 ? 'cmp-you' : 'cmp-you' },
+      { label:'Attempted',   topper:topperAttempt,  you:attempted },
+      { label:'Correct',     topper:topperCorrect,  you:correct   },
+      { label:'Accuracy',    topper:topperAcc + '%', you:accuracy + '%' },
+      { label:'Neg. Marks',  topper:'-' + Math.max(0,topperAttempt-topperCorrect), you:'-' + incorrect },
+    ];
+
+    comparisonBody.innerHTML = rows.map(r => `
+      <tr>
+        <td>${r.label}</td>
+        <td class="cmp-top">${r.topper}</td>
+        <td class="cmp-you">${r.you}</td>
+      </tr>`).join('');
+  }
+
+  /* 11. Tips */
+  const tipsBody = document.getElementById('tipsBody');
+  if (tipsBody) {
+    const tips = generateTips(subjectData, accuracy);
+    tipsBody.innerHTML = tips.map(t => `
+      <div class="perf-msg" style="background:rgba(0,0,0,0.02);border-color:${t.color};opacity:0.9;">
+        <div class="perf-msg-icon" style="color:${t.color};"><i class="fa-solid ${t.icon}"></i></div>
+        <div class="perf-msg-text">${t.text}</div>
+      </div>`).join('');
+  }
+
+  /*
+    ============================================================
+    FUTURE FIREBASE INTEGRATION HOOKS
+    ============================================================
+    Replace localStorage reads with:
+
+    import { db, collection, query, where, orderBy, limit, getDocs, getDoc, doc } from './firebase.js';
+
+    1. Load user's latest result:
+       const snap = await getDocs(query(
+         collection(db, 'testResults'),
+         where('uid', '==', auth.currentUser.uid),
+         orderBy('submittedAt', 'desc'),
+         limit(1)
+       ));
+       const result = snap.docs[0]?.data();
+
+    2. Leaderboard / Rank:
+       const allSnap = await getDocs(query(
+         collection(db, 'testResults'),
+         where('exam', '==', exam),
+         where('year', '==', year),
+         orderBy('score', 'desc')
+       ));
+       const rank = allSnap.docs.findIndex(d => d.data().uid === user.uid) + 1;
+       const percentile = ((allSnap.size - rank) / allSnap.size * 100).toFixed(1);
+
+    3. Topper data:
+       const topperDoc = allSnap.docs[0]?.data();
+       // Use topperDoc.score, topperDoc.correct etc. for comparison table
+    ============================================================
+  */
+
+})();
+
+/* ── Theme-color meta sync ── */
+(function() {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) return;
+  function sync() {
+    meta.content = document.documentElement.getAttribute('data-theme') === 'dark' ? '#0B1220' : '#ffffff';
+  }
+  sync();
+  new MutationObserver(sync).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+})();
+</script>
+
+</body>
+</html>
