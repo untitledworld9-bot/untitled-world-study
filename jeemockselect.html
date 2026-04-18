@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>JEE Main Mock Test — Study Grid Prep</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="theme-color" content="#0f2027">
+
+<!-- ======================================================
+  AUTH GATE — before any paint
+====================================================== -->
+<script>
+(function(){
+  var isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if(isPWA && !localStorage.getItem("userName")){
+    document.documentElement.style.display = 'none';
+    window.location.replace("login.html");
+  }
+})();
+</script>
+
+<!-- THEME — instant, before paint -->
+<script>
+(function(){
+  var saved = localStorage.getItem("theme");
+  var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var theme = saved ? saved : (systemDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+})();
+</script>
+
+<!-- Flash prevention -->
+<style>html{ visibility:hidden; } html[data-theme]{ visibility:visible; }</style>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+/* ======================================================
+   DESIGN SYSTEM — exact mirror of mock-home.html
+====================================================== */
+:root {
+  --bg-start:         #ffffff;
+  --bg-end:           #f0f4f8;
+  --primary:          #22D3EE;
+  --primary-dark:     #06B6D4;
+  --secondary:        #34D399;
+  --accent:           #F43F5E;
+  --text-primary:     #111111;
+  --text-secondary:   #555555;
+  --card-bg:          rgba(0,0,0,0.04);
+  --card-border:      rgba(0,0,0,0.08);
+  --header-bg:        #ffffff;
+  --nav-bg:           #ffffff;
+  --glass-bg:         rgba(0,0,0,0.03);
+  --radius:           16px;
+  --shadow:           0 4px 20px rgba(0,0,0,0.10);
+  --transition:       0.25s ease;
+  /* JEE accent — amber/orange to match mock-home JEE card */
+  --exam-color:       #f59e0b;
+  --exam-color-glow:  rgba(245,158,11,0.25);
+  --exam-gradient:    linear-gradient(135deg, #f59e0b, #ef4444);
+}
+
+[data-theme="dark"] {
+  --bg-start:       #0B1220;
+  --bg-end:         #0F172A;
+  --text-primary:   #E2E8F0;
+  --text-secondary: #94A3B8;
+  --card-bg:        rgba(255,255,255,0.04);
+  --card-border:    rgba(255,255,255,0.08);
+  --header-bg:      rgba(11,18,32,0.95);
+  --nav-bg:         rgba(11,18,32,0.95);
+  --glass-bg:       rgba(255,255,255,0.04);
+  --shadow:         0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* ======================================================
+   BASE
+====================================================== */
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+html { background: var(--bg-start); height: 100%; overflow: hidden; }
+
+body {
+  background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  animation: pageIn 0.32s ease forwards;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ======================================================
+   PAGE TRANSITION OVERLAY
+====================================================== */
+#pageTransition {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-start);
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+#pageTransition.leaving {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ======================================================
+   HEADER — fixed top
+====================================================== */
+header {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 60px;
+  background: var(--header-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+  flex-shrink: 0;
+  z-index: 1000;
+  gap: 12px;
+}
+
+[data-theme="light"] header {
+  background: rgba(255,255,255,0.97) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+/* Back button */
+.back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.15s;
+  text-decoration: none;
+}
+.back-btn:hover { background: var(--glass-bg); }
+.back-btn:active { transform: scale(0.92); }
+
+/* Header center */
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.exam-icon-header {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(245,158,11,0.12);
+  border: 1.5px solid rgba(245,158,11,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--exam-color);
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: clamp(14px, 3.5vw, 18px);
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Profile icon */
+.header-profile-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--exam-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px var(--exam-color-glow);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  border: none;
+}
+.header-profile-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px var(--exam-color-glow);
+}
+.header-profile-btn:active { transform: scale(0.95); }
+
+/* ======================================================
+   MAIN — scrollable content
+====================================================== */
+main {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 16px 32px;
+}
+
+@media (min-width: 480px) {
+  main { padding: 0 24px 32px; }
+}
+
+.content-wrap {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ======================================================
+   SECTION HEADER
+====================================================== */
+.section-header {
+  padding: 24px 0 20px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.45s ease 0.1s forwards;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  font-size: clamp(20px, 5vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.section-title span {
+  background: var(--exam-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--exam-color);
+}
+
+/* ======================================================
+   LOADING & EMPTY STATES
+====================================================== */
+.tests-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+  opacity: 0;
+  animation: fadeUp 0.3s ease 0.2s forwards;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--card-border);
+  border-top-color: var(--exam-color);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.tests-empty {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 14px;
+  text-align: center;
+}
+
+.tests-empty i {
+  font-size: 48px;
+  color: var(--card-border);
+}
+
+.tests-empty p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ======================================================
+   TEST CARDS
+====================================================== */
+.tests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  display: none;
+}
+
+.test-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 20px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: cardSlide 0.45s ease forwards;
+}
+
+.test-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 21px;
+  padding: 1px;
+  background: var(--exam-gradient);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.test-card:hover::before { opacity: 1; }
+.test-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+  border-color: rgba(245,158,11,0.3);
+}
+.test-card:active { transform: scale(0.97); }
+
+@keyframes cardSlide {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: rgba(245,158,11,0.1);
+  border: 1.5px solid rgba(245,158,11,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+  overflow: hidden;
+}
+.test-card:hover .card-icon { transform: scale(1.06); }
+
+.card-icon i {
+  font-size: 20px;
+  color: var(--exam-color);
+}
+
+.nta-logo-card {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
+}
+
+.card-body { flex: 1; min-width: 0; }
+
+.card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--exam-color);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.card-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.meta-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.subject-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.18);
+  color: var(--exam-color);
+  letter-spacing: 0.2px;
+}
+
+.card-arrow {
+  color: var(--text-secondary);
+  font-size: 13px;
+  opacity: 0.4;
+  flex-shrink: 0;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.test-card:hover .card-arrow {
+  opacity: 0.8;
+  transform: translateX(3px);
+}
+
+/* ======================================================
+   LOADING OVERLAY (card tapped)
+====================================================== */
+#loadingOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-start);
+  z-index: 98888;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+#loadingOverlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.overlay-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--card-border);
+  border-top-color: var(--exam-color);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.overlay-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
+}
+
+/* ======================================================
+   SUBJECT MODAL — bottom sheet
+====================================================== */
+#modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 90000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+#modalBackdrop.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#subjectModal {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--header-bg);
+  border-radius: 28px 28px 0 0;
+  padding: 0;
+  z-index: 90001;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.38s cubic-bezier(0.34,1.1,0.64,1);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.3);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+[data-theme="light"] #subjectModal {
+  background: #ffffff;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+}
+
+#subjectModal.open { transform: translateY(0); }
+
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--card-border);
+  border-radius: 2px;
+  margin: 14px auto 0;
+  flex-shrink: 0;
+}
+
+.modal-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-header { margin-bottom: 20px; }
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.modal-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.subject-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  margin-top: 18px;
+  opacity: 0.7;
+}
+.subject-group-label:first-of-type { margin-top: 0; }
+
+.subject-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.subject-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.subject-option:active { transform: scale(0.97); }
+
+.subject-option.selected {
+  background: rgba(245,158,11,0.08);
+  border-color: rgba(245,158,11,0.4);
+}
+
+.subject-option-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(245,158,11,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--exam-color);
+  flex-shrink: 0;
+  transition: background 0.18s;
+}
+
+.subject-option.selected .subject-option-icon {
+  background: rgba(245,158,11,0.18);
+}
+
+.subject-option-text { flex: 1; }
+
+.subject-option-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.subject-option-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+.subject-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.18s, border-color 0.18s;
+  color: transparent;
+  font-size: 11px;
+}
+
+.subject-option.selected .subject-check {
+  background: var(--exam-color);
+  border-color: var(--exam-color);
+  color: #ffffff;
+}
+
+.modal-footer {
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--card-border);
+  background: var(--header-bg);
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .modal-footer {
+  background: #ffffff;
+}
+
+.start-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 50px;
+  background: var(--exam-gradient);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+  box-shadow: 0 4px 16px var(--exam-color-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.2px;
+}
+
+.start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--exam-color-glow);
+}
+.start-btn:active { transform: scale(0.97); }
+
+.start-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.start-btn-count {
+  background: rgba(0,0,0,0.15);
+  border-radius: 20px;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ======================================================
+   SAFE AREA
+====================================================== */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  main { padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+}
+</style>
+</head>
+<body>
+
+<!-- Page transition veil -->
+<div id="pageTransition"></div>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay">
+  <div class="overlay-spinner"></div>
+  <div class="overlay-text">Preparing your test…</div>
+</div>
+
+<!-- ======================================================
+  HEADER
+====================================================== -->
+<header>
+  <a class="back-btn" onclick="navigate('mock-home.html')" title="Back" role="button">
+    <i class="fa-solid fa-arrow-left"></i>
+  </a>
+
+  <div class="header-center">
+    <div class="exam-icon-header">
+      <i class="fa-solid fa-flask"></i>
+    </div>
+    <h1 class="header-title">JEE Main Mock Tests</h1>
+  </div>
+
+  <div class="header-profile-btn" id="headerProfileBtn" onclick="navigate('profile.html')" title="Profile" role="button">
+    S
+  </div>
+</header>
+
+<!-- ======================================================
+  MAIN CONTENT
+====================================================== -->
+<main>
+  <div class="content-wrap">
+
+    <div class="section-header">
+      <div class="section-title">
+        <span>Select Test</span>
+      </div>
+      <div class="section-subtitle">
+        <span class="nta-badge"><i class="fa-solid fa-shield-halved" style="font-size:9px;"></i> NTA Official Pattern</span>
+        JEE Mains pattern
+      </div>
+    </div>
+
+    <div class="tests-loading" id="testsLoading">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading tests…</div>
+    </div>
+
+    <div class="tests-empty" id="testsEmpty">
+      <i class="fa-regular fa-folder-open"></i>
+      <p>No JEE tests available yet.<br>Check back soon — new tests are added regularly.</p>
+    </div>
+
+    <div class="tests-list" id="testsList"></div>
+
+  </div>
+</main>
+
+<!-- ======================================================
+  SUBJECT SELECTION MODAL
+====================================================== -->
+<div id="modalBackdrop" onclick="closeModal()"></div>
+
+<div id="subjectModal" role="dialog" aria-modal="true" aria-label="Select Subjects">
+  <div class="modal-handle"></div>
+
+  <div class="modal-scroll">
+    <div class="modal-header">
+      <div class="modal-title">Select Subjects</div>
+      <div class="modal-meta" id="modalMetaText">JEE Mains 2025 · Shift 1</div>
+    </div>
+
+    <!-- DOMAIN — JEE: Physics, Chemistry, Mathematics only (no Biology) -->
+    <div class="subject-group-label">Domain Subjects</div>
+    <div class="subject-options">
+
+      <div class="subject-option" data-subject="Physics" data-group="domain" onclick="toggleSubject(this)">
+        <div class="subject-option-icon"><i class="fa-solid fa-atom"></i></div>
+        <div class="subject-option-text">
+          <div class="subject-option-name">Physics</div>
+          <div class="subject-option-desc">Mechanics, Electrostatics, Optics & more</div>
+        </div>
+        <div class="subject-check"><i class="fa-solid fa-check"></i></div>
+      </div>
+
+      <div class="subject-option" data-subject="Chemistry" data-group="domain" onclick="toggleSubject(this)">
+        <div class="subject-option-icon"><i class="fa-solid fa-flask"></i></div>
+        <div class="subject-option-text">
+          <div class="subject-option-name">Chemistry</div>
+          <div class="subject-option-desc">Organic, Inorganic & Physical Chemistry</div>
+        </div>
+        <div class="subject-check"><i class="fa-solid fa-check"></i></div>
+      </div>
+
+      <div class="subject-option" data-subject="Mathematics" data-group="domain" onclick="toggleSubject(this)">
+        <div class="subject-option-icon"><i class="fa-solid fa-square-root-variable"></i></div>
+        <div class="subject-option-text">
+          <div class="subject-option-name">Mathematics</div>
+          <div class="subject-option-desc">Calculus, Algebra, Coordinate Geometry & more</div>
+        </div>
+        <div class="subject-check"><i class="fa-solid fa-check"></i></div>
+      </div>
+
+    </div><!-- /domain options -->
+
+  </div><!-- /modal-scroll -->
+
+  <div class="modal-footer">
+    <button class="start-btn" id="startBtn" onclick="startTest()" disabled>
+      <i class="fa-solid fa-play"></i>
+      Start Test
+      <span class="start-btn-count" id="selectedCount">0 selected</span>
+    </button>
+  </div>
+</div>
+
+<!-- ======================================================
+  SCRIPTS
+====================================================== -->
+<script src="theme.js"></script>
+
+<script type="module">
+import {
+  auth,
+  onAuthStateChanged,
+  signOut,
+  db,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  where
+} from './firebase.js';
+
+/* ─── Helpers ─────────────────────────────────────────── */
+const isPWA = () =>
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone;
+
+/* ─── Smooth page transition ──────────────────────────── */
+window.navigate = function(url) {
+  const veil = document.getElementById('pageTransition');
+  veil.classList.add('leaving');
+  setTimeout(() => { window.location.href = url; }, 210);
+};
+
+/* ─── Theme-color meta sync ───────────────────────────── */
+(function() {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) return;
+  function sync() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    meta.content = dark ? '#0B1220' : '#ffffff';
+  }
+  sync();
+  new MutationObserver(sync).observe(document.documentElement, {
+    attributes: true, attributeFilter: ['data-theme']
+  });
+})();
+
+/* ─── State ───────────────────────────────────────────── */
+let selectedTest = null;
+
+/* ─── Auth gate ───────────────────────────────────────── */
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    initPage(user);
+  } else {
+    if (!isPWA()) {
+      window.navigate('login.html');
+    }
+  }
+});
+
+function initPage(user) {
+  const name = user.displayName
+    ? user.displayName.split(' ')[0]
+    : (localStorage.getItem('userName') || 'S');
+  const initial = name.charAt(0).toUpperCase();
+  const profileBtn = document.getElementById('headerProfileBtn');
+  if (profileBtn) profileBtn.textContent = initial;
+
+  listenTests();
+}
+
+/* ─── Real-time Firestore listener ───────────────────────
+   Collection: "mockTests"
+   Filter:     exam == "jee"
+   Sort:       year desc → createdAt desc
+   onSnapshot: auto-updates when admin adds/removes tests
+──────────────────────────────────────────────────────── */
+function listenTests() {
+  const q = query(
+    collection(db, 'mockTests'),
+    where('exam', '==', 'jee'),
+    orderBy('year', 'desc'),
+    orderBy('createdAt', 'desc')
+  );
+
+  onSnapshot(q, (snap) => {
+    const tests = [];
+    snap.forEach(doc => {
+      tests.push({ id: doc.id, ...doc.data() });
+    });
+    renderTests(tests);
+  }, (err) => {
+    console.error('Firestore error:', err);
+    showEmpty();
+  });
+}
+
+/* ─── Render test cards ───────────────────────────────── */
+function renderTests(tests) {
+  const loading = document.getElementById('testsLoading');
+  const empty   = document.getElementById('testsEmpty');
+  const list    = document.getElementById('testsList');
+
+  loading.style.display = 'none';
+
+  if (!tests || tests.length === 0) {
+    showEmpty();
+    return;
+  }
+
+  empty.style.display = 'none';
+  list.style.display  = 'flex';
+  list.innerHTML      = '';
+
+  tests.forEach((test, i) => {
+    const card = buildCard(test, i);
+    list.appendChild(card);
+  });
+}
+
+function showEmpty() {
+  document.getElementById('testsLoading').style.display = 'none';
+  document.getElementById('testsEmpty').style.display   = 'flex';
+  document.getElementById('testsList').style.display    = 'none';
+}
+
+function buildCard(test, index) {
+  const card = document.createElement('div');
+  card.className = 'test-card';
+  card.style.animationDelay = `${0.08 + index * 0.07}s`;
+
+  const metaParts = [];
+  if (test.shift) metaParts.push(test.shift);
+  if (test.date)  metaParts.push(test.date);
+
+  const subjects = Array.isArray(test.subjects) ? test.subjects : [];
+  const chipsHtml = subjects
+    .slice(0, 4)
+    .map(s => `<span class="chip">${s}</span>`)
+    .join('');
+  const extraCount = subjects.length > 4
+    ? `<span class="chip">+${subjects.length - 4}</span>` : '';
+
+  card.innerHTML = `
+    <div class="card-icon">
+      <img
+        src="https://res.cloudinary.com/dm9hqkipf/image/upload/v1776513590/akwsnzcht7pr7owrw8zv.webp"
+        alt="NTA"
+        class="nta-logo-card"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <i class="fa-solid fa-flask" style="display:none;font-size:20px;color:#f59e0b;"></i>
+    </div>
+    <div class="card-body">
+      <div class="card-name">JEE Mains Mock ${test.year || ''}</div>
+      <div class="card-meta">
+        ${metaParts.map((p, i) => i === 0 ? p : `<span class="meta-dot"></span>${p}`).join('')}
+      </div>
+      ${subjects.length ? `<div class="subject-chips">${chipsHtml}${extraCount}</div>` : ''}
+    </div>
+    <i class="fa-solid fa-chevron-right card-arrow"></i>
+  `;
+
+  card.addEventListener('click', () => openSubjectModal(test));
+  return card;
+}
+
+/* ─── Subject Modal ───────────────────────────────────── */
+window.openSubjectModal = function(test) {
+  selectedTest = test;
+
+  const metaParts = [];
+  if (test.year)  metaParts.push(`JEE Mains ${test.year}`);
+  if (test.shift) metaParts.push(test.shift);
+  if (test.date)  metaParts.push(test.date);
+  document.getElementById('modalMetaText').textContent = metaParts.join(' · ');
+
+  document.querySelectorAll('.subject-option').forEach(el => el.classList.remove('selected'));
+  updateStartBtn();
+
+  document.getElementById('modalBackdrop').classList.add('open');
+  document.getElementById('subjectModal').classList.add('open');
+};
+
+window.closeModal = function() {
+  document.getElementById('modalBackdrop').classList.remove('open');
+  document.getElementById('subjectModal').classList.remove('open');
+  selectedTest = null;
+};
+
+window.toggleSubject = function(el) {
+  el.classList.toggle('selected');
+  updateStartBtn();
+};
+
+function updateStartBtn() {
+  const selected = document.querySelectorAll('.subject-option.selected');
+  const count = selected.length;
+  const btn   = document.getElementById('startBtn');
+  const badge = document.getElementById('selectedCount');
+
+  btn.disabled = count === 0;
+  badge.textContent = count === 0
+    ? '0 selected'
+    : `${count} subject${count > 1 ? 's' : ''}`;
+}
+
+/* ─── Start test ──────────────────────────────────────── */
+window.startTest = function() {
+  if (!selectedTest) return;
+
+  const selected = [...document.querySelectorAll('.subject-option.selected')]
+    .map(el => el.dataset.subject);
+
+  if (selected.length === 0) return;
+
+  // Save to localStorage
+  localStorage.setItem('selectedExam',     'jee');
+  localStorage.setItem('selectedYear',     selectedTest.year  || '');
+  localStorage.setItem('selectedShift',    selectedTest.shift || '');
+  localStorage.setItem('selectedDate',     selectedTest.date  || '');
+  localStorage.setItem('selectedSubjects', JSON.stringify(selected));
+  localStorage.setItem('selectedTestId',   selectedTest.id    || '');
+  localStorage.setItem('selectedMarking',  selectedTest.marking || '+4/-1');
+
+  // Show loading overlay + navigate
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('visible');
+  document.getElementById('subjectModal').classList.remove('open');
+  document.getElementById('modalBackdrop').classList.remove('open');
+
+  setTimeout(() => {
+    window.location.href = 'jeeinstructions.html';
+  }, 900);
+};
+
+</script>
+
+</body>
+</html>
