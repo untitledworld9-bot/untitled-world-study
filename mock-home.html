@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Mock Test — Study Grid Prep</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="theme-color" content="#0f2027">
+
+<!-- ======================================================
+  AUTH GATE — runs before any paint
+  PWA: if no userName → replace to login.html (no blink)
+  Web: defer to Firebase onAuthStateChanged (handled below)
+====================================================== -->
+<script>
+(function(){
+  var isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if(isPWA && !localStorage.getItem("userName")){
+    document.documentElement.style.display = 'none';
+    window.location.replace("login.html");
+  }
+})();
+</script>
+
+<!-- THEME — instant, before paint -->
+<script>
+(function(){
+  var saved = localStorage.getItem("theme");
+  var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var theme = saved ? saved : (systemDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+})();
+</script>
+
+<!-- Flash prevention -->
+<style>html{ visibility:hidden; } html[data-theme]{ visibility:visible; }</style>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 6.5.1 — with integrity for reliable loading -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer">
+
+<!-- Material Icons — fallback if FA fails to load -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<!-- FA load-check: if FA fails, swap to SVG fallback icons -->
+<script>
+(function(){
+  // Run after page load — check if FA loaded correctly
+  window.addEventListener('load', function(){
+    // Test: create a dummy FA element and check computed font-family
+    var testEl = document.createElement('i');
+    testEl.className = 'fa-solid fa-house';
+    testEl.style.cssText = 'position:absolute;visibility:hidden;font-size:0;';
+    document.body.appendChild(testEl);
+    var computed = window.getComputedStyle(testEl, ':before').content;
+    document.body.removeChild(testEl);
+    // If content is empty or "none", FA failed → flag for SVG fallback
+    if (!computed || computed === 'none' || computed === '""') {
+      document.documentElement.setAttribute('data-icons', 'svg-fallback');
+    }
+  });
+})();
+</script>
+
+<style>
+/* ======================================================
+   DESIGN SYSTEM — mirrors index.html exactly
+====================================================== */
+:root {
+  --bg-start:         #ffffff;
+  --bg-end:           #f0f4f8;
+  --primary:          #22D3EE;
+  --primary-dark:     #06B6D4;
+  --secondary:        #34D399;
+  --accent:           #F43F5E;
+  --text-primary:     #111111;
+  --text-secondary:   #555555;
+  --card-bg:          rgba(0,0,0,0.04);
+  --card-border:      rgba(0,0,0,0.08);
+  --header-bg:        #ffffff;
+  --nav-bg:           #ffffff;
+  --glass-bg:         rgba(0,0,0,0.03);
+  --radius:           16px;
+  --shadow:           0 4px 20px rgba(0,0,0,0.10);
+  --transition:       0.25s ease;
+}
+
+[data-theme="dark"] {
+  --bg-start:       #0B1220;
+  --bg-end:         #0F172A;
+  --text-primary:   #E2E8F0;
+  --text-secondary: #94A3B8;
+  --card-bg:        rgba(255,255,255,0.04);
+  --card-border:    rgba(255,255,255,0.08);
+  --header-bg:      rgba(11,18,32,0.95);
+  --nav-bg:         rgba(11,18,32,0.95);
+  --glass-bg:       rgba(255,255,255,0.04);
+  --shadow:         0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* ======================================================
+   BASE
+====================================================== */
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+html { background: var(--bg-start); height: 100%; overflow: hidden; }
+
+body {
+  background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  animation: pageIn 0.32s ease forwards;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ======================================================
+   PAGE TRANSITION OVERLAY
+====================================================== */
+#pageTransition {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-start);
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+#pageTransition.leaving {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ======================================================
+   HEADER — fixed at top, part of flex column layout
+====================================================== */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--header-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+  flex-shrink: 0;
+  z-index: 1000;
+  gap: 12px;
+}
+
+/* Hamburger — same as index.html pwa-ham-btn */
+.pwa-ham-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+  border-radius: 8px;
+  padding: 4px;
+  transition: background 0.2s;
+}
+.pwa-ham-btn:hover { background: var(--card-bg); }
+.pwa-ham-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: 0.25s;
+}
+
+.site-title {
+  display: flex;
+  align-items: center;
+  font-size: clamp(14px, 3.5vw, 20px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+  flex: 1;
+  gap: 8px;
+}
+
+.logo-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(34,211,238,0.3);
+  flex-shrink: 0;
+}
+
+/* Profile icon — right of header */
+.header-profile-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22D3EE, #06B6D4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0B1220;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(34,211,238,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  border: none;
+  outline: none;
+}
+.header-profile-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(34,211,238,0.5);
+}
+.header-profile-btn:active { transform: scale(0.95); }
+
+/* ======================================================
+   SIDEBAR — same as index.html
+====================================================== */
+.pwa-sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 260px;
+  height: 100%;
+  background: var(--header-bg);
+  border-right: 1px solid var(--card-border);
+  padding: 20px 20px 90px 20px;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
+  z-index: 9999;
+}
+.pwa-sidebar.active { transform: translateX(0); }
+
+[data-theme="dark"] .pwa-sidebar {
+  background: linear-gradient(160deg,#0A1628,#0D1E35) !important;
+}
+[data-theme="light"] .pwa-sidebar {
+  background: #ffffff !important;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+}
+
+#sidebarOverlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  z-index: 9998;
+}
+#sidebarOverlay.active { display: block; }
+
+.pwa-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+.pwa-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#22D3EE,#06B6D4);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: #fff; font-size: 16px;
+  box-shadow: 0 2px 8px rgba(34,211,238,0.35);
+  flex-shrink: 0;
+}
+.pwa-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.pwa-email { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  cursor: pointer;
+  transition: 0.25s;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.pwa-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+/* Theme toggle icon - FA icon instead of emoji */
+.theme-toggle-icon-fa {
+  font-size: 16px;
+  width: 22px;
+  text-align: center;
+}
+/* Sidebar links icon fix for both themes */
+.pwa-links a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  transition: background 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--text-primary) !important;
+}
+.pwa-links a:hover { background: var(--card-bg); }
+.pwa-links a.sidebar-active {
+  background: rgba(34,211,238,0.1);
+  color: var(--primary) !important;
+}
+.pwa-links i {
+  font-size: 16px;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+  /* Force icons visible in both themes */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.sidebar-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(244,63,94,0.1);
+  border: 1px solid rgba(244,63,94,0.3);
+  color: #F87171;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: var(--radius);
+  margin-top: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+}
+.sidebar-logout-btn:hover { background: rgba(244,63,94,0.18); }
+
+/* ======================================================
+   MAIN CONTENT — scrollable area
+====================================================== */
+main {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px 84px;
+  background: transparent;
+}
+
+/* ======================================================
+   GREETING SECTION
+====================================================== */
+.greeting-section {
+  padding: 28px 0 20px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: greetIn 0.55s ease 0.2s forwards;
+}
+
+@keyframes greetIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.greeting-hi {
+  font-size: clamp(22px, 6vw, 30px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+
+  /* Gradient text */
+  background: linear-gradient(130deg, #22D3EE 0%, #818cf8 55%, #06B6D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  display: inline-block;
+  position: relative;
+  cursor: default;
+}
+
+/* Soft glow behind username on hover */
+.greeting-hi::after {
+  content: '';
+  position: absolute;
+  inset: -6px -10px;
+  border-radius: 12px;
+  background: radial-gradient(ellipse at center, rgba(34,211,238,0.12) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.greeting-hi:hover::after { opacity: 1; }
+
+.greeting-sub {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  opacity: 0.78;
+}
+
+/* Typing cursor */
+.t-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: #22D3EE;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  animation: blink 0.8s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ======================================================
+   SECTION LABEL
+====================================================== */
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+  opacity: 0.8;
+}
+
+/* ======================================================
+   EXAM CARDS
+====================================================== */
+.cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.exam-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 22px;
+  padding: 22px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  overflow: hidden;
+
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Staggered card entrance */
+.exam-card:nth-child(1) { animation: cardIn 0.5s ease 0.35s forwards; }
+.exam-card:nth-child(2) { animation: cardIn 0.5s ease 0.48s forwards; }
+.exam-card:nth-child(3) { animation: cardIn 0.5s ease 0.61s forwards; }
+
+@keyframes cardIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Gradient border glow on hover */
+.exam-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 23px;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--card-glow-a), var(--card-glow-b));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.exam-card:hover::before { opacity: 1; }
+
+.exam-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.22);
+}
+.exam-card:active { transform: scale(0.97); }
+
+/* CUET Card */
+.card-cuet {
+  --card-glow-a: #22D3EE;
+  --card-glow-b: #818cf8;
+  border-color: rgba(34,211,238,0.25);
+  background: rgba(34,211,238,0.04);
+}
+[data-theme="dark"] .card-cuet {
+  background: rgba(34,211,238,0.06);
+  border-color: rgba(34,211,238,0.2);
+}
+
+/* JEE Card */
+.card-jee {
+  --card-glow-a: #f59e0b;
+  --card-glow-b: #f43f5e;
+  border-color: rgba(245,158,11,0.25);
+  background: rgba(245,158,11,0.04);
+}
+[data-theme="dark"] .card-jee {
+  background: rgba(245,158,11,0.06);
+  border-color: rgba(245,158,11,0.2);
+}
+
+/* Coming Soon Card */
+.card-more {
+  --card-glow-a: #94a3b8;
+  --card-glow-b: #64748b;
+  border-color: rgba(148,163,184,0.15);
+  background: var(--card-bg);
+  filter: opacity(0.55);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* NTA Logo in cards */
+.nta-icon-wrap {
+  overflow: hidden;
+  padding: 6px !important;
+  background: #ffffff !important;
+  border: 1.5px solid rgba(0,0,0,0.1) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+[data-theme="dark"] .nta-icon-wrap {
+  background: #ffffff !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+.nta-logo-img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Icon wrapper */
+.card-icon-wrap {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.exam-card:hover .card-icon-wrap { transform: scale(1.08); }
+
+.card-cuet .card-icon-wrap {
+  background: rgba(34,211,238,0.12);
+  color: #22D3EE;
+}
+.card-jee .card-icon-wrap {
+  background: rgba(245,158,11,0.12);
+  color: #f59e0b;
+}
+.card-more .card-icon-wrap {
+  background: rgba(148,163,184,0.1);
+  color: var(--text-secondary);
+}
+
+/* Text block */
+.card-text { flex: 1; }
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+.card-cuet .card-title  { color: #22D3EE; }
+.card-jee .card-title   { color: #f59e0b; }
+.card-more .card-title  { color: var(--text-secondary); }
+
+.card-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Start button */
+.card-btn {
+  padding: 9px 20px;
+  border: none;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.card-cuet .card-btn {
+  background: linear-gradient(135deg, #22D3EE, #06B6D4);
+  color: #0B1220;
+  box-shadow: 0 4px 14px rgba(34,211,238,0.3);
+}
+.card-cuet .card-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(34,211,238,0.45);
+}
+
+.card-jee .card-btn {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(245,158,11,0.3);
+}
+.card-jee .card-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(245,158,11,0.45);
+}
+
+.coming-badge {
+  padding: 8px 16px;
+  border-radius: 50px;
+  background: rgba(148,163,184,0.12);
+  border: 1px solid rgba(148,163,184,0.2);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Blur shimmer overlay on coming soon card */
+.card-more::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background: repeating-linear-gradient(
+    110deg,
+    transparent 0,
+    transparent 20px,
+    rgba(148,163,184,0.04) 20px,
+    rgba(148,163,184,0.04) 40px
+  );
+  pointer-events: none;
+}
+
+/* ======================================================
+   LOGIN MODAL
+====================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  z-index: 99998;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.login-modal {
+  background: var(--header-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 28px 28px 0 0;
+  padding: 28px 24px 40px;
+  width: 100%;
+  max-width: 480px;
+  transform: translateY(40px);
+  transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  text-align: center;
+}
+.modal-overlay.open .login-modal { transform: translateY(0); }
+
+.modal-drag { width: 40px; height: 4px; background: var(--card-border); border-radius: 2px; margin: 0 auto 20px; }
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.modal-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+
+.modal-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #22D3EE, #06B6D4);
+  color: #0B1220;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 16px rgba(34,211,238,0.3);
+  text-decoration: none;
+}
+.modal-login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(34,211,238,0.4); }
+.modal-login-btn img { width: 20px; height: 20px; background: white; border-radius: 50%; padding: 2px; }
+
+.modal-cancel {
+  margin-top: 14px;
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+}
+
+/* ======================================================
+   BOTTOM NAV — always visible on website + PWA both
+====================================================== */
+.pwa-bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: 64px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex !important; /* Always visible */
+  justify-content: space-around;
+  align-items: center;
+  z-index: 10000;
+  border-top: 1px solid var(--card-border);
+}
+
+[data-theme="dark"] .pwa-bottom-nav  { background: rgba(11,18,32,0.97) !important; }
+[data-theme="light"] .pwa-bottom-nav { background: rgba(255,255,255,0.97) !important; box-shadow: 0 -1px 0 rgba(0,0,0,0.08); }
+
+.pwa-bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  transition: color 0.2s;
+  min-width: 52px;
+  flex: 1;
+}
+.pwa-bottom-nav a i {
+  font-size: 20px;
+  line-height: 1;
+  display: block;
+}
+.pwa-bottom-nav a span {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.pwa-bottom-nav a:hover { color: var(--text-primary); }
+.pwa-bottom-nav a.active {
+  color: var(--primary) !important;
+}
+.pwa-bottom-nav a.active i {
+  color: var(--primary) !important;
+}
+
+/* Safe area for notch devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pwa-bottom-nav { padding-bottom: env(safe-area-inset-bottom); height: calc(64px + env(safe-area-inset-bottom)); }
+  main { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+}
+
+/* ======================================================
+   LIGHT MODE OVERRIDES
+====================================================== */
+[data-theme="light"] header {
+  background: rgba(255,255,255,0.97) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07) !important;
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+@media (min-width: 480px) {
+  main { padding: 0 24px 84px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Page transition veil -->
+<div id="pageTransition"></div>
+
+<!-- ======================================================
+  SIDEBAR
+====================================================== -->
+<div id="sidebar" class="pwa-sidebar">
+  <div class="pwa-profile" onclick="navigate('profile.html')">
+    <div class="pwa-avatar" id="sidebarAvatar">S</div>
+    <div>
+      <div class="pwa-name" id="sidebarName">Student</div>
+      <div class="pwa-email" id="sidebarEmail"></div>
+    </div>
+  </div>
+
+  <div class="theme-toggle-btn" onclick="toggleTheme()">
+    <span>
+      <i class="fa-solid fa-circle-half-stroke theme-toggle-icon-fa" id="themeToggleIcon" style="color: var(--text-secondary);"></i>
+    </span>
+    <span style="color: var(--text-primary); font-weight: 500;">Toggle Theme</span>
+  </div>
+
+  <nav class="pwa-links">
+    <a href="index.html"><i class="fa-solid fa-house" style="color:#22D3EE;"></i><span>Home</span></a>
+    <a href="mock-home.html" class="sidebar-active"><i class="fa-solid fa-file-pen" style="color:#818cf8;"></i><span>Mock Tests</span></a>
+    <a href="testhistory.html"><i class="fa-solid fa-clock-rotate-left" style="color:#22D3EE;"></i><span>My Tests</span></a>
+    <a href="timer.html"><i class="fa-solid fa-stopwatch" style="color:#34D399;"></i><span>Focus Timer</span></a>
+    <a href="playlist.html"><i class="fa-brands fa-youtube" style="color:#ff4757;"></i><span>Study Playlist</span></a>
+    <a href="mainleaderboard.html"><i class="fa-solid fa-trophy" style="color:#f1c40f;"></i><span>Leaderboard</span></a>
+    <a href="profile.html"><i class="fa-regular fa-circle-user" style="color:#94A3B8;"></i><span>Profile</span></a>
+    <button class="sidebar-logout-btn" onclick="handleLogout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
+  </nav>
+</div>
+<div id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ======================================================
+  HEADER
+====================================================== -->
+<header>
+  <div class="pwa-ham-btn" id="hamBtn" onclick="toggleSidebar()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </div>
+
+  <h1 class="site-title">
+    <img src="/icon-192.png" class="logo-img" alt="">
+    Mock Tests
+  </h1>
+
+  <div class="header-profile-btn" id="headerProfileBtn" onclick="navigate('profile.html')" title="Profile" role="button">
+    S
+  </div>
+</header>
+
+<!-- ======================================================
+  MAIN
+====================================================== -->
+<main>
+
+  <!-- GREETING SECTION -->
+  <section class="greeting-section" id="greetingSection">
+    <div class="greeting-hi" id="greetingText">
+      <span id="greetingDisplay"></span><span class="t-cursor" id="tCursor"></span>
+    </div>
+    <p class="greeting-sub">Ready to practice today?</p>
+  </section>
+
+  <!-- EXAM CARDS -->
+  <p class="section-label">Choose your exam</p>
+
+  <div class="cards-grid">
+
+    <!-- CUET -->
+    <div class="exam-card card-cuet" id="cardCuet" onclick="handleCardClick('cuet')" role="button" tabindex="0">
+      <div class="card-icon-wrap nta-icon-wrap">
+        <!-- Priority: local asset → NTA site → FA icon -->
+        <img src="assets/cuet.png"
+             alt="CUET"
+             class="nta-logo-img"
+             onerror="this.src='https://nta.ac.in/images/nta-logo.png';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';};">
+        <i class="fa-solid fa-graduation-cap" style="display:none;color:#22D3EE;font-size:22px;"></i>
+      </div>
+      <div class="card-text">
+        <div class="card-title">CUET Mock Test</div>
+        <div class="card-subtitle">NTA-based real exam pattern</div>
+      </div>
+      <button class="card-btn" onclick="handleCardClick('cuet');event.stopPropagation()">Start</button>
+    </div>
+
+    <!-- JEE -->
+    <div class="exam-card card-jee" id="cardJee" onclick="handleCardClick('jee')" role="button" tabindex="0">
+      <div class="card-icon-wrap nta-icon-wrap">
+        <!-- Priority: local asset → NTA site → FA icon -->
+        <img src="assets/jee.png"
+             alt="JEE"
+             class="nta-logo-img"
+             onerror="this.src='https://nta.ac.in/images/nta-logo.png';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';};">
+        <i class="fa-solid fa-flask" style="display:none;color:#f59e0b;font-size:22px;"></i>
+      </div>
+      <div class="card-text">
+        <div class="card-title">JEE Mock Test</div>
+        <div class="card-subtitle">Mains pattern</div>
+      </div>
+      <button class="card-btn" onclick="handleCardClick('jee');event.stopPropagation()">Start</button>
+    </div>
+
+    <!-- More Exams — Coming Soon -->
+    <div class="exam-card card-more" aria-disabled="true">
+      <div class="card-icon-wrap">
+        <i class="fa-solid fa-layer-group"></i>
+      </div>
+      <div class="card-text">
+        <div class="card-title">More Exams</div>
+        <div class="card-subtitle">NEET, Boards &amp; more</div>
+      </div>
+      <span class="coming-badge">Coming Soon</span>
+    </div>
+
+  </div>
+</main>
+
+<!-- ======================================================
+  LOGIN MODAL (web-only, shown when not logged in)
+====================================================== -->
+<div class="modal-overlay" id="loginModal" onclick="handleModalBackdrop(event)">
+  <div class="login-modal">
+    <div class="modal-drag"></div>
+    <div style="margin-bottom:14px;">
+      <i class="fa-solid fa-lock" style="font-size:32px;color:var(--primary);"></i>
+    </div>
+    <div class="modal-title">Sign in to continue</div>
+    <div class="modal-sub">You need to sign in to access mock tests and track your progress.</div>
+    <a href="login.html" class="modal-login-btn">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+      Continue with Google
+    </a>
+    <span class="modal-cancel" onclick="closeLoginModal()">Maybe later</span>
+  </div>
+</div>
+
+<!-- ======================================================
+  BOTTOM NAV — 4 items, always visible website + PWA
+  Active: mock-home (this page)
+====================================================== -->
+<nav class="pwa-bottom-nav">
+  <a href="index.html">
+    <i class="fa-solid fa-house"></i>
+    <span>Home</span>
+  </a>
+  <a href="mock-home.html" class="active">
+    <i class="fa-solid fa-file-pen"></i>
+    <span>Mock</span>
+  </a>
+  <a href="testhistory.html">
+    <i class="fa-solid fa-clock-rotate-left"></i>
+    <span>My Tests</span>
+  </a>
+  <a href="profile.html">
+    <i class="fa-regular fa-circle-user"></i>
+    <span>Profile</span>
+  </a>
+</nav>
+
+<!-- ======================================================
+  THEME.JS (same script tag as index.html)
+====================================================== -->
+<script src="theme.js"></script>
+
+<!-- ======================================================
+  MODULE SCRIPT
+====================================================== -->
+<script type="module">
+import {
+  auth,
+  onAuthStateChanged,
+  signOut
+} from './firebase.js';
+
+/* ── Helpers ─────────────────────────────────────── */
+const isPWA = () =>
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone;
+
+function getFirstName(displayName) {
+  if (!displayName) return null;
+  return displayName.split(' ')[0];
+}
+
+/* ── Smooth navigate with fade ───────────────────── */
+window.navigate = function(url) {
+  const veil = document.getElementById('pageTransition');
+  veil.classList.add('leaving');
+  setTimeout(() => { window.location.href = url; }, 210);
+};
+
+/* ── Auth state ──────────────────────────────────── */
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+    initWithUser(user);
+  } else {
+    // Not logged in
+    currentUser = null;
+    if (!isPWA()) {
+      // Web: redirect to login (no blink needed here, just redirect)
+      window.navigate('login.html');
+    }
+    // PWA: already redirected at top of <head> before paint
+  }
+});
+
+function initWithUser(user) {
+  const name = getFirstName(user.displayName) ||
+               localStorage.getItem('userName') ||
+               'Student';
+
+  // Update header avatar letter
+  const initial = name.charAt(0).toUpperCase();
+  const profileBtn = document.getElementById('headerProfileBtn');
+  if (profileBtn) profileBtn.textContent = initial;
+
+  // Sidebar
+  const sidebarAvatar = document.getElementById('sidebarAvatar');
+  const sidebarName   = document.getElementById('sidebarName');
+  const sidebarEmail  = document.getElementById('sidebarEmail');
+  if (sidebarAvatar) sidebarAvatar.textContent = initial;
+  if (sidebarName)   sidebarName.textContent   = name;
+  if (sidebarEmail)  sidebarEmail.textContent  = user.email || '';
+
+  // Greeting typing animation
+  startGreeting(name);
+}
+
+/* ── Greeting typing effect ──────────────────────── */
+function startGreeting(name) {
+  const display = document.getElementById('greetingDisplay');
+  const cursor  = document.getElementById('tCursor');
+  if (!display) return;
+
+  const text = `Hi, ${name}`;
+  let i = 0;
+
+  // Small delay for polish
+  setTimeout(() => {
+    const interval = setInterval(() => {
+      if (i < text.length) {
+        display.textContent += text.charAt(i);
+        i++;
+      } else {
+        clearInterval(interval);
+        // Hide blinking cursor after typing
+        setTimeout(() => {
+          if (cursor) cursor.style.opacity = '0';
+          cursor.style.transition = 'opacity 0.5s ease';
+        }, 1200);
+      }
+    }, 55);
+  }, 200);
+}
+
+/* ── Card click handler ──────────────────────────── */
+window.handleCardClick = function(exam) {
+  if (!currentUser) {
+    // Web visitor not logged in — show modal
+    openLoginModal();
+    return;
+  }
+  // Route to the correct exam selection page
+  const routes = {
+    cuet: 'cuetmockselect.html',
+    jee:  'jeemockselect.html'
+  };
+  const dest = routes[exam];
+  if (dest) {
+    window.navigate(dest);
+  }
+};
+
+/* ── Login modal ─────────────────────────────────── */
+window.openLoginModal = function() {
+  document.getElementById('loginModal').classList.add('open');
+};
+window.closeLoginModal = function() {
+  document.getElementById('loginModal').classList.remove('open');
+};
+window.handleModalBackdrop = function(e) {
+  if (e.target === document.getElementById('loginModal')) closeLoginModal();
+};
+
+/* ── Sidebar ─────────────────────────────────────── */
+window.toggleSidebar = function() {
+  document.getElementById('sidebar').classList.toggle('active');
+  document.getElementById('sidebarOverlay').classList.toggle('active');
+};
+window.closeSidebar = function() {
+  document.getElementById('sidebar').classList.remove('active');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+};
+
+/* ── Logout ──────────────────────────────────────── */
+window.handleLogout = async function() {
+  try {
+    await signOut(auth);
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    window.navigate('login.html');
+  } catch(e) {
+    console.error('Logout error:', e);
+  }
+};
+
+/* ── Keyboard nav on cards ───────────────────────── */
+document.querySelectorAll('.exam-card[tabindex]').forEach(card => {
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      card.click();
+    }
+  });
+});
+
+/* ── Theme-color meta sync (same as index.html) ──── */
+(function() {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) return;
+  function sync() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    meta.content = dark ? '#0B1220' : '#ffffff';
+  }
+  sync();
+  new MutationObserver(sync).observe(document.documentElement, {
+    attributes: true, attributeFilter: ['data-theme']
+  });
+})();
+</script>
+
+</body>
+</html>
