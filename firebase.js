@@ -1,5 +1,5 @@
 /**
- * firebase.js — Untitled World (FIXED)
+ * firebase.js — Study Grid Prep (FIXED)
  *
  * FIX: Removed Notification.requestPermission() + getToken() from module
  *      top level (lines 68-85 in original).
@@ -34,7 +34,8 @@ import {
   getDoc,
   where,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  writeBatch
 } from
   "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -106,5 +107,6 @@ export {
   getDoc,
   where,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  writeBatch
 };
