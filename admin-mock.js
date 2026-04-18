@@ -1596,6 +1596,48 @@ function addQuestionBlockFromData(data) {
   set('.q-optD', data.optionD);
 }
 
+async function publishTest() {
+  console.log("🔥 Publish button clicked");
+
+  const db = window.db; // make sure firebase connected
+
+  // check active test
+  if (!window.activeTest) {
+    alert("❌ No test selected");
+    return;
+  }
+
+  // check questions
+  if (!window.questions || window.questions.length === 0) {
+    alert("❌ No questions added");
+    return;
+  }
+
+  try {
+    console.log("Uploading test...");
+
+    // save each question
+    for (let q of window.questions) {
+      await addDoc(collection(db, "mockQuestions"), {
+        ...q,
+        testId: window.activeTest.id,
+        createdAt: Date.now()
+      });
+    }
+
+    // update test status
+    await updateDoc(doc(db, "mockTests", window.activeTest.id), {
+      status: "published"
+    });
+
+    alert("✅ Test Published Successfully");
+
+  } catch (err) {
+    console.error("❌ Publish error:", err);
+    alert("Error publishing test");
+  }
+}
+
 // ============================================================
 //  End of admin-mock.js
 // ============================================================
