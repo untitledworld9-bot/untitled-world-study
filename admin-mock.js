@@ -495,9 +495,15 @@ window.createTest = async () => {
       createdBy:    STATE.adminUser?.email || 'admin'
     };
 
-    // JEE-specific subject breakdown
+    // CUET ke liye subjects array
+    if (exam === 'cuet') {
+      testData.subjects = ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'English', 'GAT'];
+    }
+
+    // JEE-specific subject breakdown aur array
     if (exam === 'jee') {
-      testData.subjects = {
+      testData.subjects = ['Physics', 'Chemistry', 'Mathematics'];
+      testData.subjectBreakdown = {
         physics:   parseInt($('ctPhyQ').value) || 25,
         chemistry: parseInt($('ctChemQ').value) || 25,
         maths:     parseInt($('ctMathQ').value) || 25
@@ -505,7 +511,7 @@ window.createTest = async () => {
     }
 
     const docRef = await addDoc(collection(db, COLL.TESTS), testData);
-
+    
     // Set as active test in memory
     STATE.activeTest     = { id: docRef.id, ...testData };
     STATE.draftQuestions = [];
