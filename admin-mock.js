@@ -109,7 +109,7 @@ window.verifyAdmin = async () => {
   if(code!==ADMIN_CODE){ errEl.textContent='Incorrect access code.'; $('adminCodeInput').value=''; $('adminCodeInput').focus(); return; }
   btn.disabled=true; btn.textContent='Verifying...'; errEl.textContent='';
   try {
-    const user = await new Promise((res,rej)=>{ const u=onAuthStateChanged(auth,u=>{u();res(u);},rej); });
+    const user = await new Promise((res,rej)=>{ const u=onAuthStateChanged(auth,u=>{unsubscribe();res(u);},rej); });
     if(!user){ errEl.textContent='Not signed in.'; btn.disabled=false; btn.textContent='Verify Access'; return; }
     if(!ADMIN_EMAILS.includes(user.email)){ errEl.textContent='No admin access for this account.'; btn.disabled=false; btn.textContent='Verify Access'; return; }
     STATE.adminUser=user; initAdminPanel(user);
