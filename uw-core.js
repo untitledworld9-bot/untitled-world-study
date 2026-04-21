@@ -1,269 +1,266 @@
 /**
- * leaderboard.js — Study Grid Prep Weekly (Focus) Leaderboard
+ * uw-core.js — Study Grid Prep
  *
- * FIXED:
- *  - Reads from "leaderboard" collection (uid-keyed) → ZERO double entries
- *  - Sorts by weeklyTimerXP → resets properly every 7 days
- *  - weeklyTimerXP resets ONLY in auth (never on focus click — that was the bug)
- *  - timerXP (cumulative) and focusTime preserved separately
- *  - getWeekNumber() kept for weekly countdown
- *  - Top-3 popup, level strip, myRankBar all preserved
+ * Single source of truth for XP, Streak, Firebase sync.
+ * Both todo.html and playlist.html import this.
+ *
+ * Exposes window.UW so non-module inline scripts can call everything.
+ * Sets window.db and window.auth so legacy checks still work.
+ *
+ * UPDATED: _syncLeaderboard now reads timerXP from existing leaderboard
+ *          doc so level is computed from combined (playlist+todo+timer) XP.
  */
 
-import { db, auth, onAuthStateChanged } from "./firebase.js";
-
 import {
-  collection, doc, onSnapshot, getDoc,
-  query, orderBy, limit
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  db,
+  auth,
+  onAuthStateChanged,
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from "./firebase.js";
 
-// ── Level system (2 min focus = 1 XP, thresholds same as before) ─────────────
-const LEVELS = [
-  { min: 0,   name: "Beginner",  icon: "🌱", color: "#00e5a0", bg: "rgba(0,229,160,0.12)",  border: "rgba(0,229,160,0.3)"  },
-  { min: 30,  name: "Explorer",  icon: "🔍", color: "#00e0ff", bg: "rgba(0,224,255,0.12)",  border: "rgba(0,224,255,0.3)"  },
-  { min: 90,  name: "Scholar",   icon: "📚", color: "#4facfe", bg: "rgba(79,172,254,0.12)", border: "rgba(79,172,254,0.3)" },
-  { min: 150, name: "Focused",   icon: "🎯", color: "#7c5cfc", bg: "rgba(124,92,252,0.12)", border: "rgba(124,92,252,0.3)" },
-  { min: 210, name: "Achiever",  icon: "⚡", color: "#ffb830", bg: "rgba(255,184,48,0.12)", border: "rgba(255,184,48,0.3)" },
-  { min: 270, name: "Expert",    icon: "🔥", color: "#ff7a18", bg: "rgba(255,122,24,0.12)", border: "rgba(255,122,24,0.3)" },
-  { min: 330, name: "Master",    icon: "💎", color: "#ff4f6a", bg: "rgba(255,79,106,0.12)", border: "rgba(255,79,106,0.3)" },
-  { min: 390, name: "Legend",    icon: "👑", color: "#ffd700", bg: "rgba(255,215,0,0.12)",  border: "rgba(255,215,0,0.35)" }
-];
+/* ─────────────────────────────
+   STORAGE KEYS (shared across all pages)
+───────────────────────────── */
+const XP_KEY          = "uw_xp";
+const STREAK_KEY      = "uw_streak";
+const STREAK_DATE_KEY = "uw_last_streak";
+const BONUS_KEY       = "uw_todo_daily_bonus";
+
+/* ─────────────────────────────
+   INTERNAL STATE
+───────────────────────────── */
+let _authUser        = null;
+let _ready           = false;
+let _readyCallbacks  = [];
+
+/* ─────────────────────────────
+   AUTH STATE
+───────────────────────────── */
+onAuthStateChanged(auth, async (user) => {
+  _authUser = user;
+  window.db   = db;
+  window.auth = auth;
+
+  if (user) {
+    await loadUserData();
+  }
+
+  _ready = true;
+  _readyCallbacks.forEach(cb => { try { cb(user); } catch(e) {} });
+  _readyCallbacks = [];
+
+  window.dispatchEvent(new CustomEvent("uw_auth_ready", { detail: { user } }));
+});
+
+/* ─────────────────────────────
+   onReady
+───────────────────────────── */
+function onReady(cb) {
+  if (_ready) { try { cb(_authUser); } catch(e) {} }
+  else _readyCallbacks.push(cb);
+}
+
+/* ─────────────────────────────
+   XP
+───────────────────────────── */
+function getXP() {
+  return Math.max(0, parseInt(localStorage.getItem(XP_KEY) || "0", 10));
+}
+
+async function setXPAbsolute(v) {
+  v = Math.max(0, v);
+  localStorage.setItem(XP_KEY, String(v));
+  window.dispatchEvent(new CustomEvent("uw_xp_changed", { detail: { xp: v } }));
+  await _saveUser({ xp: v });
+  await _syncLeaderboard();
+  return v;
+}
+
+async function updateXP(amount) {
+  return setXPAbsolute(getXP() + amount);
+}
+
+/* ─────────────────────────────
+   STREAK
+───────────────────────────── */
+function getStreak() {
+  return Math.max(0, parseInt(localStorage.getItem(STREAK_KEY) || "0", 10));
+}
+
+async function updateStreak() {
+  const today     = new Date().toDateString();
+  const last      = localStorage.getItem(STREAK_DATE_KEY) || "";
+
+  if (last === today) return getStreak();
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toDateString();
+
+  let count = getStreak();
+  if (last === yesterdayStr) {
+    count++;
+  } else {
+    count = 1;
+  }
+
+  localStorage.setItem(STREAK_KEY, String(count));
+  localStorage.setItem(STREAK_DATE_KEY, today);
+
+  window.dispatchEvent(new CustomEvent("uw_streak_changed", { detail: { streak: count } }));
+  await _saveUser({ streak: count, lastStreakDate: today });
+  await _syncLeaderboard();
+  return count;
+}
+
+/* ─────────────────────────────
+   LEVEL SYSTEM
+───────────────────────────── */
+const LEVEL_THRESHOLDS = [0, 100, 250, 500, 800, 1200, 1700, 2300];
 
 function getLevel(xp) {
-  let lvl = LEVELS[0];
-  for (const l of LEVELS) {
-    if ((xp || 0) >= l.min) lvl = l;
-    else break;
+  xp = (xp !== undefined) ? xp : getXP();
+  for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
+    if (xp >= LEVEL_THRESHOLDS[i]) return i + 1;
   }
-  return lvl;
+  return 1;
 }
 
-// ── Weekly helpers ────────────────────────────────────────────────────────────
-function getWeekNumber() {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
-  const yearStart = new Date(d.getFullYear(), 0, 1);
-  return `${d.getFullYear()}-W${Math.ceil((((d - yearStart) / 86400000) + 1) / 7)}`;
+function getLevelProgress(xp) {
+  xp = (xp !== undefined) ? xp : getXP();
+  const level = getLevel(xp);
+  if (level >= 8) return 100;
+  const from = LEVEL_THRESHOLDS[level - 1];
+  const to   = LEVEL_THRESHOLDS[level];
+  return Math.round(((xp - from) / (to - from)) * 100);
 }
 
-function daysUntilReset() {
-  const day = new Date().getDay();
-  return day === 1 ? 7 : (8 - day) % 7;
+/* ─────────────────────────────
+   BADGE SYSTEM
+───────────────────────────── */
+function getBadge(xp) {
+  xp = (xp !== undefined) ? xp : getXP();
+  if (xp >= 500) return "🏆 Untitled Champion";
+  if (xp >= 300) return "⚡ Study Master";
+  if (xp >= 150) return "🔥 Focused Learner";
+  if (xp >= 50)  return "⭐ Rising Learner";
+  return "🏅 Beginner";
 }
 
-// ── DOM refs — matches leaderboard.html ───────────────────────────────────────
-const podiumArea = document.getElementById("podiumArea");
-const rankList   = document.getElementById("rankList");
-const loading    = document.getElementById("loading");
-const myRankBar  = document.getElementById("myRankBar");
-const myRankVal  = document.getElementById("myRankVal");
-const myXpVal    = document.getElementById("myXpVal");
-const resetTimer = document.getElementById("resetTimer");
-const levelStrip = document.getElementById("levelStrip");
-
-// ── Level strip ───────────────────────────────────────────────────────────────
-if (levelStrip) {
-  levelStrip.innerHTML = LEVELS.map(l => `
-    <div class="lvl-pill">
-      <span class="lvl-icon">${l.icon}</span>
-      <span class="lvl-name" style="color:${l.color};">${l.name}</span>
-      <span style="font-size:9px;color:rgba(255,255,255,0.35);">${l.min} XP</span>
-    </div>`).join("");
-}
-
-// ── Weekly reset countdown ────────────────────────────────────────────────────
-if (resetTimer) {
-  const d = daysUntilReset();
-  resetTimer.textContent = `Resets in ${d} day${d === 1 ? "" : "s"}`;
-}
-
-// ── Top-3 popup ───────────────────────────────────────────────────────────────
-const POPUP_KEY = "uw_lb_popup_shown";
-let   popupShown = sessionStorage.getItem(POPUP_KEY) === "true";
-
-function showTopPopup(lvl, rank) {
-  const overlay = document.createElement("div");
-  overlay.className = "levelup-overlay";
-  overlay.innerHTML = `
-    <div class="levelup-card">
-      <div class="levelup-icon">${lvl.icon}</div>
-      <div class="levelup-title">🔥 You are in Top ${rank}!</div>
-      <div class="levelup-sub">
-        You reached <b style="color:${lvl.color};">${lvl.name}</b> level!<br>
-        Keep studying to climb higher 🚀
-      </div>
-      <button class="levelup-btn" onclick="this.closest('.levelup-overlay').remove()">
-        Keep Going!
-      </button>
-    </div>`;
-  document.body.appendChild(overlay);
-}
-
-// ── Format helpers ────────────────────────────────────────────────────────────
-function formatTime(totalMin) {
-  const h = Math.floor((totalMin || 0) / 60);
-  const m = (totalMin || 0) % 60;
-  return h > 0 ? `${h}h ${m}m` : `${m}m`;
-}
-
-function escHtml(s) {
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-
-// ── Main render ───────────────────────────────────────────────────────────────
-// entries: [{uid, name, weeklyTimerXP, focusTime, rank}]
-// currentUid: Firebase UID
-function renderLeaderboard(entries, currentUid) {
-  if (loading) loading.style.display = "none";
-
-  if (!entries.length) {
-    if (loading) {
-      loading.style.display = "block";
-      loading.innerHTML = `<div style="padding:40px;color:rgba(255,255,255,0.4);font-size:14px;">No focus sessions this week yet — start focusing! 🚀</div>`;
-    }
-    return;
-  }
-
-  // ── My rank bar ───────────────────────────────────────────────────────────
-  const myIdx = entries.findIndex(u => u.uid === currentUid);
-  if (myIdx >= 0 && myRankBar) {
-    const me = entries[myIdx];
-    myRankBar.classList.add("visible");
-    if (myRankVal) myRankVal.textContent = `#${myIdx + 1} of ${entries.length}`;
-    if (myXpVal)   myXpVal.textContent   = `⭐ ${me.weeklyTimerXP || 0} XP`;
-
-    if (myIdx < 3 && !popupShown) {
-      popupShown = true;
-      sessionStorage.setItem(POPUP_KEY, "true");
-      setTimeout(() => showTopPopup(getLevel(me.weeklyTimerXP || 0), myIdx + 1), 800);
-    }
-  }
-
-  // ── Podium (top 3) ────────────────────────────────────────────────────────
-  if (podiumArea) {
-    podiumArea.innerHTML = "";
-    const podium = document.createElement("div");
-    podium.className = "podium-wrap";
-
-    const buildCol = (u, rank) => {
-      if (!u) return null;
-      const lvl = getLevel(u.weeklyTimerXP || 0);
-      const col = document.createElement("div");
-      col.className = "podium-col";
-      col.innerHTML = `
-        <div class="podium-avatar rank-${rank}">
-          ${rank === 1 ? '<span class="podium-crown">👑</span>' : ""}
-          ${(u.name || "?")[0].toUpperCase()}
-        </div>
-        <div class="podium-name">${escHtml(u.name || "—")}</div>
-        <div class="podium-xp">⭐ ${u.weeklyTimerXP || 0} XP</div>
-        <div class="podium-lvl">${lvl.icon} ${lvl.name}</div>
-        <div class="podium-bar rank-${rank}">${rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉"}</div>`;
-      return col;
-    };
-
-    // Order: 2nd left, 1st centre, 3rd right
-    const c2 = buildCol(entries[1], 2);
-    const c1 = buildCol(entries[0], 1);
-    const c3 = buildCol(entries[2], 3);
-    if (c2) podium.appendChild(c2);
-    if (c1) podium.appendChild(c1);
-    if (c3) podium.appendChild(c3);
-    podiumArea.appendChild(podium);
-  }
-
-  // ── Rank list 4–20 ────────────────────────────────────────────────────────
-  if (rankList) {
-    rankList.innerHTML = "";
-    for (let i = 3; i < Math.min(entries.length, 20); i++) {
-      const u   = entries[i];
-      const rank = i + 1;
-      const lvl = getLevel(u.weeklyTimerXP || 0);
-      const isMe = u.uid === currentUid;
-
-      const row = document.createElement("div");
-      row.className = "rank-row";
-      if (isMe) {
-        row.style.border     = `1px solid ${lvl.color}`;
-        row.style.background = lvl.bg;
-        row.style.boxShadow  = `0 0 14px ${lvl.color}44`;
+/* ─────────────────────────────
+   LOAD USER DATA
+───────────────────────────── */
+async function loadUserData() {
+  if (!_authUser) return null;
+  try {
+    const snap = await getDoc(doc(db, "users", _authUser.uid));
+    if (snap.exists()) {
+      const d = snap.data();
+      if (d.xp !== undefined) {
+        localStorage.setItem(XP_KEY, String(Math.max(0, d.xp)));
+        window.dispatchEvent(new CustomEvent("uw_xp_changed", { detail: { xp: d.xp } }));
       }
-
-      row.innerHTML = `
-        <div class="rank-num">#${rank}</div>
-        <div class="rank-avatar" style="color:${lvl.color};background:${lvl.bg};">
-          ${(u.name || "?")[0].toUpperCase()}
-        </div>
-        <div class="rank-info">
-          <div class="rank-name">${escHtml(u.name || "—")}${isMe ? `&nbsp;<span style="color:var(--cyan);font-size:11px;">(You)</span>` : ""}</div>
-          <div class="rank-detail">⏱ ${formatTime(u.focusTime || 0)} focused this week</div>
-        </div>
-        <div class="rank-right">
-          <div class="rank-xp">⭐ ${u.weeklyTimerXP || 0}</div>
-          <div class="level-badge" style="background:${lvl.bg};color:${lvl.color};border:1px solid ${lvl.border};">
-            ${lvl.icon} ${lvl.name}
-          </div>
-        </div>`;
-      rankList.appendChild(row);
+      if (d.streak !== undefined)   localStorage.setItem(STREAK_KEY, String(d.streak));
+      if (d.lastStreakDate)          localStorage.setItem(STREAK_DATE_KEY, d.lastStreakDate);
+      return d;
     }
-  }
+  } catch(e) { console.warn("[UW Core] loadUserData failed:", e); }
+  return null;
 }
 
-// ── Auth + live listener ──────────────────────────────────────────────────────
-onAuthStateChanged(auth, async user => {
+/* ─────────────────────────────
+   SAVE USER DATA (partial merge)
+───────────────────────────── */
+async function saveUserData(partial) {
+  await _saveUser(partial);
+}
 
-  if (!user) {
-    if (loading) {
-      loading.style.display = "block";
-      loading.innerHTML = `<div style="padding:60px 20px;color:rgba(255,255,255,0.4);font-size:14px;">Please log in to view the leaderboard.</div>`;
-    }
-    return;
-  }
+async function _saveUser(partial) {
+  if (!_authUser) return;
+  try {
+    await setDoc(doc(db, "users", _authUser.uid), partial, { merge: true });
+  } catch(e) { console.warn("[UW Core] saveUser failed:", e); }
+}
 
-  const currentUid = user.uid;
+/* ─────────────────────────────
+   LEADERBOARD SYNC
+   Reads existing timerXP from leaderboard so level reflects
+   combined (playlist/todo + timer) XP.
+   Uses merge:true so script.js writes to timerXP/focusTime are preserved.
+───────────────────────────── */
+async function _syncLeaderboard() {
+  if (!_authUser) return;
+  const playlistXP = getXP();
+  const streak     = getStreak();
+  const name       = _authUser.displayName || _authUser.email || "Anonymous";
 
-  /**
-   * FIX: Read from "leaderboard" collection (uid-keyed) — NO double entries.
-   *
-   * weeklyTimerXP = timer XP earned this week only.
-   * It resets in script.js auth section at start of new week (NOT on every focus).
-   *
-   * Old bug: reading "users" collection had 2 docs per user (displayName + uid).
-   * Old bug: weeklyXP reset on every startBtn click if lastActiveWeek changed.
-   * Both bugs are now fixed.
-   */
-  const q = query(
-    collection(db, "leaderboard"),
-    orderBy("weeklyTimerXP", "desc"),
-    limit(50)
-  );
+  try {
+    // Read existing timerXP to compute combined level
+    let timerXP = 0;
+    try {
+      const lbSnap = await getDoc(doc(db, "leaderboard", _authUser.uid));
+      if (lbSnap.exists()) timerXP = lbSnap.data().timerXP || 0;
+    } catch(e) {}
 
-  onSnapshot(q, snap => {
-    const seen = new Set();
-    const entries = snap.docs
-      .map(d => ({
-        uid:          d.id,
-        name:         d.data().name          || "Anonymous",
-        weeklyTimerXP:d.data().weeklyTimerXP || 0,
-        focusTime:    d.data().focusTime      || 0,
-      }))
-      // Only show users with focus XP this week
-      .filter(u => u.weeklyTimerXP > 0)
-      // Deduplicate by uid (belt-and-braces)
-      .filter(u => {
-        if (seen.has(u.uid)) return false;
-        seen.add(u.uid);
-        return true;
-      })
-      .map((u, i) => ({ ...u, rank: i + 1 }));
+    const totalXP = playlistXP + timerXP;
+    const level   = getLevel(totalXP);
 
-    renderLeaderboard(entries, currentUid);
-  }, err => {
-    console.error("[Leaderboard]", err);
-    if (loading) {
-      loading.style.display = "block";
-      loading.innerHTML = `<div style="padding:40px;color:rgba(255,79,106,0.7);font-size:14px;">Could not load leaderboard.</div>`;
-    }
-  });
-});
+    // Write playlist/todo XP; merge:true preserves timerXP + focusTime written by script.js
+    await setDoc(doc(db, "leaderboard", _authUser.uid), {
+      name,
+      xp:        playlistXP,   // playlist + todo XP only
+      streak,
+      level,                   // level from combined total
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch(e) { console.warn("[UW Core] leaderboard sync failed:", e); }
+}
+
+async function updateLeaderboard() {
+  return _syncLeaderboard();
+}
+
+/* ─────────────────────────────
+   SAVE TASKS + PLAYLIST to Firebase
+───────────────────────────── */
+async function syncData(payload) {
+  if (!_authUser) return;
+  try {
+    const base = {
+      xp:             getXP(),
+      streak:         getStreak(),
+      lastStreakDate: localStorage.getItem(STREAK_DATE_KEY) || ""
+    };
+    await setDoc(
+      doc(db, "users", _authUser.uid),
+      { ...base, ...payload },
+      { merge: true }
+    );
+    await _syncLeaderboard();
+  } catch(e) { console.warn("[UW Core] syncData failed:", e); }
+}
+
+/* ─────────────────────────────
+   EXPOSE TO WINDOW
+───────────────────────────── */
+window.UW = {
+  onReady,
+  getXP,
+  setXPAbsolute,
+  updateXP,
+  getStreak,
+  updateStreak,
+  getLevel,
+  getLevelProgress,
+  getBadge,
+  loadUserData,
+  saveUserData,
+  syncData,
+  updateLeaderboard,
+  LEVEL_THRESHOLDS
+};
+
+console.log("[UW Core] loaded");
