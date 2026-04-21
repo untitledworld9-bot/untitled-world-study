@@ -405,7 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const snap  = await getDoc(uRef);
 
     if (snap.exists() && snap.data().lastActiveDate !== today) {
-      await updateDoc(uRef,{focusTime:0,lastActiveDate:today,lastActive:Date.now()});
+      await setDoc(uRef,{focusTime:0,lastActiveDate:today,lastActive:Date.now()},{merge:true});
     }
     await setDoc(uRef,{
       name:currentUser, email:user.email,
