@@ -1,5 +1,5 @@
 /**
- * leaderboard.js — Untitled World Weekly (Focus) Leaderboard
+ * leaderboard.js — Study Grid Prep Weekly (Focus) Leaderboard
  *
  * FIXED:
  *  - Reads from "leaderboard" collection (uid-keyed) → ZERO double entries
