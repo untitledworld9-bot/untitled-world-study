@@ -624,7 +624,7 @@ main::-webkit-scrollbar-thumb { background:var(--card-border); border-radius:99p
       </div>
     </div>
     <div class="ac-body">
-      <div onclick="navigate('solutions.html')" style="
+      <div onclick="try{sessionStorage.setItem('solutionsData', sessionStorage.getItem('analysisData') || localStorage.getItem('lastTestResult') || '');}catch(e){} navigate('solutions.html')" style="
         display:flex; align-items:center; gap:14px;
         padding:16px 18px; border-radius:14px;
         background:linear-gradient(135deg,rgba(34,211,238,0.08),rgba(52,211,153,0.07));
