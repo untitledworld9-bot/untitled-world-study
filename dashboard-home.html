@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Dashboard - Study Grid Prep</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="/icon-192.png">
+<meta name="theme-color" content="#0f2027">
+
+<!-- ✅ AUTH GUARD — works in browser AND PWA -->
+<script>
+(function(){
+  if(!localStorage.getItem("userName")){
+    document.documentElement.style.display = 'none';
+    window.location.replace("login.html");
+  }
+})();
+</script>
+
+<script>
+(function(){
+  const saved = localStorage.getItem("theme");
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved ? saved : (systemDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+})();
+</script>
+
+<style>
+html{visibility:hidden;}
+html[data-theme]{visibility:visible;}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+/* ===== GLOBAL DESIGN SYSTEM ===== */
+:root {
+  --bg-start:#ffffff;
+  --bg-end:#f5f5f5;
+  --primary:#22D3EE;
+  --primary-dark:#06B6D4;
+  --secondary:#34D399;
+  --accent:#F43F5E;
+  --text-primary:#111111;
+  --text-secondary:#555555;
+  --card-bg:rgba(0,0,0,0.04);
+  --card-border:rgba(0,0,0,0.08);
+  --header-bg:#ffffff;
+  --nav-bg:#ffffff;
+  --glass-bg:rgba(0,0,0,0.03);
+  --radius:16px;
+  --shadow:0 4px 20px rgba(0,0,0,0.10);
+  --transition:0.25s ease;
+}
+[data-theme="dark"] {
+  --bg-start:#0B1220;
+  --bg-end:#0F172A;
+  --text-primary:#E2E8F0;
+  --text-secondary:#94A3B8;
+  --card-bg:rgba(255,255,255,0.04);
+  --card-border:rgba(255,255,255,0.08);
+  --header-bg:rgba(11,18,32,0.95);
+  --nav-bg:rgba(11,18,32,0.95);
+  --glass-bg:rgba(255,255,255,0.04);
+  --shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+html{background:var(--bg-start);}
+body{
+  background:linear-gradient(160deg,var(--bg-start) 0%,var(--bg-end) 100%);
+  color:var(--text-primary);
+  min-height:100vh;
+  animation:pageIn 0.3s ease forwards;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
+}
+@keyframes pageIn{from{opacity:0;}to{opacity:1;}}
+
+/* ===== HEADER ===== */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
+  position:relative;
+  background:var(--header-bg);
+  border-bottom:1px solid var(--card-border);
+  position:sticky;
+  top:0;
+  z-index:9999;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+
+.site-title{
+  display:flex;
+  align-items:center;
+  font-size:clamp(15px,3.5vw,20px);
+  font-weight:700;
+  line-height:1.2;
+  color:var(--text-primary);
+}
+.logo-img{
+  width:32px;height:32px;
+  border-radius:10px;
+  margin-right:10px;
+  object-fit:cover;
+}
+
+.header-right-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.header-streak-badge{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  background:rgba(255,159,67,0.12);
+  border:1px solid rgba(255,159,67,0.3);
+  border-radius:50px;
+  padding:5px 11px;
+  font-size:13px;
+  font-weight:700;
+  color:#ff9f43;
+  cursor:pointer;
+  transition:all 0.2s ease;
+}
+.header-streak-badge:active{transform:scale(0.94);}
+.streak-fire-anim{display:inline-block;animation:firePulse 1.4s ease-in-out infinite;}
+@keyframes firePulse{0%,100%{transform:scale(1) rotate(-3deg);}50%{transform:scale(1.2) rotate(3deg);}}
+
+.notif-dot-btn{
+  position:relative;width:36px;height:36px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--card-border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-secondary);transition:all 0.2s ease;flex-shrink:0;
+}
+.notif-dot-btn:hover{background:rgba(255,255,255,0.1);color:var(--text-primary);}
+.notif-dot-btn:active{transform:scale(0.93);}
+.notif-unread-dot{
+  position:absolute;top:6px;right:6px;
+  width:8px;height:8px;
+  background:#f43f5e;border-radius:50%;
+  border:1.5px solid var(--bg-start);
+  animation:blink 1.5s ease-in-out infinite;
+}
+
+/* Hamburger */
+.pwa-ham-btn{
+  display:flex;flex-direction:column;gap:5px;
+  cursor:pointer;padding:6px;border-radius:10px;
+  transition:var(--transition);
+}
+.pwa-ham-btn span{
+  width:22px;height:2px;
+  background:var(--text-primary);
+  border-radius:2px;transition:var(--transition);
+}
+.pwa-ham-btn:hover{background:var(--card-bg);}
+
+/* ===== SIDEBAR ===== */
+.pwa-sidebar{
+  position:fixed;top:0;left:0;
+  width:260px;height:100%;
+  background:var(--header-bg);
+  border-right:1px solid var(--card-border);
+  padding:20px 20px 90px 20px;
+  overflow-y:auto;
+  transform:translateX(-100%);
+  transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);
+  z-index:9999;
+}
+.pwa-sidebar.active{transform:translateX(0);}
+[data-theme="dark"] .pwa-sidebar{background:linear-gradient(160deg,#0A1628,#0D1E35)!important;}
+[data-theme="light"] .pwa-sidebar{background:#ffffff!important;box-shadow:4px 0 20px rgba(0,0,0,0.1);}
+
+#pwaOverlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.4);display:none;z-index:999;
+}
+#pwaOverlay.active{display:block;}
+
+.pwa-profile{display:flex;align-items:center;gap:12px;margin-bottom:25px;cursor:pointer;}
+.pwa-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,#22D3EE,#06B6D4);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:bold;color:#fff;font-size:16px;
+  box-shadow:0 2px 8px rgba(34,211,238,0.4);flex-shrink:0;
+}
+.pwa-email{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+.pwa-xp-mini{font-size:12px;opacity:.9;margin-top:4px;color:var(--text-secondary);}
+
+.theme-toggle-btn{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:10px;padding:10px 14px;
+  font-size:14px;font-weight:500;
+  cursor:pointer;transition:var(--transition);
+  margin-bottom:16px;color:var(--text-primary);
+}
+.theme-toggle-btn:hover{background:var(--glass-bg);}
+
+.pwa-links{display:flex;flex-direction:column;gap:8px;}
+.pwa-links a{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:10px;
+  transition:0.2s;font-size:14px;font-weight:500;
+  text-decoration:none;color:var(--text-primary);
+}
+.pwa-links a:hover{background:var(--card-bg);}
+.pwa-links i{font-size:18px;width:24px;text-align:center;}
+.pwa-links button{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);
+  color:#F87171;font-size:14px;font-weight:600;
+  padding:12px;border-radius:var(--radius);margin-top:8px;
+  cursor:pointer;transition:var(--transition);width:100%;
+}
+
+.yt-promo-card{
+  background:rgba(255,71,87,0.1);border:1px solid #ff4757;
+  border-radius:12px;padding:10px 20px;
+  display:inline-flex;align-items:center;gap:8px;
+  color:#ff4757;text-decoration:none;font-weight:bold;font-size:14px;
+  transition:0.2s;margin-top:8px;width:100%;
+}
+.rate-promo-card{
+  background:rgba(255,215,0,0.1);border:1px solid #ffd700;
+  border-radius:10px;padding:8px 16px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  color:#ffd700!important;text-decoration:none;
+  font-weight:bold;font-size:14px;transition:0.2s;
+  margin-top:10px;width:100%;
+}
+.contact-promo-card{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.3);
+  border-radius:10px;padding:8px 16px;
+  color:#22D3EE;text-decoration:none;font-weight:600;font-size:14px;
+  transition:0.2s;margin-top:8px;width:100%;
+}
+.sidebar-footer{margin-top:20px;font-size:14px;}
+.sidebar-footer p{opacity:.85;margin-bottom:8px;color:var(--text-secondary);}
+
+/* ===== MAIN DASHBOARD ===== */
+.dashboard{
+  padding:16px 16px 100px 16px;
+  max-width:480px;
+  margin:0 auto;
+}
+
+/* XP Rank */
+.xp-rank{
+  margin:0 auto 12px auto;
+  width:90%;max-width:360px;
+  font-size:13px;
+  background:var(--card-bg);padding:6px 15px;
+  border-radius:12px;border:1px solid var(--card-border);
+  display:flex;justify-content:center;gap:30px;
+  cursor:pointer;color:var(--text-primary);
+}
+
+/* Streak Card */
+.daily-streak-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:18px;padding:16px 18px;
+  margin:0 auto 12px auto;max-width:440px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);cursor:pointer;
+}
+.streak-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.streak-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--text-primary);}
+.streak-progress{font-size:12px;color:var(--text-secondary);}
+.streak-bar-container{position:relative;height:44px;display:flex;align-items:center;}
+.streak-line{position:absolute;left:0;right:0;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;}
+[data-theme="light"] .streak-line{background:rgba(0,0,0,0.08);}
+.streak-line-fill{
+  position:absolute;left:0;height:4px;border-radius:2px;
+  background:linear-gradient(90deg,#ff9f43,#ff6b6b);
+  transition:width 0.6s ease;width:0%;
+}
+.streak-step{
+  position:absolute;width:36px;height:36px;border-radius:50%;
+  border:2.5px solid var(--card-border);background:var(--card-bg);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--text-secondary);transition:all 0.3s ease;
+  z-index:1;
+}
+.streak-step:nth-child(3){left:0;}
+.streak-step:nth-child(4){left:50%;transform:translateX(-50%);}
+.streak-step:nth-child(5){right:0;}
+.streak-step.completed{border-color:#ff9f43;background:rgba(255,159,67,0.15);color:#ff9f43;}
+.streak-step.target{border-color:#ff9f43;color:#ff9f43;background:rgba(255,159,67,0.08);}
+
+/* App Boxes */
+.start-text{
+  font-size:16px;font-weight:600;color:var(--text-secondary);
+  margin:14px 0 10px 0;letter-spacing:0.3px;text-align:center;
+}
+.app-box{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card-bg);border:1.5px solid var(--card-border);
+  border-radius:18px;padding:18px 20px;
+  margin:6px auto;max-width:440px;width:100%;
+  font-weight:600;cursor:pointer;transition:all 0.22s ease;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  position:relative;text-align:left;
+}
+.app-box::after{
+  content:'\f054';font-family:'Font Awesome 6 Free';font-weight:900;
+  font-size:12px;color:var(--text-secondary);
+  position:absolute;right:18px;top:50%;transform:translateY(-50%);opacity:0.5;
+}
+.app-box:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.15);border-color:rgba(34,211,238,0.3);}
+.app-box:active{transform:scale(0.97);}
+
+.app-icon-wrap{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.app-box-text{display:flex;flex-direction:column;gap:3px;flex:1;}
+.mock-title{color:#818cf8;font-size:15px;font-weight:700;}
+.focus-title{color:#34d399;font-size:15px;font-weight:700;}
+.playlist-title{color:#ff4757;font-size:15px;font-weight:700;}
+.todo-title{color:#00e6c8;font-size:15px;font-weight:700;}
+.app-box-sub{font-size:12px;color:var(--text-secondary);font-weight:400;}
+
+.app-box.focus{border-color:rgba(16,185,129,0.4)!important;background:rgba(16,185,129,0.06)!important;}
+.app-box.playlist-box{border-color:rgba(255,71,87,0.4);background:rgba(255,71,87,0.07);}
+.app-box.todo-box{border-color:rgba(0,230,200,0.35);background:rgba(0,230,200,0.06);}
+
+/* Today focus mini */
+.today-focus-mini{
+  margin:8px auto;padding:10px 14px;max-width:220px;
+  font-size:13px;background:var(--card-bg);
+  border:1px solid rgba(0,242,254,0.3);border-radius:12px;
+  text-align:center;color:var(--text-primary);
+}
+#todayFocusValue{color:#22D3EE;font-weight:600;margin-left:4px;}
+
+/* Edtech section card */
+.edtech-section-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:20px;padding:20px;
+  margin:0 auto 10px auto;max-width:440px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+.app-box.playlist-box{margin:0 0 16px 0;width:100%;max-width:100%;}
+
+/* Tools grid */
+.pwa-tools-grid{
+  display:flex;justify-content:space-around;align-items:center;
+  border-top:1px solid var(--card-border);padding-top:18px;gap:12px;
+}
+.tool-item{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;transition:0.22s;text-decoration:none;flex:1;
+}
+.tool-item:active{transform:scale(0.95);}
+.tool-icon{
+  font-size:22px;background:var(--card-bg);padding:14px;
+  border-radius:16px;border:1px solid var(--card-border);
+  width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+  transition:0.22s;
+}
+.tool-item:hover .tool-icon{background:var(--glass-bg);transform:translateY(-2px);}
+.tool-item span{font-size:12px;font-weight:600;color:var(--text-secondary);}
+
+/* Bottom Nav */
+.pwa-bottom-nav{
+  position:fixed;bottom:0;left:0;width:100%;height:64px;
+  background:var(--nav-bg);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  display:flex;justify-content:space-around;align-items:center;
+  z-index:10000;border-top:1px solid var(--card-border);
+}
+[data-theme="light"] .pwa-bottom-nav{background:rgba(255,255,255,0.97)!important;box-shadow:0 -1px 0 rgba(0,0,0,0.08);}
+.pwa-bottom-nav a{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-decoration:none;color:var(--text-secondary);font-size:11px;gap:4px;
+  padding:6px 12px;border-radius:12px;transition:var(--transition);min-width:52px;
+}
+.pwa-bottom-nav a span{font-size:11px;}
+.pwa-bottom-nav a:hover,.pwa-bottom-nav a.active{color:var(--primary)!important;}
+.pwa-bottom-nav a i{font-size:20px;}
+body{padding-bottom:80px;}
+
+/* Follow / footer */
+.follow-section{margin-top:15px;text-align:center;}
+.made-line{
+  margin:14px auto;font-family:'Playfair Display',serif;
+  font-size:14px;font-style:italic;font-weight:500;
+  text-align:center;color:var(--text-secondary);
+}
+
+/* Notifications panel */
+.notif-panel-overlay{
+  position:fixed;inset:0;z-index:99990;
+  background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:opacity 0.25s ease;
+}
+.notif-panel-overlay.show{opacity:1;pointer-events:all;}
+.notif-panel{
+  position:fixed;top:0;right:0;width:min(340px,92vw);height:100%;
+  background:var(--header-bg);border-left:1px solid var(--card-border);
+  z-index:99991;transform:translateX(110%);
+  transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);
+  display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,0.3);
+}
+[data-theme="light"] .notif-panel{background:#ffffff;}
+.notif-panel.open{transform:translateX(0);}
+.notif-panel-header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;border-bottom:1px solid var(--card-border);}
+.notif-panel-title{font-size:16px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:8px;}
+.notif-panel-close{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);color:var(--text-secondary);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s;}
+.notif-panel-close:hover{background:rgba(244,63,94,0.15);color:#f43f5e;}
+.notif-panel-body{flex:1;overflow-y:auto;padding:12px 16px;}
+.notif-item{display:flex;align-items:flex-start;gap:12px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:13px 14px;margin-bottom:8px;transition:0.2s;}
+[data-theme="light"] .notif-item{background:rgba(0,0,0,0.03)!important;border-color:rgba(0,0,0,0.07)!important;}
+.notif-item:hover{background:var(--glass-bg);}
+.notif-item-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
+.notif-item-text{flex:1;}
+.notif-item-title{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:2px;}
+.notif-item-time{font-size:11px;color:var(--text-secondary);}
+.notif-empty{text-align:center;padding:48px 20px;color:var(--text-secondary);font-size:14px;}
+.notif-empty-icon{font-size:40px;display:block;margin-bottom:12px;}
+
+/* Streak popup */
+.streak-popup-overlay{position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease;}
+.streak-popup-card{background:linear-gradient(145deg,#0D1E35,#0A1628);border:1px solid rgba(255,159,67,0.35);border-radius:24px;padding:36px 28px 28px;max-width:320px;width:90%;text-align:center;box-shadow:0 0 40px rgba(255,159,67,0.2),0 20px 60px rgba(0,0,0,0.5);animation:popScale 0.45s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes popScale{0%{transform:scale(0.6) translateY(30px);opacity:0;}100%{transform:scale(1) translateY(0);opacity:1;}}
+.streak-popup-fires{font-size:52px;display:block;margin-bottom:6px;}
+.streak-popup-count-wrap{font-size:56px;font-weight:800;background:linear-gradient(135deg,#ff9f43,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin:8px 0;}
+.streak-popup-title{font-size:20px;font-weight:700;color:#E2E8F0;margin-bottom:8px;}
+.streak-popup-sub{font-size:14px;color:#94A3B8;line-height:1.5;margin-bottom:24px;}
+.streak-popup-btn{background:linear-gradient(135deg,#ff9f43,#f43f5e);border:none;border-radius:50px;padding:14px 32px;color:white;font-size:15px;font-weight:700;cursor:pointer;width:100%;transition:0.2s;}
+.streak-popup-btn:active{transform:scale(0.96);}
+
+/* Daily Exam Popup */
+.exam-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);z-index:999999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:80px;animation:overlayIn 0.3s ease;}
+@keyframes overlayIn{from{opacity:0;}to{opacity:1;}}
+.exam-popup-card{background:linear-gradient(145deg,#0D1E35,#0A1628);border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 20px 20px;padding:20px;width:92%;max-width:380px;box-shadow:0 -4px 40px rgba(0,0,0,0.5);animation:slideUp 0.35s cubic-bezier(0.34,1.4,0.64,1);position:relative;}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.exam-popup-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:#94A3B8;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.exam-popup-top{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.exam-popup-nta{width:44px;height:44px;flex-shrink:0;}
+.exam-popup-meta{display:flex;flex-direction:column;gap:2px;}
+.exam-popup-label{font-size:11px;color:#94A3B8;font-weight:500;}
+.exam-popup-name{font-size:15px;font-weight:700;color:#E2E8F0;}
+.exam-popup-days{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 16px;margin-bottom:14px;}
+.days-big{font-size:42px;font-weight:800;background:linear-gradient(135deg,#22D3EE,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.days-right{display:flex;flex-direction:column;gap:3px;}
+.days-label{font-size:12px;color:#94A3B8;}
+.days-date{font-size:13px;font-weight:600;color:#E2E8F0;}
+.days-fire{font-size:22px;}
+.exam-popup-bar-wrap{margin-bottom:14px;}
+.exam-popup-bar-label{display:flex;justify-content:space-between;font-size:11px;color:#94A3B8;margin-bottom:6px;}
+.exam-popup-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:50px;overflow:hidden;}
+.exam-popup-bar-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,#22D3EE,#34D399);transition:width 0.8s ease;}
+.exam-popup-btn{width:100%;padding:13px;border:none;border-radius:50px;background:linear-gradient(135deg,#22D3EE,#06B6D4);color:#0B1220;font-weight:700;font-size:14px;cursor:pointer;transition:0.2s;}
+.exam-popup-btn:active{transform:scale(0.97);}
+
+/* Set Goal Popup */
+.set-goal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);backdrop-filter:blur(8px);z-index:9999999;display:flex;align-items:center;justify-content:center;animation:overlayIn 0.3s ease;}
+.set-goal-card{background:linear-gradient(145deg,#0D1E35,#0A1628);border:1px solid rgba(34,211,238,0.2);border-radius:24px;padding:28px 24px 24px;width:92%;max-width:370px;box-shadow:0 8px 40px rgba(0,0,0,0.6),0 0 40px rgba(34,211,238,0.08);animation:slideUp 0.38s cubic-bezier(0.34,1.4,0.64,1);position:relative;}
+.set-goal-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.3);border-radius:50px;padding:5px 14px;margin-bottom:16px;font-size:12px;font-weight:700;color:#22D3EE;letter-spacing:0.5px;}
+.set-goal-title{font-size:20px;font-weight:800;color:#E2E8F0;margin-bottom:6px;line-height:1.3;}
+.set-goal-sub{font-size:13px;color:#94A3B8;margin-bottom:20px;line-height:1.5;}
+.goal-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.goal-option{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 12px;text-align:center;cursor:pointer;transition:all 0.22s ease;position:relative;}
+.goal-option:hover{border-color:rgba(34,211,238,0.4);background:rgba(34,211,238,0.05);}
+.goal-option.selected{border-color:#22D3EE;background:rgba(34,211,238,0.1);box-shadow:0 0 16px rgba(34,211,238,0.2);}
+.goal-option-icon{font-size:24px;margin-bottom:6px;}
+.goal-option-name{font-size:13px;font-weight:700;color:#E2E8F0;}
+.goal-option-desc{font-size:10px;color:#94A3B8;margin-top:3px;}
+.sg-date-section{margin-bottom:18px;display:none;}
+.sg-date-label{font-size:12px;color:#94A3B8;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.sg-cal-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px;}
+.sg-cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.sg-cal-month{font-size:13px;font-weight:700;color:#E2E8F0;}
+.sg-cal-nav{background:none;border:none;color:#94A3B8;font-size:16px;cursor:pointer;padding:0 6px;transition:0.2s;}
+.sg-cal-nav:hover{color:#22D3EE;}
+.sg-cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;}
+.sg-day-header{text-align:center;font-size:10px;font-weight:600;color:#64748B;padding:4px 0;}
+.sg-cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.sg-day{text-align:center;padding:6px 2px;border-radius:8px;font-size:12px;font-weight:500;color:#94A3B8;cursor:pointer;transition:all 0.18s ease;position:relative;user-select:none;-webkit-user-select:none;}
+.sg-day:hover{background:rgba(34,211,238,0.08);color:#E2E8F0;}
+.sg-day.today{color:#22D3EE;}
+.sg-day.selected-day{background:#22D3EE;color:#0B1220;font-weight:700;box-shadow:0 2px 8px rgba(34,211,238,0.4);}
+.sg-day.highlight-exam{background:rgba(251,191,36,0.18);border:1.5px solid rgba(251,191,36,0.5);color:#FBBF24;font-weight:700;}
+.sg-day.other-month{opacity:0.2;cursor:default;}
+.sg-day.other-month:hover{background:none;}
+.sg-fixed-date{display:flex;align-items:center;gap:10px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:12px;padding:12px 14px;font-size:13px;font-weight:600;color:#FBBF24;}
+.sg-start-btn{width:100%;padding:15px;border:none;border-radius:50px;background:linear-gradient(135deg,#22D3EE,#06B6D4);color:#0B1220;font-weight:700;font-size:15px;cursor:pointer;transition:0.22s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(34,211,238,0.35);}
+.sg-start-btn:hover{transform:translateY(-2px);}
+.sg-start-btn:active{transform:scale(0.97);}
+.sg-start-btn:disabled{background:#334155;color:#64748B;box-shadow:none;cursor:not-allowed;}
+.sg-skip{text-align:center;margin-top:12px;font-size:12px;color:#64748B;cursor:pointer;transition:0.2s;}
+.sg-skip:hover{color:#94A3B8;}
+
+/* Rating Overlay */
+.rating-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);z-index:999999;display:none;align-items:center;justify-content:center;}
+.rating-box{background:linear-gradient(135deg,#0F1F2E,#162030);border:1px solid var(--card-border);width:90%;max-width:350px;padding:24px 20px;border-radius:var(--radius);text-align:center;position:relative;box-shadow:var(--shadow);animation:popUpAnim 0.3s ease;}
+@keyframes popUpAnim{0%{transform:scale(0.8);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.close-rating{position:absolute;top:15px;right:15px;color:#a4b0be;font-size:18px;cursor:pointer;}
+.rating-header h3{color:#00f2fe;margin-bottom:5px;font-size:20px;}
+.rating-header p{color:#d1d8e0;font-size:13px;margin-bottom:15px;}
+.stars-container{display:flex;justify-content:center;gap:10px;margin-bottom:10px;}
+.rating-star{font-size:35px;color:#555;cursor:pointer;transition:0.2s;}
+.rating-star.active{color:#ffd700;text-shadow:0 0 15px rgba(255,215,0,0.6);}
+.rating-status-text{font-size:14px;font-weight:bold;color:#fff;margin-bottom:15px;min-height:20px;}
+#feedbackMsg{width:100%;padding:12px;border-radius:10px;border:1px solid #2c5364;background:rgba(255,255,255,0.05);color:#fff;font-size:14px;resize:none;outline:none;margin-bottom:15px;font-family:'Poppins',sans-serif;}
+#feedbackMsg:focus{border-color:#00f2fe;}
+.submit-rating-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#0B1220;border:none;border-radius:50px;font-weight:700;font-size:15px;cursor:pointer;transition:var(--transition);}
+.submit-rating-btn:hover{box-shadow:0 4px 16px rgba(34,211,238,0.35);transform:translateY(-1px);}
+.submit-rating-btn:disabled{background:#334155;color:#64748B;cursor:not-allowed;box-shadow:none;}
+
+/* Todo Reminder Popup */
+.todo-reminder-popup{position:fixed;top:-100px;left:50%;transform:translateX(-50%);background:rgba(10,22,40,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,230,200,0.4);border-left:5px solid #00e6c8;border-radius:16px;padding:14px 22px;box-shadow:0 10px 30px rgba(0,0,0,0.5),0 0 20px rgba(0,230,200,0.15);z-index:100000;display:flex;align-items:center;gap:15px;transition:top 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);width:90%;max-width:350px;}
+.todo-reminder-popup.show{top:80px;}
+.todo-reminder-content{display:flex;align-items:center;gap:15px;width:100%;}
+.todo-reminder-content .bell-icon{font-size:26px;color:#00e6c8;animation:ringBell 1.5s ease infinite;}
+.todo-reminder-content .todo-text h4{margin:0;color:#fff;font-size:16px;font-weight:700;letter-spacing:0.5px;}
+.todo-reminder-content .todo-text p{margin:2px 0 0 0;color:#a4b0be;font-size:13px;font-weight:500;}
+@keyframes ringBell{0%,100%{transform:rotate(0deg);}25%{transform:rotate(15deg);}50%{transform:rotate(-15deg);}75%{transform:rotate(10deg);}}
+
+/* Announcement container */
+#announcement-container{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:500px;pointer-events:none;}
+
+/* Wave hand */
+.wave-hand{display:inline-block;transform-origin:70% 70%;animation:waveHand 7s ease-in-out infinite;}
+@keyframes waveHand{0%,30%,100%{transform:rotate(0deg);}35%{transform:rotate(20deg);}40%{transform:rotate(-10deg);}45%{transform:rotate(14deg);}50%{transform:rotate(-4deg);}55%{transform:rotate(10deg);}60%{transform:rotate(0deg);}}
+
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes blink{50%{opacity:0;}}
+
+/* Mobile tweaks */
+@media(max-width:400px){
+  .xp-rank{gap:15px!important;font-size:12px!important;}
+  .app-box{padding:14px 16px;}
+}
+@media(min-width:768px){
+  .dashboard{max-width:480px!important;margin:0 auto;padding-top:24px;}
+}
+</style>
+</head>
+<body>
+
+<div id="announcement-container"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="pwa-ham-btn" id="pwaHamBtn" onclick="openPwaMenu()">
+    <span></span><span></span><span></span>
+  </div>
+  <h1 class="site-title" id="siteTitle">
+    <img src="/icon-192.png" class="logo-img" alt="SGP">
+    Study Grid Prep
+  </h1>
+  <div class="header-right-actions" id="headerRightActions">
+    <div id="headerStreakBadge" class="header-streak-badge" onclick="location.href='mainleaderboard.html'" title="Your study streak">
+      <span class="streak-fire-anim">🔥</span><span id="headerStreakNum">0</span>
+    </div>
+    <div class="notif-dot-btn" onclick="openNotifPanel()" id="notifDotBtn" title="Notifications">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/>
+      </svg>
+      <span id="notifUnreadDot" class="notif-unread-dot" style="display:none;"></span>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<div id="pwaSidebar" class="pwa-sidebar">
+  <div class="pwa-profile" onclick="location.href='profile.html'">
+    <div class="pwa-avatar" id="pwaAvatar">A</div>
+    <div>
+      <div id="pwaName">User</div>
+      <div id="pwaEmail" class="pwa-email"></div>
+      <div id="pwaGoal" class="pwa-email"></div>
+      <div class="pwa-xp-mini">⭐ <span id="xpValueSide">0</span> XP 🏆 <span id="rankValueSide">--</span></div>
+    </div>
+  </div>
+
+  <div class="theme-toggle-btn" onclick="toggleTheme()">
+    <span id="themeToggleIcon">✨</span><span>Toggle Theme</span>
+  </div>
+
+  <div class="pwa-links">
+    <a href="mock-home.html"><i class="fa-solid fa-file-pen" style="color:#00f2fe;"></i> Mock Test</a>
+    <a href="timer.html"><i class="fa-solid fa-stopwatch" style="color:#00ff88;"></i> Smart Focus Timer</a>
+    <a href="playlist.html"><i class="fa-brands fa-youtube" style="color:#ff4757;"></i> Study Playlist</a>
+    <a href="mainleaderboard.html"><i class="fa-solid fa-trophy" style="color:#f1c40f;"></i> Leaderboard</a>
+    <a href="profile.html"><i class="fa-regular fa-user" style="color:#22D3EE;"></i> Profile</a>
+    <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  </div>
+
+  <div class="sidebar-footer">
+    <p style="margin-bottom:12px;">Follow us on</p>
+    <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card">
+      <i class="fa-brands fa-youtube"></i> YouTube
+    </a><br>
+    <a href="javascript:void(0)" onclick="openRatingFromSidebar()" class="rate-promo-card">
+      <i class="fa-solid fa-star"></i> <span id="rateBtnText">Rate Us</span>
+    </a><br>
+    <a href="contact.html" class="contact-promo-card">
+      <i class="fa-solid fa-headset"></i> Contact Us
+    </a>
+  </div>
+</div>
+
+<div id="pwaOverlay"></div>
+
+<!-- MAIN DASHBOARD -->
+<div class="dashboard" id="mainDashboard">
+
+  <div id="xpRankBox" class="xp-rank" onclick="location.href='mainleaderboard.html'">
+    ⭐ XP: <span id="xpValue">0</span>
+    🏆 Rank: <span id="rankValue">--</span>
+  </div>
+
+  <!-- Daily Streak -->
+  <div class="daily-streak-card" onclick="location.href='playlist.html'">
+    <div class="streak-header">
+      <div class="streak-title">
+        <i class="fa-solid fa-fire" style="color:#ff9f43;font-size:18px;"></i> Daily Goal
+      </div>
+      <div class="streak-progress">(<span id="dailyXpDisplay">0</span>/10 XP) <i class="fa-solid fa-circle-chevron-right"></i></div>
+    </div>
+    <div class="streak-bar-container">
+      <div class="streak-line"></div>
+      <div class="streak-line-fill" id="streakFill"></div>
+      <div class="streak-step completed" id="step0"><i class="fa-solid fa-play"></i></div>
+      <div class="streak-step" id="step5"><i class="fa-solid fa-bolt"></i></div>
+      <div class="streak-step target" id="step10"><i class="fa-solid fa-bullseye"></i></div>
+    </div>
+  </div>
+
+  <h2 class="start-text">Start Studying 🚀</h2>
+
+  <!-- Mock Test -->
+  <div class="app-box" onclick="location.href='mock-home.html'">
+    <div class="app-icon-wrap" style="background:rgba(99,102,241,0.12);">
+      <i class="fa-solid fa-file-pen" style="color:#818cf8;"></i>
+    </div>
+    <div class="app-box-text">
+      <div class="mock-title">Mock Test Platform</div>
+      <div class="app-box-sub">JEE · NEET · CUET · Boards</div>
+    </div>
+  </div>
+
+  <!-- Focus Timer -->
+  <div class="app-box focus" onclick="location.href='timer.html'">
+    <div class="app-icon-wrap" style="background:rgba(52,211,153,0.12);">
+      <i class="fa-solid fa-stopwatch" style="color:#34D399;"></i>
+    </div>
+    <div class="app-box-text">
+      <div class="focus-title">Smart Focus Timer</div>
+      <div class="app-box-sub">Study with global rooms · Earn XP</div>
+    </div>
+  </div>
+
+  <div id="todayFocusCard" class="today-focus-mini">
+    🔥 Today Focus • <span id="todayFocusValue">0m</span>
+  </div>
+
+  <!-- Playlist + Tools -->
+  <div class="edtech-section-card">
+    <div class="app-box playlist-box" onclick="location.href='playlist.html'">
+      <div class="app-icon-wrap" style="background:rgba(255,71,87,0.12);">
+        <i class="fa-brands fa-youtube" style="color:#ff4757;font-size:20px;"></i>
+      </div>
+      <div class="app-box-text">
+        <div class="playlist-title">My Study Playlist</div>
+        <div class="app-box-sub">Paste YouTube links subject-wise & earn XP</div>
+      </div>
+    </div>
+
+    <div class="pwa-tools-grid">
+      <div class="tool-item" onclick="location.href='focus.html'">
+        <i class="fa-solid fa-stopwatch tool-icon" style="color:#ff9f43;"></i>
+        <span>Timer</span>
+      </div>
+      <div class="tool-item" onclick="location.href='progress.html'">
+        <i class="fa-solid fa-chart-simple tool-icon" style="color:#10ac84;"></i>
+        <span>Weekly Analysis</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Todo -->
+  <div class="app-box todo-box" onclick="location.href='todo.html'">
+    <div class="app-icon-wrap" style="background:rgba(0,230,200,0.12);">
+      <i class="fa-solid fa-list-check" style="color:#00e6c8;"></i>
+    </div>
+    <div class="app-box-text">
+      <div class="todo-title">Your Todo List</div>
+      <div class="app-box-sub">Track tasks · Get daily reminders 🔔</div>
+    </div>
+  </div>
+
+  <div class="follow-section">
+    <p style="margin-bottom:12px;color:var(--text-secondary);font-size:14px;">Follow us on</p>
+    <a href="https://www.youtube.com/@untitledworld01" target="_blank" class="yt-promo-card" style="max-width:200px;margin:0 auto;">
+      <i class="fa-brands fa-youtube"></i> YouTube
+    </a>
+  </div>
+
+  <p class="made-line">Crafted with ❤️ for Focused Learners</p>
+
+</div>
+
+<!-- Todo Reminder Popup -->
+<div id="todoReminderPopup" class="todo-reminder-popup">
+  <div class="todo-reminder-content">
+    <i class="fa-solid fa-bell bell-icon"></i>
+    <div class="todo-text">
+      <h4>Reminder 🔔</h4>
+      <p>You have <span id="incTaskCount" style="color:#00e6c8;font-weight:bold;">0</span> incomplete tasks today!</p>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications Panel -->
+<div class="notif-panel-overlay" id="notifOverlay" onclick="closeNotifPanel()"></div>
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-panel-header">
+    <div class="notif-panel-title">🔔 Notifications</div>
+    <button class="notif-panel-close" onclick="closeNotifPanel()">✕</button>
+  </div>
+  <div class="notif-panel-body" id="notifList">
+    <div class="notif-empty"><span class="notif-empty-icon">🔔</span>Loading...</div>
+  </div>
+</div>
+
+<!-- Streak Popup -->
+<div class="streak-popup-overlay" id="streakPopupOverlay" style="display:none;">
+  <div class="streak-popup-card">
+    <span class="streak-popup-fires">🔥</span>
+    <div class="streak-popup-count-wrap" id="streakPopupNum">1</div>
+    <div class="streak-popup-title">Day Streak! 🎯</div>
+    <div class="streak-popup-sub" id="streakPopupMsg">You completed your daily goal!</div>
+    <button class="streak-popup-btn" onclick="closeStreakPopup()">Let's Keep Going! 🚀</button>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div id="pwaBottomNav" class="pwa-bottom-nav">
+  <a href="dashboard-home.html" class="active">
+    <i class="fa-solid fa-house"></i><span>Home</span>
+  </a>
+  <a href="todo.html">
+    <i class="fa-solid fa-list-check"></i><span>Todo</span>
+  </a>
+  <a href="timer.html">
+    <i class="fa-solid fa-stopwatch"></i><span>Focus</span>
+  </a>
+  <a href="playlist.html">
+    <i class="fa-brands fa-youtube" style="color:red;font-size:16px;"></i><span>Playlist</span>
+  </a>
+  <a href="profile.html">
+    <i class="fa-regular fa-user"></i><span>Profile</span>
+  </a>
+</div>
+
+<!-- Rating Overlay -->
+<div class="rating-overlay" id="ratingOverlay" style="display:none;">
+  <div class="rating-box">
+    <span class="close-rating" onclick="closeRatingPopup()">✕</span>
+    <div class="rating-header">
+      <h3>Rate Study Grid Prep ⭐</h3>
+      <p>Your feedback helps us improve!</p>
+    </div>
+    <div class="stars-container">
+      <span class="rating-star" data-star="1" onclick="selectStar(1)">★</span>
+      <span class="rating-star" data-star="2" onclick="selectStar(2)">★</span>
+      <span class="rating-star" data-star="3" onclick="selectStar(3)">★</span>
+      <span class="rating-star" data-star="4" onclick="selectStar(4)">★</span>
+      <span class="rating-star" data-star="5" onclick="selectStar(5)">★</span>
+    </div>
+    <div class="rating-status-text" id="ratingStatusText"></div>
+    <textarea id="feedbackMsg" rows="3" placeholder="Tell us more (optional)..."></textarea>
+    <button class="submit-rating-btn" id="submitRatingBtn" disabled onclick="submitAppFeedback()">Submit Feedback</button>
+  </div>
+</div>
+
+<!-- Daily Exam Popup -->
+<div id="examDailyPopup" class="exam-popup-overlay" style="display:none;">
+  <div class="exam-popup-card">
+    <button class="exam-popup-close" onclick="closeExamPopup()">✕</button>
+    <div class="exam-popup-top">
+      <img src="https://nta.ac.in/img/ntalogo.png" class="exam-popup-nta" alt="NTA"
+        style="background:white;border-radius:8px;padding:3px;object-fit:contain;"
+        onerror="this.outerHTML='<div class=\'exam-popup-nta\' style=\'background:#003087;border-radius:50%;display:flex;align-items:center;justify-content:center;\'><span style=\'color:white;font-size:10px;font-weight:800;\'>NTA</span></div>'">
+      <div class="exam-popup-meta">
+        <div class="exam-popup-label">Your Goal</div>
+        <div class="exam-popup-name" id="popupExamName">JEE Main 2026</div>
+      </div>
+    </div>
+    <div class="exam-popup-days">
+      <div class="days-big" id="popupDaysBig">--</div>
+      <div class="days-right">
+        <div class="days-label">Days Left</div>
+        <div class="days-date" id="popupExamDate">2 Apr 2026</div>
+        <div class="days-fire" id="popupFireEmoji">🔥</div>
+      </div>
+    </div>
+    <div class="exam-popup-bar-wrap">
+      <div class="exam-popup-bar-label">
+        <span>Progress</span>
+        <span id="popupPercent">--% prepared time used</span>
+      </div>
+      <div class="exam-popup-bar">
+        <div class="exam-popup-bar-fill" id="popupBarFill" style="width:0%"></div>
+      </div>
+    </div>
+    <button class="exam-popup-btn" onclick="closeExamPopup()">Let's Study! 🚀</button>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+
+<script>
+// ─── SIDEBAR ───
+function openPwaMenu(){
+  document.getElementById("pwaSidebar").classList.add("active");
+  document.getElementById("pwaOverlay").classList.add("active");
+}
+function closePwaMenu(){
+  document.getElementById("pwaSidebar").classList.remove("active");
+  document.getElementById("pwaOverlay").classList.remove("active");
+}
+window.addEventListener("load",function(){
+  document.getElementById("pwaOverlay").onclick = closePwaMenu;
+});
+
+// ─── USER DATA ───
+function syncUserData(){
+  let name = localStorage.getItem("customUserName") || localStorage.getItem("userName") || "User";
+  let email = localStorage.getItem("userEmail") || "";
+  let goal = localStorage.getItem("goal") || "";
+
+  // Header greeting
+  const title = document.getElementById("siteTitle");
+  if(title) title.innerHTML = `<img src="/icon-192.png" class="logo-img" alt="SGP"> <span class="wave-hand">👋</span> Hey, ${name.split(" ")[0]}`;
+
+  const pwaName = document.getElementById("pwaName");
+  const pwaEmail = document.getElementById("pwaEmail");
+  const pwaAvatar = document.getElementById("pwaAvatar");
+  const pwaGoal = document.getElementById("pwaGoal");
+  if(pwaName) pwaName.innerText = name;
+  if(pwaEmail) pwaEmail.innerText = email;
+  if(pwaAvatar) pwaAvatar.innerText = name.charAt(0).toUpperCase();
+  if(pwaGoal && goal) pwaGoal.innerText = "Goal: " + goal;
+}
+syncUserData();
+window.addEventListener("pageshow", syncUserData);
+window.addEventListener("storage", syncUserData);
+
+// ─── STREAK BADGE ───
+(function(){
+  const cachedStreak = parseInt(localStorage.getItem("uw_streak") || "0");
+  const num = document.getElementById("headerStreakNum");
+  if(num) num.textContent = cachedStreak;
+})();
+
+// ─── STREAK POPUP ───
+window.closeStreakPopup = function(){
+  const el = document.getElementById("streakPopupOverlay");
+  if(el){ el.style.opacity='0'; el.style.transition='0.25s'; setTimeout(()=>{ el.style.display='none'; el.style.opacity=''; },250); }
+};
+
+// ─── NOTIF PANEL ───
+window.openNotifPanel = function(){
+  document.getElementById("notifPanel")?.classList.add("open");
+  document.getElementById("notifOverlay")?.classList.add("show");
+  localStorage.setItem("notifLastSeen", Date.now());
+  const dot = document.getElementById("notifUnreadDot");
+  if(dot) dot.style.display='none';
+};
+window.closeNotifPanel = function(){
+  document.getElementById("notifPanel")?.classList.remove("open");
+  document.getElementById("notifOverlay")?.classList.remove("show");
+};
+
+// ─── RATING ───
+let selectedStars = 0;
+window.openRatingFromSidebar = function(){
+  closePwaMenu();
+  const overlay = document.getElementById("ratingOverlay");
+  if(overlay){ overlay.style.display='flex'; }
+};
+window.closeRatingPopup = function(){
+  const overlay = document.getElementById("ratingOverlay");
+  if(overlay){ overlay.style.display='none'; }
+};
+window.selectStar = function(n){
+  selectedStars = n;
+  const labels = ["","Terrible 😞","Poor 😕","Okay 😐","Good 😊","Excellent 🤩"];
+  document.getElementById("ratingStatusText").innerText = labels[n] || "";
+  document.querySelectorAll(".rating-star").forEach((s,i)=>s.classList.toggle("active", i < n));
+  document.getElementById("submitRatingBtn").disabled = false;
+};
+window.submitAppFeedback = function(){
+  const msg = document.getElementById("feedbackMsg").value.trim();
+  if(window._saveRatingToFirebase) window._saveRatingToFirebase(selectedStars, msg);
+  localStorage.setItem("appRated","yes");
+  const btn = document.getElementById("rateBtnText");
+  if(btn) btn.innerText = "Rated ⭐";
+  closeRatingPopup();
+};
+
+// ─── LOGOUT ───
+window.logout = function(){
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userEmail");
+  localStorage.removeItem("returningUser");
+  localStorage.removeItem("seenWelcome");
+  window.location.replace("login.html");
+};
+
+// ─── EXAM POPUP CLOSE ───
+window.closeExamPopup = function(){
+  const el = document.getElementById("examDailyPopup");
+  el.style.opacity="0"; el.style.transition="opacity 0.2s ease";
+  setTimeout(()=>{ el.style.display="none"; el.style.opacity=""; },200);
+};
+</script>
+
+<!-- Daily Exam Countdown Popup logic (shows once per day) -->
+<script>
+(function(){
+  const goal = localStorage.getItem("goal");
+  const examDate = localStorage.getItem("examDate");
+  if(!goal || !examDate) return;
+  const todayKey = new Date().toDateString();
+  if(localStorage.getItem("examPopupShown") === todayKey) return;
+  const EXAM_NAMES = {JEE:"JEE Main 2026",NEET:"NEET 2026",CUET:"CUET 2026",Boards:"Board Exams"};
+  const EXAM_DATES_LABEL = {JEE:"2 Apr 2026",NEET:"4 May 2026",CUET:"14 May 2026",Boards:""};
+  const examTs = new Date(examDate); examTs.setHours(0,0,0,0);
+  const todayTs = new Date(); todayTs.setHours(0,0,0,0);
+  const daysLeft = Math.ceil((examTs - todayTs)/86400000);
+  if(daysLeft <= 0) return;
+  document.getElementById("popupExamName").innerText = EXAM_NAMES[goal] || goal;
+  document.getElementById("popupDaysBig").innerText = daysLeft;
+  document.getElementById("popupExamDate").innerText = EXAM_DATES_LABEL[goal] || examDate;
+  document.getElementById("popupFireEmoji").innerText = daysLeft<=10?"🔥🔥":daysLeft<=30?"🔥":"💪";
+  const usedPct = Math.max(0,Math.min(100,Math.round(((365-daysLeft)/365)*100)));
+  document.getElementById("popupBarFill").style.width = usedPct+"%";
+  document.getElementById("popupPercent").innerText = usedPct+"% time elapsed";
+  setTimeout(()=>{
+    document.getElementById("examDailyPopup").style.display="flex";
+    localStorage.setItem("examPopupShown",todayKey);
+  },2000);
+})();
+</script>
+
+<script type="module" src="script.js"></script>
+
+<!-- Firebase XP + Rank live -->
+<script type="module">
+import { db, auth } from "./firebase.js";
+import { collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+onAuthStateChanged(auth, user => {
+  if(!user) return;
+  onSnapshot(collection(db,"users"), snap => {
+    let users = [];
+    snap.forEach(d => users.push(d.data()));
+    users.sort((a,b)=>(b.weeklyXP||0)-(a.weeklyXP||0));
+    const me = users.find(u => u.name === user.displayName);
+    if(!me) return;
+    const xp = me.weeklyXP || 0;
+    const rank = users.findIndex(u => u.name === user.displayName) + 1;
+    ["xpValue","xpValueSide"].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=xp; });
+    ["rankValue","rankValueSide"].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=rank; });
+  });
+  onSnapshot(doc(db,"users",user.displayName), snap => {
+    const data = snap.data();
+    if(!data) return;
+    const mins = data.focusTime || 0;
+    const h = Math.floor(mins/60), m = mins%60;
+    const text = h > 0 ? `${h}h ${m}m` : `${m}m`;
+    const el = document.getElementById("todayFocusValue");
+    if(el) el.innerText = text;
+  });
+});
+</script>
+
+<!-- Firebase Streak + Notifications -->
+<script type="module">
+import { db, auth } from "./firebase.js";
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+window._saveRatingToFirebase = function(stars, msg){
+  if(!auth.currentUser) return;
+  const userId = auth.currentUser.displayName || auth.currentUser.email;
+  updateDoc(doc(db,"users",userId),{
+    appRating:stars, appRatedAt:Date.now(), appRatingMsg:msg||"",
+    notifications: arrayUnion({ icon:'⭐', title:`You rated the app ${stars} stars. Thank you!`, ts:Date.now() })
+  }).catch(()=>{});
+};
+
+function formatTimeAgo(ts){
+  if(!ts) return '';
+  const diff = Date.now()-ts, m=Math.floor(diff/60000);
+  if(m<1) return 'Just now'; if(m<60) return m+'m ago';
+  const h=Math.floor(m/60); if(h<24) return h+'h ago';
+  return Math.floor(h/24)+'d ago';
+}
+
+window._renderNotifications = function(notifs){
+  const list = document.getElementById("notifList");
+  if(!list) return;
+  const dot = document.getElementById("notifUnreadDot");
+  if(!notifs||notifs.length===0){
+    list.innerHTML=`<div class="notif-empty"><span class="notif-empty-icon">🔔</span>No notifications yet.</div>`;
+    if(dot) dot.style.display='none'; return;
+  }
+  const lastSeen = parseInt(localStorage.getItem("notifLastSeen")||"0");
+  const hasNew = notifs.some(n=>(n.ts||0)>lastSeen);
+  if(dot) dot.style.display=hasNew?'block':'none';
+  list.innerHTML = notifs.slice(0,5).map(n=>`
+    <div class="notif-item">
+      <div class="notif-item-icon">${n.icon||'📢'}</div>
+      <div class="notif-item-text">
+        <div class="notif-item-title">${n.title||''}</div>
+        <div class="notif-item-time">${formatTimeAgo(n.ts)}</div>
+      </div>
+    </div>`).join('');
+};
+
+onAuthStateChanged(auth, async user => {
+  if(!user) return;
+  const userId = user.displayName || user.email;
+  const userRef = doc(db,"users",userId);
+
+  // Streak logic
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  const data = (await getDoc(userRef)).data() || {};
+  const lastActive = data.lastActiveDate;
+  let streak = data.streak || 0;
+  if(lastActive !== today){
+    if(lastActive === yesterday) streak++;
+    else if(lastActive !== today) streak = 1;
+    await updateDoc(userRef,{ streak, lastActiveDate:today }).catch(()=>{});
+    localStorage.setItem("uw_streak", streak);
+    document.getElementById("headerStreakNum").textContent = streak;
+    if(streak>1 && !localStorage.getItem("streakShown_"+today)){
+      localStorage.setItem("streakShown_"+today,"yes");
+      const el=document.getElementById("streakPopupOverlay");
+      const num=document.getElementById("streakPopupNum");
+      const msg=document.getElementById("streakPopupMsg");
+      if(el){if(num) num.textContent=streak; if(msg) msg.textContent=streak===1?"First goal complete!":"You've studied "+streak+" days in a row! 💪"; el.style.display='flex';}
+    }
+  }
+
+  // Notifications
+  onSnapshot(userRef, snap => {
+    const d = snap.data() || {};
+    const notifs = (d.notifications||[]).slice().reverse();
+    if(window._renderNotifications) window._renderNotifications(notifs);
+  });
+
+  // Daily XP bar
+  onSnapshot(userRef, snap => {
+    const d = snap.data() || {};
+    const dailyXP = d.dailyXP || 0;
+    const el = document.getElementById("dailyXpDisplay");
+    const fill = document.getElementById("streakFill");
+    const s5 = document.getElementById("step5");
+    const s10 = document.getElementById("step10");
+    if(el) el.textContent = Math.min(dailyXP,10);
+    const pct = Math.min((dailyXP/10)*100,100);
+    if(fill) fill.style.width=pct+"%";
+    if(s5) s5.classList.toggle("completed", dailyXP>=5);
+    if(s10) s10.classList.toggle("completed", dailyXP>=10);
+  });
+});
+</script>
+
+<script>
+// Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').then(reg=>{
+    if(reg.waiting) reg.waiting.postMessage('skipWaiting');
+    reg.addEventListener("updatefound",()=>{
+      const nw=reg.installing;
+      nw.addEventListener("statechange",()=>{
+        if(nw.state==="installed"&&navigator.serviceWorker.controller) nw.postMessage("skipWaiting");
+      });
+    });
+  });
+}
+// Theme color update
+(function(){
+  function updateThemeColor(){
+    const isDark = document.documentElement.getAttribute("data-theme")==="dark";
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.content = isDark?"#0B1220":"#ffffff";
+  }
+  updateThemeColor();
+  new MutationObserver(updateThemeColor).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+})();
+</script>
+
+<script src="theme.js"></script>
+<script type="module" src="/index.js"></script>
+
+</body>
+</html>
