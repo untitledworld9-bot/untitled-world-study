@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="google-site-verification" content="fBQIEBmTNrzlTsyT3SmORHwQFKqwU3LcgaybVCyVIdI" />
+<title>Study Grid Prep - Smart Study Platform</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="description" content="Distraction free study platform for JEE, NEET,CUET & Boards. Mock tests, focus timer, progress tracking.">
+<meta name="keywords" content="JEE NEET CUET preparation, study, mock test platform, study timer, focus study">
+<meta name="author" content="Study Grid Prep">
+<meta name="robots" content="index, follow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Study Grid Prep - Smart Study Platform">
+<meta property="og:description" content="Distraction-free study platform with mock tests & focus timer.">
+<meta property="og:url" content="https://untitledworld.us.cc">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://untitledworld.us.cc/icon-512.png">
+
+<script>
+(function(){
+  if(localStorage.getItem("userName")){
+    window.location.replace("dashboard-home.html");
+  }
+  var isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if(isPWA && !localStorage.getItem("userName")){
+    window.location.replace("login.html");
+  }
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --primary: #4F46E5;
+  --primary-light: #EEF2FF;
+  --primary-hover: #4338CA;
+  --accent: #06B6D4;
+  --accent-light: #ECFEFF;
+  --teal: #0D9488;
+  --teal-light: #F0FDFA;
+  --orange: #EA580C;
+  --orange-light: #FFF7ED;
+  --violet: #7C3AED;
+  --violet-light: #F5F3FF;
+  --rose: #E11D48;
+  --rose-light: #FFF1F2;
+  --amber: #D97706;
+  --amber-light: #FFFBEB;
+  --success: #10B981;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --bg: #FFFFFF;
+  --bg-soft: #F8FAFC;
+  --bg-muted: #F1F5F9;
+  --border: #E2E8F0;
+  --border-soft: #F1F5F9;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --shadow-md: 0 10px 24px -4px rgba(0,0,0,0.08), 0 4px 8px -2px rgba(0,0,0,0.04);
+  --shadow-lg: 0 24px 40px -8px rgba(0,0,0,0.1);
+  --radius: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+  --font: 'Outfit', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+html { background: var(--bg); scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 0 5%;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.nav-logo {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  object-fit: cover;
+}
+.nav-name {
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--text-primary);
+  letter-spacing: -0.4px;
+}
+
+/* Hamburger menu */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 10px;
+  gap: 5px;
+  transition: background var(--transition);
+  padding: 6px;
+}
+.hamburger:hover { background: var(--bg-muted); }
+.hamburger span {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--text-primary);
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  transform-origin: center;
+}
+.hamburger span:nth-child(1) { width: 22px; }
+.hamburger span:nth-child(2) { width: 16px; }
+.hamburger span:nth-child(3) { width: 22px; }
+.hamburger.open span:nth-child(1) {
+  width: 20px;
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger.open span:nth-child(3) {
+  width: 20px;
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile menu overlay */
+.mobile-menu {
+  position: fixed;
+  top: 64px; left: 0; right: 0;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  z-index: 190;
+  padding: 0 5%;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+  opacity: 0;
+}
+.mobile-menu.open {
+  max-height: 400px;
+  opacity: 1;
+}
+.mobile-menu-inner {
+  padding: 20px 0 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mob-link {
+  display: block;
+  padding: 14px 16px;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: var(--radius);
+  transition: background var(--transition), color var(--transition);
+}
+.mob-link:hover, .mob-link.active { background: var(--primary-light); color: var(--primary); }
+.mob-btn {
+  display: block;
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: var(--primary);
+  color: white;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--radius);
+  transition: background var(--transition);
+}
+.mob-btn:hover { background: var(--primary-hover); }
+
+.nav-cta-desktop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-ghost {
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+.btn-ghost:hover { background: var(--bg-muted); color: var(--text-primary); }
+
+.btn-primary-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary);
+  color: white;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 9px 18px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-primary-nav:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+.btn-primary-nav:active { transform: scale(0.97); }
+
+/* Install button - shown below hero buttons */
+.btn-install {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--bg-soft);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+  margin: 0 auto;
+  width: fit-content;
+}
+.btn-install.visible { display: inline-flex; }
+.btn-install:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+.btn-install:active { transform: scale(0.97); }
+.btn-install svg { width: 15px; height: 15px; }
+
+.hero-install-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  padding: 72px 5% 48px;
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+  animation: fadeUp 0.55s ease forwards;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 50px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(79,70,229,0.18);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: var(--font);
+  font-size: clamp(34px, 7vw, 58px);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1.05;
+  color: var(--text-primary);
+  margin-bottom: 18px;
+}
+
+.hero h1 .grad {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 60%, var(--teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: clamp(15px, 2.2vw, 18px);
+  color: var(--text-secondary);
+  font-weight: 400;
+  line-height: 1.65;
+  margin-bottom: 32px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.btn-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary);
+  color: white;
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 16px;
+  padding: 15px 30px;
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 4px 18px rgba(79,70,229,0.35), 0 1px 3px rgba(79,70,229,0.2);
+}
+.btn-hero:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 8px 24px rgba(79,70,229,0.42);
+  transform: translateY(-2px);
+}
+.btn-hero:active { transform: scale(0.97); }
+
+.btn-hero-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 26px;
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-hero-outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+/* ===== STATS BAR ===== */
+.stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding: 22px 5%;
+  background: var(--bg-soft);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stat-item { text-align: center; }
+.stat-value { font-family: var(--font); font-size: 22px; font-weight: 900; color: var(--text-primary); letter-spacing: -0.5px; }
+.stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+.stat-divider { width: 1px; height: 36px; background: var(--border); }
+
+/* ===== SECTION HEADER ===== */
+.section {
+  padding: 72px 5%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 44px;
+}
+.section-eyebrow {
+  display: inline-block;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.section-title {
+  font-family: var(--font);
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.15;
+}
+.section-sub {
+  font-size: 15px;
+  color: var(--text-secondary);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* ===== MOCK TEST CARDS ===== */
+.mock-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 20px;
+}
+
+.mock-card {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  text-decoration: none;
+  display: block;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+.mock-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: transparent;
+}
+.mock-card:active { transform: scale(0.98); }
+
+.mock-card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.mock-card:hover .mock-card-img { transform: scale(1.04); }
+
+.mock-card-body {
+  padding: 20px;
+}
+.mock-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 4px 10px;
+  border-radius: 50px;
+  margin-bottom: 10px;
+}
+.badge-jee { background: #EEF2FF; color: #4F46E5; }
+.badge-cuet { background: #FFF7ED; color: #EA580C; }
+
+.mock-card-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+.mock-card-title {
+  font-family: var(--font);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+.mock-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+.mock-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 10px;
+  transition: var(--transition);
+}
+.cta-jee {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.cta-jee:hover { background: var(--primary); color: white; }
+.cta-cuet {
+  background: var(--orange-light);
+  color: var(--orange);
+}
+.cta-cuet:hover { background: var(--orange); color: white; }
+
+/* ===== FEATURE CARDS ===== */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+}
+
+.feature-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.feature-card:hover {
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+.feature-card:active {
+  transform: scale(0.97);
+  box-shadow: var(--shadow);
+}
+.feature-card:hover::before { opacity: 1; }
+.feature-card:active::before { opacity: 1; }
+
+.fc-mock::before   { background: linear-gradient(90deg, #4F46E5, #06B6D4); }
+.fc-timer::before  { background: linear-gradient(90deg, #10B981, #34D399); }
+.fc-playlist::before { background: linear-gradient(90deg, #EF4444, #F97316); }
+.fc-analysis::before { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+.fc-todo::before   { background: linear-gradient(90deg, #8B5CF6, #A78BFA); }
+.fc-solver::before { background: linear-gradient(90deg, #06B6D4, #22D3EE); }
+
+.feature-icon-wrap {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 21px;
+  margin-bottom: 16px;
+}
+.fi-mock { background: #EEF2FF; }
+.fi-timer { background: #ECFDF5; }
+.fi-playlist { background: #FEF2F2; }
+.fi-analysis { background: #FFFBEB; }
+.fi-todo { background: #F5F3FF; }
+.fi-solver { background: #ECFEFF; }
+
+.feature-title {
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 7px;
+  letter-spacing: -0.2px;
+}
+.feature-desc {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.feature-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 50px;
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+}
+
+/* ===== HOW IT WORKS ===== */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+.step-card {
+  text-align: center;
+  padding: 32px 20px;
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+.step-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.step-card:active { transform: scale(0.97); box-shadow: var(--shadow); }
+.step-num {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px auto;
+  box-shadow: 0 4px 14px rgba(79,70,229,0.3);
+}
+.step-title {
+  font-family: var(--font);
+  font-size: 15px; font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 7px;
+}
+.step-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ===== EXAM TARGETS ===== */
+.exams-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+.exam-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 18px;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: var(--transition);
+  cursor: default;
+}
+.exam-pill:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+.exam-emoji { font-size: 18px; }
+
+/* ===== FOLLOW US ON + FOOTER (merged dark block) ===== */
+.dark-footer-block {
+  background: #0F172A;
+}
+
+.follow-section {
+  padding: 72px 5% 56px;
+  text-align: center;
+}
+.follow-title {
+  font-family: var(--font);
+  font-size: clamp(26px, 5vw, 40px);
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.8px;
+  margin-bottom: 10px;
+}
+.follow-sub {
+  font-size: 15px;
+  color: #94A3B8;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+.social-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: #1E293B;
+  border: 1px solid #334155;
+  text-decoration: none;
+  transition: all 0.28s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.social-btn:hover {
+  transform: translateY(-4px) scale(1.06);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+}
+.social-btn:active { transform: scale(0.92); }
+.social-btn img, .social-btn svg {
+  width: 32px; height: 32px;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+.social-btn:hover img, .social-btn:hover svg { transform: scale(1.12); }
+.social-btn.yt { border-color: rgba(255,0,0,0.3); }
+.social-btn.yt:hover { background: #FF0000; border-color: #FF0000; box-shadow: 0 12px 28px rgba(255,0,0,0.3); }
+.social-btn.ig:hover { background: linear-gradient(135deg, #F58529, #DD2A7B, #8134AF, #515BD4); border-color: transparent; box-shadow: 0 12px 28px rgba(221,42,123,0.3); }
+.social-btn.tg:hover { background: #2AABEE; border-color: #2AABEE; box-shadow: 0 12px 28px rgba(42,171,238,0.3); }
+.social-btn.tw:hover { background: #111; border-color: #333; box-shadow: 0 12px 28px rgba(0,0,0,0.5); }
+
+.social-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.social-name {
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* Footer inside dark block */
+footer {
+  border-top: 1px solid #1E293B;
+  padding: 24px 5%;
+  text-align: center;
+}
+.footer-logo {
+  font-family: var(--font);
+  font-weight: 900;
+  font-size: 16px;
+  color: #475569;
+  letter-spacing: -0.3px;
+  margin-bottom: 14px;
+}
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+.footer-links a {
+  font-size: 13px;
+  color: #475569;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.footer-links a:hover { color: #94A3B8; }
+.footer-copy { font-size: 12px; color: #334155; }
+
+/* ===== CTA SECTION ===== */
+.cta-section {
+  background: linear-gradient(135deg, var(--primary) 0%, #7C3AED 100%);
+  border-radius: var(--radius-xl);
+  padding: 56px 40px;
+  text-align: center;
+  margin: 0 5% 72px;
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+.cta-section::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -40px;
+  width: 240px; height: 240px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+.cta-title {
+  font-family: var(--font);
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.8px;
+  margin-bottom: 12px;
+  position: relative; z-index: 1;
+}
+.cta-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.78);
+  margin-bottom: 28px;
+  position: relative; z-index: 1;
+}
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  color: var(--primary);
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 16px;
+  padding: 14px 28px;
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  position: relative; z-index: 1;
+}
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--bg-soft);
+  border-top: 1px solid var(--border);
+  padding: 32px 5%;
+  text-align: center;
+}
+.footer-logo {
+  font-family: var(--font);
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  margin-bottom: 18px;
+}
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+.footer-links a {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.footer-links a:hover { color: var(--primary); }
+.footer-copy { font-size: 12px; color: var(--text-muted); }
+
+/* ===== MOBILE ===== */
+@media (max-width: 640px) {
+  .hero { padding: 52px 5% 36px; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .btn-hero, .btn-hero-outline { justify-content: center; }
+  .stats-bar { gap: 20px; }
+  .stat-divider { display: none; }
+  .cta-section { padding: 40px 24px; margin: 0 5% 48px; }
+  .section { padding: 52px 5%; }
+  .features-grid { grid-template-columns: 1fr; }
+  .nav-cta-desktop { display: none; }
+  .social-grid { gap: 12px; }
+  .social-btn { width: 60px; height: 60px; border-radius: 16px; }
+}
+
+@media (min-width: 641px) {
+  .hamburger { display: none; }
+  .mobile-menu { display: none; }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.anim-delay-1 { animation: fadeUp 0.55s ease 0.1s both; }
+.anim-delay-2 { animation: fadeUp 0.55s ease 0.2s both; }
+.anim-delay-3 { animation: fadeUp 0.55s ease 0.3s both; }
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Mock section bg */
+.mock-section-wrap {
+  background: linear-gradient(160deg, #F8FAFF 0%, #F0FDFA 100%);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <img src="/icon-192.png" class="nav-logo" alt="Study Grid Prep">
+    <span class="nav-name">Study Grid Prep</span>
+  </a>
+
+  <div class="nav-right">
+    <!-- Desktop nav -->
+    <div class="nav-cta-desktop">
+      <a href="login.html" class="btn-ghost">Login</a>
+      <a href="login.html" class="btn-primary-nav">Get Started →</a>
+    </div>
+
+    <!-- Hamburger (mobile) -->
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Dropdown Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-inner">
+    <a href="#features" class="mob-link" onclick="closeMenu()">Features</a>
+    <a href="#mock-tests" class="mob-link" onclick="closeMenu()">Mock Tests</a>
+    <a href="#how" class="mob-link" onclick="closeMenu()">How It Works</a>
+    <a href="login.html" class="mob-link">Login</a>
+    <a href="login.html" class="mob-btn">Sign Up Free →</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🎓 JEE · NEET · CUET · Boards</div>
+  <h1>Study Smarter.<br><span class="grad">Score Better.</span></h1>
+  <p class="hero-sub">
+    A distraction-free study platform with mock tests, focus timer, progress tracking and personalised playlists — everything in one place.
+  </p>
+  <div class="hero-actions">
+    <a href="login.html" class="btn-hero">Start Learning →</a>
+    <a href="#features" class="btn-hero-outline">See Features</a>
+  </div>
+  <!-- Install App button — appears only when app is installable and not yet installed -->
+  <div class="hero-install-wrap">
+    <button class="btn-install" id="installBtn" onclick="installPWA()" aria-label="Install App">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/>
+      </svg>
+      Install App
+    </button>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar reveal">
+  <div class="stat-item">
+    <div class="stat-value">1K+</div>
+    <div class="stat-label">Active Students</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div class="stat-value">100+</div>
+    <div class="stat-label">Mock Tests</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div class="stat-value">4.9★</div>
+    <div class="stat-label">Avg Rating</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div class="stat-value">3+</div>
+    <div class="stat-label">Exams Covered</div>
+  </div>
+</div>
+
+<!-- MOCK TEST CARDS -->
+<div class="mock-section-wrap" id="mock-tests">
+  <div class="section" style="padding-bottom: 56px;">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Mock Tests</span>
+      <h2 class="section-title">Practice like the real exam</h2>
+      <p class="section-sub">Full-length and subject-wise mock tests with detailed analysis for every major exam.</p>
+    </div>
+
+    <div class="mock-cards-grid">
+
+      <!-- JEE Mock Card -->
+      <a href="mock-home.html" class="mock-card reveal">
+        <img
+          src="https://res.cloudinary.com/dm9hqkipf/image/upload/v1776606792/egqmpo2mjwhvydw2vpcs.jpg"
+          alt="JEE Mock Tests"
+          class="mock-card-img"
+          loading="lazy"
+        >
+        <div class="mock-card-body">
+          <div class="mock-card-badge badge-jee">
+            <img src="/assets/jee.png" class="mock-card-logo" alt="JEE" onerror="this.style.display='none'">
+            JEE Main
+          </div>
+          <div class="mock-card-title">JEE Mock Tests</div>
+          <div class="mock-card-desc">Previous Year Full-length JEE Main mock tests with Physics, Chemistry & Maths. Track your rank and accuracy.</div>
+          <span class="mock-card-cta cta-jee">View Tests →</span>
+        </div>
+      </a>
+
+      <!-- CUET Mock Card -->
+      <a href="mock-select.html" class="mock-card reveal" style="transition-delay: 0.1s;">
+        <img
+          src="https://res.cloudinary.com/dm9hqkipf/image/upload/v1777202478/lzxipky73tjlmdennaxy.jpg"
+          alt="CUET Mock Tests"
+          class="mock-card-img"
+          loading="lazy"
+        >
+        <div class="mock-card-body">
+          <div class="mock-card-badge badge-cuet">
+            <img src="/assets/cuet.png" class="mock-card-logo" alt="CUET" onerror="this.style.display='none'">
+            CUET UG
+          </div>
+          <div class="mock-card-title">CUET Mock Tests</div>
+          <div class="mock-card-desc">Subject-wise and previous year full mock tests for CUET UG. Choose your domain subjects and practice smarter.</div>
+          <span class="mock-card-cta cta-cuet">View Tests →</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section" id="features">
+  <div class="section-header reveal">
+    <span class="section-eyebrow">Features</span>
+    <h2 class="section-title">Everything you need to excel</h2>
+    <p class="section-sub">All study tools in one clean platform — no distractions, just focus.</p>
+  </div>
+
+  <div class="features-grid">
+
+    <div class="feature-card fc-mock reveal">
+      <div class="feature-icon-wrap fi-mock">📝</div>
+      <div class="feature-title">Mock Test Platform</div>
+      <div class="feature-desc">Practice with full-length mock tests and Pyqs designed for JEE, NEET, CUET and Board exams. Track your accuracy and improve with every attempt.</div>
+      <div class="feature-tags">
+        <span class="tag">JEE</span><span class="tag">NEET</span><span class="tag">CUET</span><span class="tag">Boards</span>
+      </div>
+    </div>
+
+    <div class="feature-card fc-timer reveal" style="transition-delay:0.07s">
+      <div class="feature-icon-wrap fi-timer">⏱️</div>
+      <div class="feature-title">Smart Focus Timer</div>
+      <div class="feature-desc">Stay focused with Pomodoro-based timers. Join global study rooms, earn XP and build streaks with fellow students.</div>
+      <div class="feature-tags">
+        <span class="tag">Pomodoro</span><span class="tag">Study Rooms</span><span class="tag">Earn XP</span>
+      </div>
+    </div>
+
+    <div class="feature-card fc-playlist reveal" style="transition-delay:0.14s">
+      <div class="feature-icon-wrap fi-playlist">▶️</div>
+      <div class="feature-title">Study Playlist</div>
+      <div class="feature-desc">Organise YouTube videos subject-wise. Watch, mark complete and earn XP for your study sessions.</div>
+      <div class="feature-tags">
+        <span class="tag">YouTube</span><span class="tag">Subject-wise</span><span class="tag">XP Rewards</span>
+      </div>
+    </div>
+
+    <div class="feature-card fc-analysis reveal" style="transition-delay:0.07s">
+      <div class="feature-icon-wrap fi-analysis">📊</div>
+      <div class="feature-title">Performance Analysis</div>
+      <div class="feature-desc">Visualise your weekly study hours, XP progress and leaderboard rank to stay motivated and on track.</div>
+      <div class="feature-tags">
+        <span class="tag">Weekly Charts</span><span class="tag">XP Tracking</span><span class="tag">Leaderboard</span>
+      </div>
+    </div>
+
+    <div class="feature-card fc-todo reveal" style="transition-delay:0.14s">
+      <div class="feature-icon-wrap fi-todo">✅</div>
+      <div class="feature-title">Todo Planner</div>
+      <div class="feature-desc">Plan your day with a smart todo list. Get daily reminders and track your task completion rate.</div>
+      <div class="feature-tags">
+        <span class="tag">Daily Goals</span><span class="tag">Reminders</span><span class="tag">Progress</span>
+      </div>
+    </div>
+
+    <div class="feature-card fc-solver reveal" style="transition-delay:0.21s">
+      <div class="feature-icon-wrap fi-solver">🧮</div>
+      <div class="feature-title">Time-Bound Solver</div>
+      <div class="feature-desc">Sharpen problem-solving speed with timed challenges. Exactly what you need for competitive exam prep.</div>
+      <div class="feature-tags">
+        <span class="tag">Timed Tests</span><span class="tag">Speed Practice</span><span class="tag">Analytics</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div style="background: var(--bg-soft); padding: 72px 0; border-top: 1px solid var(--border);" id="how">
+  <div class="section" style="padding-top: 0; padding-bottom: 0;">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">How it works</span>
+      <h2 class="section-title">Start studying in 3 steps</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">1</div>
+        <div class="step-title">Create Account</div>
+        <div class="step-desc">Sign in with Google in one tap. No forms, no hassle. Your data is saved automatically.</div>
+      </div>
+      <div class="step-card reveal" style="transition-delay:0.1s">
+        <div class="step-num">2</div>
+        <div class="step-title">Set Your Target Exam</div>
+        <div class="step-desc">Choose JEE, NEET, CUET or Boards. Set your exam date and get a personalised countdown.</div>
+      </div>
+      <div class="step-card reveal" style="transition-delay:0.2s">
+        <div class="step-num">3</div>
+        <div class="step-title">Study & Track Progress</div>
+        <div class="step-desc">Use mock tests, focus timer and playlist. Watch your XP and leaderboard rank grow daily.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXAM TARGETS -->
+<div class="section reveal">
+  <div class="section-header">
+    <span class="section-eyebrow">Target Exams</span>
+    <h2 class="section-title">Designed for top competitive exams</h2>
+    <p class="section-sub">Tailored mock tests and study plans for every major Indian competitive exam.</p>
+  </div>
+  <div class="exams-row">
+    <div class="exam-pill"><span class="exam-emoji">⚛️</span> JEE Main 2026</div>
+    <div class="exam-pill"><span class="exam-emoji">🔬</span> NEET 2026</div>
+    <div class="exam-pill"><span class="exam-emoji">📚</span> CUET 2026</div>
+    <div class="exam-pill"><span class="exam-emoji">🎓</span> Board Exams</div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div style="padding: 72px 0 56px;">
+  <div class="cta-section reveal">
+    <div class="cta-title">Ready to start your preparation?</div>
+    <div class="cta-sub">Join students already studying smarter on Study Grid Prep.</div>
+    <a href="login.html" class="btn-cta">Get Started →</a>
+  </div>
+</div>
+
+<!-- FOLLOW US ON + FOOTER (one dark block) -->
+<div class="dark-footer-block">
+
+  <div class="follow-section">
+    <div class="follow-title reveal">Follow Us On</div>
+    <p class="follow-sub reveal">Stay updated with the latest announcements, features, and platform news</p>
+    <div class="social-grid reveal">
+
+      <div class="social-label">
+        <a href="www.youtube.com/@studygridprep" target="_blank" rel="noopener" class="social-btn yt" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="color:#FF0000; width:32px; height:32px;">
+            <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+        </a>
+        <span class="social-name">YouTube</span>
+      </div>
+
+      <div class="social-label">
+        <a href="https://instagram.com" target="_blank" rel="noopener" class="social-btn ig" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" style="width:30px;height:30px;">
+            <defs>
+              <radialGradient id="ig1" cx="30%" cy="107%" r="150%">
+                <stop offset="0%" stop-color="#fdf497"/>
+                <stop offset="5%" stop-color="#fdf497"/>
+                <stop offset="45%" stop-color="#fd5949"/>
+                <stop offset="60%" stop-color="#d6249f"/>
+                <stop offset="90%" stop-color="#285AEB"/>
+              </radialGradient>
+            </defs>
+            <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig1)"/>
+            <circle cx="12" cy="12" r="4.5" stroke="white" stroke-width="1.7" fill="none"/>
+            <circle cx="17.2" cy="6.8" r="1.2" fill="white"/>
+          </svg>
+        </a>
+        <span class="social-name">Instagram</span>
+      </div>
+
+      <div class="social-label">
+        <a href="https://t.me" target="_blank" rel="noopener" class="social-btn tg" aria-label="Telegram">
+          <svg viewBox="0 0 24 24" fill="none" style="width:30px;height:30px;">
+            <circle cx="12" cy="12" r="12" fill="#2AABEE"/>
+            <path d="M17.5 7L9.8 13.2 7 11.5 4.5 10.8 17.5 7Z" fill="white" opacity="0.5"/>
+            <path d="M9.8 13.2L10.6 17L12 14.5L17.5 7L9.8 13.2Z" fill="white"/>
+            <path d="M9.8 13.2L7 11.5L17.5 7L9.8 13.2Z" fill="white" opacity="0.7"/>
+          </svg>
+        </a>
+        <span class="social-name">Telegram</span>
+      </div>
+
+      <div class="social-label">
+        <a href="https://x.com" target="_blank" rel="noopener" class="social-btn tw" aria-label="X (Twitter)">
+          <svg viewBox="0 0 24 24" fill="white" style="width:26px;height:26px;">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.632L18.244 2.25Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
+          </svg>
+        </a>
+        <span class="social-name">X (Twitter)</span>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Study Grid Prep</div>
+    <div class="footer-links">
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+    <div class="footer-copy">© 2026 Study Grid Prep · Built for students, by students</div>
+  </footer>
+
+</div>
+
+<script>
+// ===== SERVICE WORKER =====
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+
+// ===== PWA INSTALL =====
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBtn').classList.add('visible');
+});
+
+function installPWA() {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then((choiceResult) => {
+    if(choiceResult.outcome === 'accepted') {
+      document.getElementById('installBtn').classList.remove('visible');
+    }
+    deferredPrompt = null;
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBtn').classList.remove('visible');
+  deferredPrompt = null;
+});
+
+// ===== HAMBURGER MENU =====
+function toggleMenu() {
+  const hamburger = document.getElementById('hamburger');
+  const menu = document.getElementById('mobileMenu');
+  hamburger.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+// Close on outside click
+document.addEventListener('click', (e) => {
+  const hamburger = document.getElementById('hamburger');
+  const menu = document.getElementById('mobileMenu');
+  if(!hamburger.contains(e.target) && !menu.contains(e.target)){
+    hamburger.classList.remove('open');
+    menu.classList.remove('open');
+  }
+});
+
+// ===== SCROLL REVEAL =====
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
