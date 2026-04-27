@@ -23,7 +23,7 @@ const CACHE = "sgp-cache-v9";
 
 // ✅ Sirf wahi files jo 100% exist karti hain
 const ASSETS = [
-  "/index.html",
+  "/dashboard-home.html",
   "/offline.html",
   "/focus.html",
   "/timer.html",
