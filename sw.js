@@ -199,10 +199,11 @@ self.addEventListener("notificationclick", event => {
   const url = event.notification.data?.url || "/";
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true })
-      .then(list => {
-        for (const c of list) {
-  if ("focus" in c) { await c.focus(); return; }
-        }
+      // ✅ SAHI — async lagao
+.then(async list => {
+  for (const c of list) {
+    if ("focus" in c) { await c.focus(); return; }
+  }
         if (clients.openWindow) return clients.openWindow(url);
       })
   );
