@@ -1263,7 +1263,6 @@ function loadExamConfig() {
     const uid = STATE.user?.uid;
     if (uid) {
       const testId = localStorage.getItem("selectedTestId") || "";
-      status: "started",
       setDoc(doc(db, "activeTests", uid), {
         uid,
         userName:  STATE.user?.displayName || localStorage.getItem("userName") || "User",
@@ -1271,6 +1270,7 @@ function loadExamConfig() {
         testId,
         testName:  (STATE.exam||"").toUpperCase() + " " + STATE.year + " " + STATE.shift,
         shift:     STATE.shift,
+        status:    "started",  
         startedAt: serverTimestamp()
       }).catch(() => {});
     }
