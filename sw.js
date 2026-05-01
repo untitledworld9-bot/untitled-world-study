@@ -12,9 +12,17 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload) {
-  self.registration.showNotification(payload.notification.title, {
-    body: payload.notification.body,
-    icon: "/icon-192.png"
+  const n = payload.notification;
+  const d = payload.data || {};
+
+  self.registration.showNotification(n.title, {
+    body: n.body,
+    icon: "/icon-192.png",
+    badge: "/icon-192.png",
+    image: n.image || d.image || null,
+    vibrate: [200, 100, 200],
+    requireInteraction: true,
+    data: { url: d.url || "/" }
   });
 });
 
@@ -46,7 +54,6 @@ self.addEventListener("install", event => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE).then(cache => {
-      // ✅ Individual try — ek fail ho toh baaki cache hoti rahe
       return Promise.allSettled(
         ASSETS.map(url =>
           cache.add(url).catch(err =>
@@ -73,10 +80,7 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const req = event.request;
 
-  // External requests — ignore
   if (!req.url.startsWith(self.location.origin)) return;
-
-  // POST etc. — ignore
   if (req.method !== "GET") return;
 
   // ── NAVIGATION (page open) ──────────────────────────────
@@ -84,18 +88,15 @@ self.addEventListener("fetch", event => {
     event.respondWith(
       fetch(req)
         .then(res => {
-          // Network se mila → cache update karo aur return karo
           if (res && res.status === 200) {
             caches.open(CACHE).then(c => c.put(req, res.clone()));
           }
           return res;
         })
         .catch(async () => {
-          // Network fail → cache check karo
           const cached = await caches.match(req, { ignoreSearch: true });
           if (cached) return cached;
 
-          // Cache mein bhi nahi → offline page
           const offlinePage = await caches.match("/offline.html");
           return offlinePage || new Response(
             "<h2>Offline</h2><button onclick='location.reload()'>Retry</button>",
@@ -116,13 +117,11 @@ self.addEventListener("fetch", event => {
         return res;
       }).catch(() => null);
 
-      // Cache hai → turant serve, background mein update
       if (cached) {
         event.waitUntil(networkFetch);
         return cached;
       }
 
-      // Cache nahi → network se lo
       return networkFetch;
     })
   );
@@ -140,7 +139,6 @@ self.addEventListener("message", event => {
     return;
   }
 
-  // Net wapas aaya → sab pages reload karo
   if (data.type === "CLIENT_ONLINE") {
     event.waitUntil(
       self.clients.matchAll({ type: "window" }).then(list => {
@@ -199,11 +197,10 @@ self.addEventListener("notificationclick", event => {
   const url = event.notification.data?.url || "/";
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true })
-      // ✅ SAHI — async lagao
-.then(async list => {
-  for (const c of list) {
-    if ("focus" in c) { await c.focus(); return; }
-  }
+      .then(async list => {
+        for (const c of list) {
+          if ("focus" in c) { await c.focus(); return; }
+        }
         if (clients.openWindow) return clients.openWindow(url);
       })
   );
