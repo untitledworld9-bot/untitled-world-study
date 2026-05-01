@@ -11,6 +11,7 @@
   "theme_color": "#ffffff",
   "lang": "en",
   "dir": "auto",
+  "orientation": "portrait",
   "prefer_related_applications": false,
 
   "icons": [
@@ -31,6 +32,21 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot2.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ],
 
