@@ -2,7 +2,7 @@
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
         "namespace": "android_app",
-        "package_name": "cc.us.untitledworld.twa",
-        "sha256_cert_fingerprints": ["1D:FB:1B:5C:A6:28:4B:F7:BC:4C:DF:6A:60:D3:CA:60:EF:D9:50:9E:03:02:BB:0D:11:51:B2:00:5C:F6:66:C3"]
+        "package_name": "com.studygrid.prep",
+        "sha256_cert_fingerprints": ["D3:9E:88:1A:3A:9D:96:CE:CE:6A:93:F4:88:4C:5F:BB:1D:42:BF:78:C3:AF:18:1B:88:DE:B3:85:65:3F:E9:44"]
       }
     }]
