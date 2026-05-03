@@ -1,32 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-<url>
-<loc>https://untitledworld.us.cc/</loc>
-</url>
+  <url>
+    <loc>https://untitledworld.us.cc/</loc>
+    <lastmod>2026-05-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
 
-<url>
-<loc>https://untitledworld.us.cc/about.html</loc>
-</url>
+  <url>
+    <loc>https://untitledworld.us.cc/login.html</loc>
+    <lastmod>2026-05-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
-<url>
-<loc>https://untitledworld.us.cc/privacy.html</loc>
-</url>
+  <url>
+    <loc>https://untitledworld.us.cc/dashboard-home.html</loc>
+    <priority>0.9</priority>
+  </url>
 
-<url>
-<loc>https://untitledworld.us.cc/terms.html</loc>
-</url>
+  <url>
+    <loc>https://untitledworld.us.cc/mock-home.html</loc>
+  </url>
 
-<url>
-<loc>https://untitledworld.us.cc/login.html</loc>
-</url>
+  <url>
+    <loc>https://untitledworld.us.cc/timer.html</loc>
+  </url>
 
-<url>
-<loc>https://untitledworld.us.cc/signup.html</loc>
-</url>
+  <url>
+    <loc>https://untitledworld.us.cc/playlist.html</loc>
+  </url>
 
-<url>
-<loc>https://untitledworld.us.cc/mocktest.html</loc>
-</url>
+  <url>
+    <loc>https://untitledworld.us.cc/todo.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/focus.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/progress.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/testhistory.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/cuetmockselect.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/jeemockselect.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/about.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/contact.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/privacy.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/terms.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/profile.html</loc>
+  </url>
+
+  <url>
+    <loc>https://untitledworld.us.cc/subscription.html</loc>
+  </url>
 
 </urlset>
